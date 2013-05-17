@@ -1,0 +1,89 @@
+using System;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
+using Microsoft.SharePoint;
+
+namespace SharePointTutorial.Features.Feature1
+{
+    /// <summary>
+    /// This class handles events raised during feature activation, deactivation, installation, uninstallation, and upgrade.
+    /// </summary>
+    /// <remarks>
+    /// The GUID attached to this class may be used during packaging and should not be modified.
+    /// </remarks>
+
+    [Guid("106183b5-3afc-4e80-9ab9-0a64bf9f4c0c")]
+    public class Feature1EventReceiver : SPFeatureReceiver
+    {
+        //private static const string FHWN_USER_LIST = "FHWN UserList";
+
+        // Uncomment the method below to handle the event raised after a feature has been activated.
+
+        public override void FeatureActivated(SPFeatureReceiverProperties properties)
+        {
+            SPWeb web = properties.Feature.Parent as SPWeb;
+
+            if (!web.ListExists("FHWN UserList"))
+            {
+                Guid listID = web.Lists.Add("FHWN UserList", "My first UserList", SPListTemplateType.GenericList);
+                web.Lists[listID].Fields.Add("Username", SPFieldType.Text, true);
+                web.Lists[listID].Fields.Add("Password", SPFieldType.Text, true);
+
+                SPView view = web.Lists[listID].DefaultView;
+                view.ViewFields.Add("Username");
+                view.ViewFields.Add("Password");
+                view.Update();
+
+                web.Properties["FHWN EncryptionKey"] = "abcdefg";
+                web.Properties.Update();
+
+                web.Update();
+            }
+        }
+
+
+        // Uncomment the method below to handle the event raised before a feature is deactivated.
+
+        //public override void FeatureDeactivating(SPFeatureReceiverProperties properties)
+        //{
+        //}
+
+
+        // Uncomment the method below to handle the event raised after a feature has been installed.
+
+        //public override void FeatureInstalled(SPFeatureReceiverProperties properties)
+        //{
+        //    SPWeb web = properties.Feature.Parent as SPWeb;
+
+        //    if (!web.ListExists("FHWN UserList"))
+        //    {
+        //        Guid listID = web.Lists.Add("FHWN UserList", "My first UserList", SPListTemplateType.GenericList);
+        //        web.Lists[listID].Fields.Add("Username", SPFieldType.Text, true);
+        //        web.Lists[listID].Fields.Add("Password", SPFieldType.Text, true);
+
+        //        SPView view = web.Lists[listID].DefaultView;
+        //        view.ViewFields.Add("Username");
+        //        view.ViewFields.Add("Password");
+        //        view.Update();
+
+        //        web.Properties["FHWN EncryptionKey"] = "abcdefg";
+        //        web.Properties.Update();
+
+        //        web.Update();
+        //    }
+        //}
+
+
+        // Uncomment the method below to handle the event raised before a feature is uninstalled.
+
+        //public override void FeatureUninstalling(SPFeatureReceiverProperties properties)
+        //{
+        //}
+
+        // Uncomment the method below to handle the event raised when a feature is upgrading.
+
+        //public override void FeatureUpgrading(SPFeatureReceiverProperties properties, string upgradeActionName, System.Collections.Generic.IDictionary<string, string> parameters)
+        //{
+        //}
+    }
+}
