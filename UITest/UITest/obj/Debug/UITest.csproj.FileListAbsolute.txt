@@ -1,1 +1,13 @@
 C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\bin\Debug\UITest.exe.config
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\bin\Debug\UITest.exe
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\bin\Debug\UITest.pdb
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\obj\Debug\UITest.csprojResolveAssemblyReference.cache
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\obj\Debug\MainWindow.baml
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\obj\Debug\MainWindow.g.cs
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\obj\Debug\App.g.cs
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\obj\Debug\UITest_MarkupCompile.cache
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\obj\Debug\UITest.g.resources
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\obj\Debug\UITest.Properties.Resources.resources
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\obj\Debug\UITest.csproj.GenerateResource.Cache
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\obj\Debug\UITest.exe
+C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\Sharezbold\Sharezbold\UITest\UITest\obj\Debug\UITest.pdb
