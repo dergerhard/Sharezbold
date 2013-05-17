@@ -1,6 +1,0 @@
-C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\SharePointTutorial\Client\bin\Debug\Client.exe.config
-C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\SharePointTutorial\Client\bin\Debug\Client.exe
-C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\SharePointTutorial\Client\bin\Debug\Client.pdb
-C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\SharePointTutorial\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache
-C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\SharePointTutorial\Client\obj\Debug\Client.exe
-C:\Users\administrator.CSSDEV\Documents\Visual Studio 2012\Projects\SharePointTutorial\Client\obj\Debug\Client.pdb

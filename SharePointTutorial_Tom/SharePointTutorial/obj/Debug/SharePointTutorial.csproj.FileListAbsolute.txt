@@ -1,4 +1,0 @@
-c:\users\administrator.cssdev\documents\visual studio 2012\Projects\SharePointTutorial\SharePointTutorial\bin\Debug\SharePointTutorial.dll
-c:\users\administrator.cssdev\documents\visual studio 2012\Projects\SharePointTutorial\SharePointTutorial\bin\Debug\SharePointTutorial.pdb
-c:\users\administrator.cssdev\documents\visual studio 2012\Projects\SharePointTutorial\SharePointTutorial\obj\Debug\SharePointTutorial.dll
-c:\users\administrator.cssdev\documents\visual studio 2012\Projects\SharePointTutorial\SharePointTutorial\obj\Debug\SharePointTutorial.pdb
