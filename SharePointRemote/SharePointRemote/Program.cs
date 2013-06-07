@@ -13,24 +13,41 @@ namespace Client
         static void Main(string[] args)
         {
             ClientContext ctx = new ClientContext("http://10.10.102.36");
+            
+            //ListCollection allLists = web.Lists;
+            string username = "holzgethan";
+            string password = "FHWN2013!";
+            string domain = "cssdev";
+            ctx.Credentials = new NetworkCredential(username, password, domain);
             Web web = ctx.Web;
             PropertyValues propValues = web.AllProperties;
-            //ListCollection allLists = web.Lists;
-            ctx.Credentials = new NetworkCredential("holzgethan", "FHWN2013!", "cssdev");
-            ctx.Load(web);
+            ctx.Load(web, website => website.Title);
+            ctx.Load(web.Webs);
             ctx.Load(propValues);
+
             //ctx.Load(allLists);
-            ctx.ExecuteQuery();
-
-            string cypher = (string)propValues["fhwn encryptionkey"];
-            Console.WriteLine("cypher = {0}", cypher);
-            if (cypher != null)
+            try
             {
-                Console.WriteLine("Please enter your encrypted password: ");
-                string password = Console.ReadLine();
-                // Console.WriteLine("Decrypted: {0}", password.Decrypt(cypher));
+               ctx.ExecuteQuery();
 
+                Console.WriteLine(web.Title);
+                /*
+                string cypher = (string)propValues["fhwn encryptionkey"];
+                Console.WriteLine("cypher = {0}", cypher);
+                if (cypher != null)
+                {
+                    Console.WriteLine("Please enter your encrypted password: ");
+                    string pwd = Console.ReadLine();
+                    // Console.WriteLine("Decrypted: {0}", pwd.Decrypt(cypher));
+
+                }
+                 */
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
 
             //foreach (List list in allLists)
             //{
