@@ -74,15 +74,16 @@ namespace UITest
                 // Iterate through each service of all services on the server.
                 foreach (SPServiceInstance inst in server.ServiceInstances)
                 {
-                    //insert service name (consider inst.status)
-                    TreeViewItem tviInst = new TreeViewItem();
-                    tviInst.Header = inst.TypeName;
-                    tviServer.Items.Add(tviInst);
-
+                    
                     // If the current service is a SPWebService
                     // (which host's the web applications)
-                    if (inst.Service is SPWebService)
+                    if ((inst.Service is SPWebService) && (! inst.TypeName.ToLower().Contains("administrat")))
                     {
+                        //insert service name (consider inst.status)
+                        TreeViewItem tviInst = new TreeViewItem();
+                        tviInst.Header = inst.TypeName;
+                        tviServer.Items.Add(tviInst);
+
                         // Get all web applications.
                         SPWebApplicationCollection wepApps = (inst.Service as SPWebService).WebApplications;
 
@@ -107,7 +108,7 @@ namespace UITest
                                 tviSite.Header = site.PrimaryUri;// +", Site count: " + site.AllWebs.Count;
                                 tviWebApp.Items.Add(tviSite);
 
-
+                                
                                 // Iterate trough each web.
                                 foreach (SPWeb web in site.AllWebs)
                                 {
