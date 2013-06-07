@@ -23,12 +23,23 @@ namespace Client
             PropertyValues propValues = web.AllProperties;
             ctx.Load(web, website => website.Title);
             ctx.Load(web.Webs);
+            ctx.Load(web.Lists);
             ctx.Load(propValues);
 
             //ctx.Load(allLists);
             try
             {
                ctx.ExecuteQuery();
+
+               foreach (var list in web.Lists)
+               {
+                   ctx.Load(list.WorkflowAssociations);
+                   ctx.ExecuteQuery();
+                   foreach (var item in list.WorkflowAssociations)
+                   {
+                       Console.WriteLine("item = " + item.ToString());                       
+                   }
+               }
 
                 Console.WriteLine(web.Title);
                 /*
