@@ -14,28 +14,30 @@ namespace Client
         static void Main(string[] args)
         {
             ClientContext ctx = new ClientContext("http://10.10.102.36");
+            // ClientContext ctx = new ClientContext("http://localhost");
             
-            //ListCollection allLists = web.Lists;
+            // ListCollection allLists = web.Lists;
             string username = "holzgethan";
             string password = "FHWN2013!";
             string domain = "cssdev";
             ctx.Credentials = new NetworkCredential(username, password, domain);
             Web web = ctx.Web;
             PropertyValues propValues = web.AllProperties;
-            ctx.Load(web, website => website.Title);
-            ctx.Load(web.Webs);
-            ctx.Load(web.Lists);
-            ctx.Load(propValues);
+            ctx.Load(web);
+            // ctx.Load(web, website => website.Title);
+            // ctx.Load(web.Webs);
+            // ctx.Load(web.Lists);
+            // ctx.Load(propValues);
 
             //ctx.Load(allLists);
             try
             {
                ctx.ExecuteQuery();
-
+                /*
                foreach (var list in web.Lists)
                {
                    ctx.Load(list);
-                   ctx.ExecuteQuery();
+                   // ctx.ExecuteQuery();
                    Console.WriteLine("List Name: {0}", list.Title);
                    for (int i = 0; i < list.ItemCount; i++)
                    {
@@ -49,9 +51,9 @@ namespace Client
                    {
                        Console.WriteLine("item = " + item.ToString());                       
                    }
-                    * */
-               }
-
+                    * *
+               }*/
+            
                 Console.WriteLine(web.Title);
                 /*
                 string cypher = (string)propValues["fhwn encryptionkey"];
