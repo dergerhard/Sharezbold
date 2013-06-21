@@ -5,6 +5,7 @@ using System.Text;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.SharePoint.Client;
+// using Microsoft.SharePoint.Workflow;
 
 namespace Client
 {
@@ -33,12 +34,22 @@ namespace Client
 
                foreach (var list in web.Lists)
                {
-                   ctx.Load(list.WorkflowAssociations);
+                   ctx.Load(list);
                    ctx.ExecuteQuery();
+                   Console.WriteLine("List Name: {0}", list.Title);
+                   for (int i = 0; i < list.ItemCount; i++)
+                   {
+                       Console.WriteLine("item by id: {0}", list.GetItemById(i).ToString());
+                   }
+
+                   /*
+                   ctx.Load(list.WorkflowAssociations);
+                   
                    foreach (var item in list.WorkflowAssociations)
                    {
                        Console.WriteLine("item = " + item.ToString());                       
                    }
+                    * */
                }
 
                 Console.WriteLine(web.Title);
