@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.SharePoint;
 using Microsoft.SharePoint.Client;
+using System.IO;
 // using Microsoft.SharePoint.Workflow;
 
 namespace Client
@@ -13,17 +15,56 @@ namespace Client
     {
         static void Main(string[] args)
         {
-            ClientContext ctx = new ClientContext("http://10.10.102.36");
+            // define variables:
+            FileStream fileStream = null;
+            BinaryWriter writer = null;
+            try
+            {
+                string username = "holzgethan";
+                string password = "FHWN2013!";
+                string domain = "cssdev";
+
+                ClientContext ctx = new ClientContext("http://10.10.102.36");
+
+                ctx.Credentials = new NetworkCredential(username, password, domain);
+                Web web = ctx.Web;
+                ListCollection listCollection = web.Lists;
+                PropertyValues propValues = web.AllProperties;
+                UserCollection userCollection = web.SiteUsers;
+                ctx.Load(web);
+                ctx.Load(listCollection);
+                ctx.Load(userCollection);
+
+                ctx.ExecuteQuery();
+
+                Console.WriteLine("the title of the web = {0}", web.Title);
+                Console.WriteLine("count of the list-collection = {0}", listCollection.Count);
+                Console.WriteLine("count the users on the sharepoint = {0}", userCollection.Count);
+                Console.WriteLine("are items available? = {0}", userCollection.AreItemsAvailable);
+
+                
+                for (int i = 0; i < userCollection.Count; i++)
+                {
+                    User user = userCollection.ElementAt(i);
+
+                    Console.WriteLine("user number {0}? = {1}", i, user.LoginName);
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+            finally
+            {
+                if (writer != null) writer.Close();
+                if (fileStream != null) fileStream.Close();
+            }
+
+           // ClientContext ctx = new ClientContext("http://10.10.102.36");
             // ClientContext ctx = new ClientContext("http://localhost");
             
             // ListCollection allLists = web.Lists;
-            string username = "holzgethan";
-            string password = "FHWN2013!";
-            string domain = "cssdev";
-            ctx.Credentials = new NetworkCredential(username, password, domain);
-            Web web = ctx.Web;
-            PropertyValues propValues = web.AllProperties;
-            ctx.Load(web);
+            
             // ctx.Load(web, website => website.Title);
             // ctx.Load(web.Webs);
             // ctx.Load(web.Lists);
@@ -32,7 +73,7 @@ namespace Client
             //ctx.Load(allLists);
             try
             {
-               ctx.ExecuteQuery();
+             //  ctx.ExecuteQuery();
                 /*
                foreach (var list in web.Lists)
                {
@@ -54,7 +95,7 @@ namespace Client
                     * *
                }*/
             
-                Console.WriteLine(web.Title);
+            //    Console.WriteLine(web.Title);
                 /*
                 string cypher = (string)propValues["fhwn encryptionkey"];
                 Console.WriteLine("cypher = {0}", cypher);
@@ -82,7 +123,7 @@ namespace Client
             //        string cypher = (string) propValues["fhwn encryptionkey"];
             //    }
             //}
-
+            Console.WriteLine("END OF TEST");
             Console.ReadLine();
         }
     }
