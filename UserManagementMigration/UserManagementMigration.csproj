@@ -45,8 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UserManagementDownloader.cs" />
     <Compile Include="UserManagementMigration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserManagementUploader.cs" />
     <Compile Include="UserMigrationException.cs" />
   </ItemGroup>
   <ItemGroup>
