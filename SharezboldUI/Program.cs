@@ -6,10 +6,13 @@ using System.Windows.Forms;
 
 namespace SharezboldUI
 {
+    /// <summary>
+    /// Main user interface class
+    /// </summary>
     static class Program
     {
         /// <summary>
-        /// Der Haupteinstiegspunkt für die Anwendung.
+        /// main method of ui
         /// </summary>
         [STAThread]
         static void Main()

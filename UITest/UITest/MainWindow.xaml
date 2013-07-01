@@ -5,6 +5,7 @@
     <Grid Margin="0,0,0,-17">
         <TreeView x:Name="tvSharepointSource" HorizontalAlignment="Left" Height="288" Margin="10,10,0,0" VerticalAlignment="Top" Width="497"/>
         <Button x:Name="btDoLoad" Content="Load Sharepoint Tree" HorizontalAlignment="Left" Margin="383,303,0,0" VerticalAlignment="Top" Width="124" Click="btDoLoad_Click"/>
+        <Button x:Name="btDoLoadWithClientObjectModel" Content="Load with Client Object Model" HorizontalAlignment="Left" Margin="216,303,0,0" VerticalAlignment="Top" Width="162" Click="btDoLoadWithClientObjectModel_Click"/>
 
     </Grid>
 </Window>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+targetNamespace="urn:xmlns:Sharezbold:SharepointMigration" 
+xmlns:bk="urn:xmlns:Sharezbold:SharepointMigration" 
+elementFormDefault="qualified">
+<xs:element name="MigrationSettings">
+   <xs:complexType>
+      <xs:attribute name="FromHost" type="xs:string" />
+      <xs:attribute name="FromDomain" type="xs:string" />
+      <xs:attribute name="FromUserName" type="xs:string" />
+      <xs:attribute name="FromPassword" type="xs:string" />
+	  
+      <xs:attribute name="ToHost" type="xs:string" />
+      <xs:attribute name="ToDomain" type="xs:string" />
+      <xs:attribute name="ToUserName" type="xs:string" />
+      <xs:attribute name="ToPassword" type="xs:string" />
+   </xs:complexType>
+</xs:element>
+</xs:schema>
