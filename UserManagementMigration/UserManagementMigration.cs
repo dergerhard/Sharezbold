@@ -1,62 +1,49 @@
-﻿namespace Sharezbold.UserManagement
+﻿//-----------------------------------------------------------------------
+// <copyright file="UserManagementMigration.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
+namespace Sharezbold.UserManagement
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Net;
-    using Microsoft.SharePoint;
     using Microsoft.SharePoint.Client;
-    using Sharezbold.Util;
 
+    /// <summary>
+    /// This class is responsible for the user migration and group migration.
+    /// It is also the interface for the other components.
+    /// </summary>
     public class UserManagementMigration
     {
+        /// <summary>
+        /// The downloader of the source SharePoint.
+        /// </summary>
+        private UserManagementDownloader downloader;
 
-        public void MigrateAllUserGroups(SharepointInformation sourceSharePoint, SharepointInformation targetSharePoint)
+        /// <summary>
+        /// The uploader of the target SharePoint.
+        /// </summary>
+        private UserManagementUploader uploader;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserManagementMigration"/> class.
+        /// </summary>
+        /// <param name="sourceSharePoint">The ClientContext of the source SharePoint.</param>
+        /// <param name="targetSharePoint">The ClientContext of the target SharePoint.</param>
+        public UserManagementMigration(ClientContext sourceSharePoint, ClientContext targetSharePoint)
         {
-            // TODO give the logic to an own method (better class):
-            ClientContext contextSource = new ClientContext(sourceSharePoint.Address);
-            contextSource.Credentials = sourceSharePoint.Credentials;
-
-            Web web = contextSource.Web;
-            GroupCollection groupCollection = web.SiteGroups;
-            contextSource.Load(groupCollection);
-
-            contextSource.ExecuteQuery();
-
-            Console.WriteLine("count the gourps on the sharepoint = {0}", groupCollection.Count);
-
-            for (int i = 0; i < groupCollection.Count; i++)
-            {
-                Group group = groupCollection.ElementAt(i);
-
-                Console.WriteLine("group number {0}? = {1}", i, group.LoginName);
-            }
+            this.downloader = new UserManagementDownloader(sourceSharePoint);
+            this.uploader = new UserManagementUploader(targetSharePoint);
         }
 
-        public void MigrateAllUsers(SharepointInformation sourceSharePoint, SharepointInformation targetSharePoint)
+        /// <summary>
+        /// Migrates the users and groups.
+        /// </summary>
+        /// <exception cref="UserMigrationException">if the users and/or the groups could not be migrated.</exception>
+        public void MigrateUserManagement()
         {
-            // TODO give the logic to an own method (better class):
-            ClientContext contextSource = new ClientContext(sourceSharePoint.Address);
-            contextSource.Credentials = sourceSharePoint.Credentials;
-
-            Web web = contextSource.Web;
-            UserCollection userCollection = web.SiteUsers;
-            contextSource.Load(userCollection);
-
-            contextSource.ExecuteQuery();
-
-            Console.WriteLine("count the users on the sharepoint = {0}", userCollection.Count);
-            Console.WriteLine("are items available? = {0}", userCollection.AreItemsAvailable);
-
-
-            for (int i = 0; i < userCollection.Count; i++)
-            {
-                User user = userCollection.ElementAt(i);
-
-                Console.WriteLine("user number {0}? = {1}", i, user.LoginName);
-            }
+            GroupCollection groupCollection = this.downloader.GetAllGroups();
+            this.uploader.UploadUserGroups(groupCollection);
         }
     }
 }
