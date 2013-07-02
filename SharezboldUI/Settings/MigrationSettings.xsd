@@ -5,15 +5,17 @@ xmlns:bk="urn:xmlns:Sharezbold:SharepointMigration"
 elementFormDefault="qualified">
 <xs:element name="MigrationSettings">
    <xs:complexType>
-      <xs:attribute name="FromHost" type="xs:string" />
-      <xs:attribute name="FromDomain" type="xs:string" />
-      <xs:attribute name="FromUserName" type="xs:string" />
-      <xs:attribute name="FromPassword" type="xs:string" />
-	  
-      <xs:attribute name="ToHost" type="xs:string" />
-      <xs:attribute name="ToDomain" type="xs:string" />
-      <xs:attribute name="ToUserName" type="xs:string" />
-      <xs:attribute name="ToPassword" type="xs:string" />
+      <xs:sequence>
+        <xs:element name="FromHost" type="xs:string" />
+        <xs:element name="FromDomain" type="xs:string" />
+        <xs:element name="FromUserName" type="xs:string" />
+        <xs:element name="FromPassword" type="xs:string" />
+
+        <xs:element name="ToHost" type="xs:string" />
+        <xs:element name="ToDomain" type="xs:string" />
+        <xs:element name="ToUserName" type="xs:string" />
+        <xs:element name="ToPassword" type="xs:string" />
+     </xs:sequence>
    </xs:complexType>
 </xs:element>
 </xs:schema>

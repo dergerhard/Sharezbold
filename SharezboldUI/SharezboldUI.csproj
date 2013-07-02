@@ -55,6 +55,9 @@
     <Compile Include="Settings\MigrationSettings.cs">
       <DependentUpon>MigrationSettings.xsd</DependentUpon>
     </Compile>
+    <Compile Include="TablessControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
