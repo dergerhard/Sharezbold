@@ -73,7 +73,7 @@ Creation:
 
 
  Wer macht was?
-
+ ##############
  Thomas:
 	Content Types, Site Columns, Benutzer, Gruppen, Permission levels, Workflows
 	Installer
@@ -86,3 +86,24 @@ Creation:
 
 Projekte:
 	ContentMigration, TypeMigration
+
+
+
+##############
+Server Tomas:
+-----------
+10.10.102.36
+CSSDEV\Administrator
+P@ssw0rd
+
+Sharepoint 2010
+-----------
+10.10.102.48
+CSSDEV\Administrator
+P@ssw0rd
+
+Server Gerhard:
+-----------
+10.10.102.38
+CSSDEV\Administrator
+P@ssw0rd
