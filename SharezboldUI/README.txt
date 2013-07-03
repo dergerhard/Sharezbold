@@ -107,3 +107,8 @@ Server Gerhard:
 10.10.102.38
 CSSDEV\Administrator
 P@ssw0rd
+
+Treffen:
+-----------
+Montag, 18:30 - so viel wie geht
+Mittwoch, Integration + Präsentationsvorbereitung
