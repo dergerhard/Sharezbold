@@ -53,5 +53,28 @@ namespace Sharezbold.UserManagement
 
             return groupCollection;
         }
+
+        /// <summary>
+        /// Returns all SiteUsers of source-SharePoint.
+        /// </summary>
+        /// <returns>all SiteUsers </returns>
+        /// <exception cref="UserMigrationException">If the SiteUsers could not be loaded.</exception>
+        internal UserCollection GetAllUsers()
+        {
+            Web web = this.clientContext.Web;
+            UserCollection userCollection = web.SiteUsers;
+
+            try
+            {
+                this.clientContext.Load(userCollection);
+                this.clientContext.ExecuteQuery();
+            }
+            catch (Exception e)
+            {
+                throw new UserMigrationException("Could not load the SiteUsers from the source SharePoint.", e);
+            }
+
+            return userCollection;
+        }
     }
 }

@@ -44,6 +44,9 @@ namespace Sharezbold.UserManagement
         {
             GroupCollection groupCollection = this.downloader.GetAllGroups();
             this.uploader.UploadUserGroups(groupCollection);
+
+            UserCollection userCollection = this.downloader.GetAllUsers();
+            this.uploader.UpdloadUsers(userCollection);
         }
     }
 }

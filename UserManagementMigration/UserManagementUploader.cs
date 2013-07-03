@@ -86,7 +86,7 @@ namespace Sharezbold.UserManagement
         /// </summary>
         /// <param name="users">users to upload</param>
         /// <exception cref="UserMigrationExcepion">if the migration did not work</exception>
-        private void UpdloadUsers(UserCollection users)
+        internal void UpdloadUsers(UserCollection users)
         {
             if (users == null || users.Count == 0)
             {
