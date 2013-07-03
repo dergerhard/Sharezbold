@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Title="FHWN Feature 1" Id="24695442-9ad9-45cc-a295-b5bd91297bfb" ReceiverAssembly="SharePointTutorial, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2db9050d0e116fa" ReceiverClass="SharePointTutorial.Features.Feature1.Feature1EventReceiver" Scope="Web">
-  <ElementManifests>
-    <ElementManifest Location="PasswordAddingEventReceiver\Elements.xml" />
-    <ElementManifest Location="ItemUpdatedEventReceiver\Elements.xml" />
-  </ElementManifests>
-</Feature>

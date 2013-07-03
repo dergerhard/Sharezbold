@@ -69,3 +69,20 @@ Creation:
  Classe Design:
  - MigrationSettings holds data
  - MigrationSettingsManager loads and saves (load(string path), save(MigrationSettings settings, string path))
+
+
+
+ Wer macht was?
+
+ Thomas:
+	Content Types, Site Columns, Benutzer, Gruppen, Permission levels, Workflows
+	Installer
+
+ Gerhard:
+	TreePicker mit Listen, Bibliotheken, Webs/Sites, Site Collections
+	Mapping Spaltennamen
+	Version/History migrieren
+	Download/Uplaod Manager
+
+Projekte:
+	ContentMigration, TypeMigration

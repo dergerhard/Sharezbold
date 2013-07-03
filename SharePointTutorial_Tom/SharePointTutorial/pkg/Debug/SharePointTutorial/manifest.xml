@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Solution xmlns="http://schemas.microsoft.com/sharepoint/" SolutionId="7d4ebbaf-a8d5-4750-a591-8f1c54437dfb" SharePointProductVersion="15.0">
-  <Assemblies>
-    <Assembly Location="SharePointTutorial.dll" DeploymentTarget="GlobalAssemblyCache" />
-  </Assemblies>
-  <FeatureManifests>
-    <FeatureManifest Location="SharePointTutorial_Feature1\Feature.xml" />
-  </FeatureManifests>
-</Solution>
