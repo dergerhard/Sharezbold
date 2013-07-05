@@ -92,6 +92,16 @@
   <ItemGroup>
     <Content Include="README.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ContentMigration\ContentMigration.csproj">
+      <Project>{5929e4e8-3668-4e37-936d-e462d6773371}</Project>
+      <Name>ContentMigration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TypeMigration\TypeMigration.csproj">
+      <Project>{5765b89b-3dd6-4e68-b030-36a3412ea68a}</Project>
+      <Name>TypeMigration</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

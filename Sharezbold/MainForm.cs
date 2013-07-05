@@ -14,6 +14,7 @@ using Sharezbold.Settings;
 using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
+using Sharezbold.ContentMigration;
 
 namespace Sharezbold
 {
@@ -34,6 +35,16 @@ namespace Sharezbold
         /// </summary>
         private MigrationSettings settings;
 
+        /// <summary>
+        /// Source context
+        /// </summary>
+        private ClientContext source;
+
+        /// <summary>
+        /// Destination context
+        /// </summary>
+        private ClientContext destination;
+
 
         public MainForm()
         {
@@ -42,50 +53,14 @@ namespace Sharezbold
             this.allowNext = this.tabPageContentSelection;
             this.allowPrevious = null;
             //this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
+
+            //TODO: delete this
+            TextReader reader = new StreamReader("c:\\test.xml");
+            XmlSerializer serializer = new XmlSerializer(typeof(MigrationSettings));
+            MigrationSettings settings = (MigrationSettings)serializer.Deserialize(reader);
+            reader.Close();
+            this.SettingsToUI(settings);
         }
-
-        private void loadMigrateFromTree()
-        {
-            try
-            {
-                //"http://ss13-css-007/"
-                ClientContext ctx = new ClientContext(settings.FromHost);
-
-                var cc = new CredentialCache();
-                cc.Add(
-                    new Uri(ctx.Url),
-                    "NTLM",
-                    new NetworkCredential(settings.FromUserName, settings.FromPassword, settings.FromDomain));
-                ctx.Credentials = cc;
-                Web web = ctx.Web;
-
-                // Retrieve all lists from the server. 
-                ctx.Load(web.Lists,
-                             lists => lists.Include(list => list.Title, // For Each list, retrieve Title and Id
-                                                    list => list.Id));
-
-                // Execute query. 
-                ctx.ExecuteQuery();
-
-                // Enumerate the web.Lists. 
-                foreach (List list in web.Lists)
-                {
-                    Debug.WriteLine(list.Title);
-                }
-
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception.Message);
-                Console.WriteLine(exception.StackTrace);
-            }
-            finally
-            {
-                //if (writer != null) writer.Close();
-                //if (fileStream != null) fileStream.Close();
-            }
-        }
-
 
         /// <summary>
         /// Exit the application
@@ -239,7 +214,74 @@ namespace Sharezbold
             this.allowNext = this.tabPageMigrationProgress;
             this.allowPrevious = this.tabPageConfiguration;
 
+            this.UIToSettings();
+            this.connectToSource();
             this.loadMigrateFromTree();
+        }
+
+        /// <summary>
+        /// Connects to the source, provides context
+        /// </summary>
+        private void connectToSource()
+        {
+            this.UIToSettings();
+            this.source = new ClientContext(settings.FromHost);
+
+            var cc = new CredentialCache();
+            cc.Add(new Uri(source.Url), "NTLM", new NetworkCredential(settings.FromUserName, settings.FromPassword, settings.FromDomain));
+            source.Credentials = cc;
+            source.ExecuteQuery();
+        }
+
+        /// <summary>
+        /// Connects to the destination, provides context
+        /// </summary>
+        private void connectToDestination()
+        {
+
+        }
+
+        /// <summary>
+        /// Loads the migration Tree
+        /// </summary>
+        private void loadMigrateFromTree()
+        {
+            ContentMigrator cm = new ContentMigrator(source, destination);
+            this.treeViewContentSelection.Nodes.Add(cm.GenerateMigrationTree());
+                
+            /*
+            Web web = source.Web;
+
+            // Retrieve all lists from the server. 
+            source.Load(web.Lists,
+                         lists => lists.Include(list => list.Title, // For Each list, retrieve Title and Id
+                                                list => list.Id));
+
+            // Execute query. 
+            source.ExecuteQuery();
+
+            // Enumerate the web.Lists. 
+            foreach (List list in web.Lists)
+            {
+                Debug.WriteLine(list.Title);
+            }
+
+            try
+            {
+                
+                
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+                Console.WriteLine(exception.StackTrace);
+                MessageBox.Show(exception.Message);
+            }
+            finally
+            {
+                //if (writer != null) writer.Close();
+                //if (fileStream != null) fileStream.Close();
+            }*/
         }
     }
 }

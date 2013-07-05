@@ -4,7 +4,7 @@
 // </copyright>
 // <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
 //-----------------------------------------------------------------------
-namespace Sharezbold
+namespace Sharezbold.ContentMigration
 {
     using System;
     using System.Collections.Generic;
