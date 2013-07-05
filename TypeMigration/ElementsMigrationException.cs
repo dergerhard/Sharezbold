@@ -4,7 +4,7 @@
 // </copyright>
 // <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
 //-----------------------------------------------------------------------
-namespace Sharezbold.UserManagement
+namespace Sharezbold.ElementsMigration
 {
     using System;
     using System.Collections.Generic;
@@ -15,22 +15,22 @@ namespace Sharezbold.UserManagement
     /// <summary>
     /// If the migration of users or the groups did not work.
     /// </summary>
-    public class UserMigrationException : Exception
+    public class ElementsMigrationException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserMigrationException"/> class.
+        /// Initializes a new instance of the <see cref="ElementsMigrationException"/> class.
         /// </summary>
         /// <param name="message">The exception-message.</param>
-        public UserMigrationException(string message) : base(message)
+        public ElementsMigrationException(string message) : base(message)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserMigrationException"/> class.
+        /// Initializes a new instance of the <see cref="ElementsMigrationException"/> class.
         /// </summary>
         /// <param name="message">The exception-message.</param>
         /// <param name="exception">The inner-exception.</param>
-        public UserMigrationException(string message, Exception exception) : base(message, exception)
+        public ElementsMigrationException(string message, Exception exception) : base(message, exception)
         {
         }
     }

@@ -4,7 +4,7 @@
 // </copyright>
 // <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
 //-----------------------------------------------------------------------
-namespace Sharezbold.UserManagement
+namespace Sharezbold.ElementsMigration.UserManagement
 {
     using System;
     using System.Collections.Generic;
@@ -24,7 +24,7 @@ namespace Sharezbold.UserManagement
         private ClientContext clientContext;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserManagementUploader"/> class.
+        /// Initializes a new instance of the <see cref="UserManagementMigration"/> class.
         /// </summary>
         /// <param name="context">The ClientContext of the target SharePoint.</param>
         internal UserManagementUploader(ClientContext context)
@@ -53,7 +53,7 @@ namespace Sharezbold.UserManagement
             }
             catch (Exception e)
             {
-                throw new UserMigrationException("Could not load UserGroups from target-server.", e);
+                throw new ElementsMigrationException("Could not load UserGroups from target-server.", e);
             }
 
             foreach (Group group in groupCollection)
@@ -77,7 +77,7 @@ namespace Sharezbold.UserManagement
             catch (Exception e)
             {
                 Console.WriteLine("Could not upload users and usergroups");
-                throw new UserMigrationException("Could not upload users and usergroups.", e);
+                throw new ElementsMigrationException("Could not upload users and usergroups.", e);
             }
         }
 
@@ -102,7 +102,7 @@ namespace Sharezbold.UserManagement
             }
             catch (Exception e)
             {
-                throw new UserMigrationException("Could not load users from target-server.", e);
+                throw new ElementsMigrationException("Could not load users from target-server.", e);
             }
 
             foreach (User user in users)

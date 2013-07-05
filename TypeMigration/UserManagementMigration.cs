@@ -4,7 +4,7 @@
 // </copyright>
 // <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
 //-----------------------------------------------------------------------
-namespace Sharezbold.UserManagement
+namespace Sharezbold.ElementsMigration.UserManagement
 {
     using System;
     using Microsoft.SharePoint.Client;
@@ -13,8 +13,9 @@ namespace Sharezbold.UserManagement
     /// This class is responsible for the user migration and group migration.
     /// It is also the interface for the other components.
     /// </summary>
-    public class UserManagementMigration
+    public class UserManagementMigration 
     {
+        
         /// <summary>
         /// The downloader of the source SharePoint.
         /// </summary>
@@ -26,7 +27,7 @@ namespace Sharezbold.UserManagement
         private UserManagementUploader uploader;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserManagementMigration"/> class.
+        /// Initializes a new instance of the <see cref="Sharepoint2013ElementsMigrator"/> class.
         /// </summary>
         /// <param name="sourceSharePoint">The ClientContext of the source SharePoint.</param>
         /// <param name="targetSharePoint">The ClientContext of the target SharePoint.</param>
