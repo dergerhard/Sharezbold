@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D2C15D1E-D085-4EDA-AE00-91C6A8FB8940}</ProjectGuid>
+    <ProjectGuid>{1ACB61FE-BDDC-455E-80E0-98286CC2EEEE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SharezboldUI</RootNamespace>
-    <AssemblyName>SharezboldUI</AssemblyName>
+    <RootNamespace>Sharezbold</RootNamespace>
+    <AssemblyName>Sharezbold</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,6 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.SharePoint.Client, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -55,6 +57,7 @@
     <Compile Include="Settings\MigrationSettings.cs">
       <DependentUpon>MigrationSettings.xsd</DependentUpon>
     </Compile>
+    <Compile Include="SpTreeNode.cs" />
     <Compile Include="TablessControl.cs">
       <SubType>Component</SubType>
     </Compile>

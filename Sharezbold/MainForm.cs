@@ -1,23 +1,23 @@
-﻿namespace SharezboldUI
+﻿using Microsoft.SharePoint.Client;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Sharezbold.Settings;
+using System.IO;
+using System.Xml.Serialization;
+using System.Xml;
+
+namespace Sharezbold
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
-    using System.Drawing;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Windows.Forms;
-    using System.Xml;
-    using System.Xml.Serialization;
-    using SharezboldUI.Settings;
-    
-    /// <summary>
-    /// main form of the UI
-    /// </summary>
-    public partial class MainForm : Form
+    public partial class MainForm : System.Windows.Forms.Form
     {
         /// <summary>
         /// next allowed tab page
@@ -30,16 +30,63 @@
         private TabPage allowPrevious;
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainForm" />
+        /// represents the migration settings/profile
         /// </summary>
+        private MigrationSettings settings;
+
+
         public MainForm()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+
             this.allowNext = this.tabPageContentSelection;
             this.allowPrevious = null;
-            this.Size = new Size(this.Size.Width, this.Size.Height - 25);
+            //this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
         }
-        
+
+        private void loadMigrateFromTree()
+        {
+            try
+            {
+                //"http://ss13-css-007/"
+                ClientContext ctx = new ClientContext(settings.FromHost);
+
+                var cc = new CredentialCache();
+                cc.Add(
+                    new Uri(ctx.Url),
+                    "NTLM",
+                    new NetworkCredential(settings.FromUserName, settings.FromPassword, settings.FromDomain));
+                ctx.Credentials = cc;
+                Web web = ctx.Web;
+
+                // Retrieve all lists from the server. 
+                ctx.Load(web.Lists,
+                             lists => lists.Include(list => list.Title, // For Each list, retrieve Title and Id
+                                                    list => list.Id));
+
+                // Execute query. 
+                ctx.ExecuteQuery();
+
+                // Enumerate the web.Lists. 
+                foreach (List list in web.Lists)
+                {
+                    Debug.WriteLine(list.Title);
+                }
+
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+                Console.WriteLine(exception.StackTrace);
+            }
+            finally
+            {
+                //if (writer != null) writer.Close();
+                //if (fileStream != null) fileStream.Close();
+            }
+        }
+
+
         /// <summary>
         /// Exit the application
         /// </summary>
@@ -68,6 +115,7 @@
         /// <param name="settings">settings to apply to UI</param>
         private void SettingsToUI(MigrationSettings settings)
         {
+            this.settings = settings;
             textBoxFromDomain.Text = settings.FromDomain;
             textBoxFromHost.Text = settings.FromHost;
             textBoxFromUserName.Text = settings.FromUserName;
@@ -85,16 +133,16 @@
         /// <returns>settings from UI</returns>
         private MigrationSettings UIToSettings()
         {
-            MigrationSettings settings = new MigrationSettings();
-            settings.FromDomain = textBoxFromDomain.Text;
-            settings.FromHost = textBoxFromHost.Text;
-            settings.FromUserName = textBoxFromUserName.Text;
-            settings.FromPassword = textBoxFromPassword.Text;
+            this.settings = new MigrationSettings();
+            this.settings.FromDomain = textBoxFromDomain.Text;
+            this.settings.FromHost = textBoxFromHost.Text;
+            this.settings.FromUserName = textBoxFromUserName.Text;
+            this.settings.FromPassword = textBoxFromPassword.Text;
 
-            settings.ToDomain = textBoxToDomain.Text;
-            settings.ToHost = textBoxToHost.Text;
-            settings.ToUserName = textBoxToUserName.Text;
-            settings.ToPassword = textBoxToPassword.Text;
+            this.settings.ToDomain = textBoxToDomain.Text;
+            this.settings.ToHost = textBoxToHost.Text;
+            this.settings.ToUserName = textBoxToUserName.Text;
+            this.settings.ToPassword = textBoxToPassword.Text;
             return settings;
         }
 
@@ -147,7 +195,7 @@
             saveFileDialog1.Filter = "XML files (*.xml)|*.xml";
             saveFileDialog1.Title = "Save the current profile";
             saveFileDialog1.ShowDialog();
-            
+
             if (saveFileDialog1.FileName != string.Empty)
             {
                 try
@@ -190,6 +238,8 @@
             this.tabControl1.SelectedTab = this.tabPageContentSelection;
             this.allowNext = this.tabPageMigrationProgress;
             this.allowPrevious = this.tabPageConfiguration;
+
+            this.loadMigrateFromTree();
         }
     }
 }

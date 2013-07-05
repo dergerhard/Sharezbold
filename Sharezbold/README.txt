@@ -49,12 +49,8 @@ werden können.
 Prozess integriert werden. 
 
 
-
-
 Verwendete Libraries:
 	- log4net
-
-
 
 
 ##############
@@ -69,7 +65,6 @@ Creation:
  Classe Design:
  - MigrationSettings holds data
  - MigrationSettingsManager loads and saves (load(string path), save(MigrationSettings settings, string path))
-
 
 
  Wer macht was?
@@ -112,3 +107,14 @@ Treffen:
 -----------
 Montag, 18:30 - so viel wie geht
 Mittwoch, Integration + Präsentationsvorbereitung
+
+
+
+
+
+//-----------------------------------------------------------------------
+// <copyright file=".cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------

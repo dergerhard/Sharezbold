@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharezboldUI", "SharezboldUI.csproj", "{D2C15D1E-D085-4EDA-AE00-91C6A8FB8940}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharezbold", "Sharezbold.csproj", "{1ACB61FE-BDDC-455E-80E0-98286CC2EEEE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentMigration", "..\ContentMigration\ContentMigration.csproj", "{5929E4E8-3668-4E37-936D-E462D6773371}"
 EndProject
@@ -13,10 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D2C15D1E-D085-4EDA-AE00-91C6A8FB8940}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D2C15D1E-D085-4EDA-AE00-91C6A8FB8940}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D2C15D1E-D085-4EDA-AE00-91C6A8FB8940}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D2C15D1E-D085-4EDA-AE00-91C6A8FB8940}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ACB61FE-BDDC-455E-80E0-98286CC2EEEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ACB61FE-BDDC-455E-80E0-98286CC2EEEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ACB61FE-BDDC-455E-80E0-98286CC2EEEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ACB61FE-BDDC-455E-80E0-98286CC2EEEE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5929E4E8-3668-4E37-936D-E462D6773371}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5929E4E8-3668-4E37-936D-E462D6773371}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5929E4E8-3668-4E37-936D-E462D6773371}.Release|Any CPU.ActiveCfg = Release|Any CPU
