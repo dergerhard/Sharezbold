@@ -4,7 +4,7 @@
 // </copyright>
 // <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
 //-----------------------------------------------------------------------
-namespace Sharezbold.UserManagement
+namespace Sharezbold.ElementsMigration.UserManagement
 {
     using System;
     using System.Linq;
@@ -48,7 +48,7 @@ namespace Sharezbold.UserManagement
             }
             catch (Exception e)
             {
-                throw new UserMigrationException("Could not load the groups from the source SharePoint.", e);
+                throw new ElementsMigrationException("Could not load the groups from the source SharePoint.", e);
             }
 
             return groupCollection;
@@ -71,7 +71,7 @@ namespace Sharezbold.UserManagement
             }
             catch (Exception e)
             {
-                throw new UserMigrationException("Could not load the SiteUsers from the source SharePoint.", e);
+                throw new ElementsMigrationException("Could not load the SiteUsers from the source SharePoint.", e);
             }
 
             return userCollection;
