@@ -8,6 +8,15 @@ TODO:
 	+ Bibliotheken, 
 	+ Webs/Sites, 
 	+ Site Collections 
+
+	Client			|	Server
+	----------------------------------
+	ClientContext	|	SPContext
+	Site			|	SPSite			+ = Site Collection
+	Web				|	SPWeb			+ = Web(site)
+	List			|	SPList			+
+	ListItem		|	SPListItem		+
+	Field			|	SPField			+
 	
 - Mapping von unterschiedlichen Spaltennamen 
 

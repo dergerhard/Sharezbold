@@ -45,11 +45,16 @@ namespace Sharezbold
         /// </summary>
         private ClientContext destination;
 
+        /// <summary>
+        /// used to block the ui, while thread is loading
+        /// </summary>
+        private PleaseWaitForm waitForm = new PleaseWaitForm();
+
 
         public MainForm()
         {
             InitializeComponent();
-
+            
             this.allowNext = this.tabPageContentSelection;
             this.allowPrevious = null;
             //this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
@@ -214,9 +219,11 @@ namespace Sharezbold
             this.allowNext = this.tabPageMigrationProgress;
             this.allowPrevious = this.tabPageConfiguration;
 
+            //waitForm.Show();
             this.UIToSettings();
             this.connectToSource();
             this.loadMigrateFromTree();
+            //waitForm.Hide();
         }
 
         /// <summary>
@@ -283,5 +290,7 @@ namespace Sharezbold
                 //if (fileStream != null) fileStream.Close();
             }*/
         }
+
+       
     }
 }
