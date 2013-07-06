@@ -42,11 +42,11 @@ namespace Sharezbold.ElementsMigration.ContentType
             }
 
 
+            var contentTypeNamesOnServer = ReadAllNContentTypeNames(contentTypeCollectionOnServer);
             foreach (var contentType in contentTypeCollection)
             {
                 Console.WriteLine("next contentType = {0}", contentType.Name); 
-                //// TODO compare names
-                if (!contentTypeCollectionOnServer.Contains<ContentType>(contentType))
+                if (!contentTypeNamesOnServer.Contains(contentType.Name))
                 {
                     Console.WriteLine("upload contentType = {0}", contentType.Name);
                     
@@ -65,6 +65,18 @@ namespace Sharezbold.ElementsMigration.ContentType
             }
 
             this.clientContext.ExecuteQuery();
+        }
+
+        private HashSet<string> ReadAllNContentTypeNames(ContentTypeCollection contentTypeCollection)
+        {
+            HashSet<string> names = new HashSet<string>();
+
+            foreach (var contentType in contentTypeCollection)
+            {
+                names.Add(contentType.Name);
+            }
+
+            return names;
         }
     }
 }
