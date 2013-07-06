@@ -67,7 +67,7 @@ namespace Sharezbold.ElementsMigration.UserManagement
                     groupCollectionOnServer.Add(groupCreationInformation);
                 }
 
-                this.UpdloadUsers(group.Users);
+                this.UploadUsers(group.Users);
             }
 
             try
@@ -86,7 +86,7 @@ namespace Sharezbold.ElementsMigration.UserManagement
         /// </summary>
         /// <param name="users">users to upload</param>
         /// <exception cref="UserMigrationExcepion">if the migration did not work</exception>
-        internal void UpdloadUsers(UserCollection users)
+        internal void UploadUsers(UserCollection users)
         {
             if (users == null || users.Count == 0)
             {
