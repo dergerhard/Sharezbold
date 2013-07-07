@@ -56,9 +56,11 @@ namespace Sharezbold.ElementsMigration.UserManagement
                 throw new ElementsMigrationException("Could not load UserGroups from target-server.", e);
             }
 
+            HashSet<string> groupNamesOnServer = ReadAllUserGroups(groupCollectionOnServer);
+
             foreach (Group group in groupCollection)
             {
-                if (!groupCollectionOnServer.Contains<Group>(group))
+                if (!groupNamesOnServer.Contains(group.LoginName))
                 {
                     GroupCreationInformation groupCreationInformation = new GroupCreationInformation();
                     groupCreationInformation.Description = group.Description;
@@ -66,8 +68,6 @@ namespace Sharezbold.ElementsMigration.UserManagement
 
                     groupCollectionOnServer.Add(groupCreationInformation);
                 }
-
-                this.UploadUsers(group.Users);
             }
 
             try
@@ -76,8 +76,8 @@ namespace Sharezbold.ElementsMigration.UserManagement
             }
             catch (Exception e)
             {
-                Console.WriteLine("Could not upload users and usergroups");
-                throw new ElementsMigrationException("Could not upload users and usergroups.", e);
+                Console.WriteLine("Could not upload usergroups");
+                throw new ElementsMigrationException("Could not upload usergroups.", e);
             }
         }
 
@@ -105,9 +105,11 @@ namespace Sharezbold.ElementsMigration.UserManagement
                 throw new ElementsMigrationException("Could not load users from target-server.", e);
             }
 
+            HashSet<string> userNamesOnServer = ReadAllUsernames(usersOnServer);
+
             foreach (User user in users)
             {
-                if (!usersOnServer.Contains<User>(user))
+                if (!userNamesOnServer.Contains(user.LoginName)) 
                 {
                     UserCreationInformation userCreationInformation = new UserCreationInformation();
                     userCreationInformation.Email = user.Email;
@@ -117,6 +119,40 @@ namespace Sharezbold.ElementsMigration.UserManagement
                     usersOnServer.Add(userCreationInformation);
                 }
             }
+
+            try
+            {
+                this.clientContext.ExecuteQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Could not upload users.");
+                throw new ElementsMigrationException("Could not upload users", e);
+            }
+        }
+
+        private HashSet<string> ReadAllUsernames(UserCollection userCollection)
+        {
+            HashSet<string> names = new HashSet<string>();
+
+            foreach (var user in userCollection)
+            {
+                names.Add(user.LoginName);
+            }
+
+            return names;
+        }
+
+        private HashSet<string> ReadAllUserGroups(GroupCollection groupCollection)
+        {
+            HashSet<string> names = new HashSet<string>();
+
+            foreach (var group in groupCollection)
+            {
+                names.Add(group.LoginName);
+            }
+
+            return names;
         }
     }
 }
