@@ -42,7 +42,8 @@ namespace Sharezbold.ElementsMigration.ContentType
             }
 
 
-            var contentTypeNamesOnServer = ReadAllNContentTypeNames(contentTypeCollectionOnServer);
+            var contentTypeNamesOnServer = ReadAllContentTypeNames(contentTypeCollectionOnServer);
+
             foreach (var contentType in contentTypeCollection)
             {
                 Console.WriteLine("next contentType = {0}", contentType.Name); 
@@ -67,12 +68,15 @@ namespace Sharezbold.ElementsMigration.ContentType
             this.clientContext.ExecuteQuery();
         }
 
-        private HashSet<string> ReadAllNContentTypeNames(ContentTypeCollection contentTypeCollection)
+        private HashSet<string> ReadAllContentTypeNames(ContentTypeCollection contentTypeCollection)
         {
-            HashSet<string> names = new HashSet<string>();
+            Console.WriteLine("Read all names of ContentTypes. There are {0} ContentTypes", contentTypeCollection.Count);
+
+            HashSet<string> names = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
             foreach (var contentType in contentTypeCollection)
             {
+                Console.WriteLine("Add name '{0}'", contentType.Name);
                 names.Add(contentType.Name);
             }
 
