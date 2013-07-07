@@ -63,11 +63,11 @@ namespace Sharezbold.ElementsMigration
             GroupCollection groupCollectionOnSourceServer = this.GetAllGroups(this.sourceClientContext);
             GroupCollection groupCollectoinOnTargetServer = this.GetAllGroups(this.targetClientContext);
 
-            HashSet<string> titlesOfGroupsOnSourceServer = this.ReadAllTitles(groupCollectionOnSourceServer);
+            HashSet<string> titlesOfGroupsOnTargetServer = this.ReadAllTitles(groupCollectoinOnTargetServer);
 
             foreach (var group in groupCollectionOnSourceServer)
             {
-                if (!titlesOfGroupsOnSourceServer.Contains(group.Title))
+                if (!titlesOfGroupsOnTargetServer.Contains(group.Title))
                 {
                     Console.WriteLine("import group '{0}'", group.Title);
                     GroupCreationInformation groupCreationInformation = new GroupCreationInformation();
@@ -89,8 +89,8 @@ namespace Sharezbold.ElementsMigration
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception during fetching the SiteGroups.", e);
-                throw new ElementsMigrationException("Exception during fetching the SiteGroups.", e);
+                Console.WriteLine("Exception during importing new SiteGroups.", e);
+                throw new ElementsMigrationException("Exception during importing new SiteGroups.", e);
             }
         }
 
@@ -105,7 +105,7 @@ namespace Sharezbold.ElementsMigration
 
             foreach (var title in this.groupsToAdapt)
             {
-                Console.WriteLine("have to apadpt group '{0}'", title);
+                Console.WriteLine("have to adapt group '{0}'", title);
                 Group sourceGroup = this.GetGroupByName(groupCollectionOnSourceServer, title);
                 Group targetGroup = this.GetGroupByName(groupCollectoinOnTargetServer, title);
 

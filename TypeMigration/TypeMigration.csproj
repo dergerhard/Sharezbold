@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentTypesDownloader.cs" />
+    <Compile Include="ContentTypesMigrator.cs" />
     <Compile Include="ContentTypesUploader.cs" />
     <Compile Include="IElementsMigrator.cs" />
     <Compile Include="IMigrator.cs" />
