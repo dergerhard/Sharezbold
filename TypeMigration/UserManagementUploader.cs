@@ -60,7 +60,7 @@ namespace Sharezbold.ElementsMigration.UserManagement
 
             foreach (Group group in groupCollection)
             {
-                if (!groupNamesOnServer.Contains(group.LoginName))
+                if (!groupNamesOnServer.Contains(group.Title))
                 {
                     GroupCreationInformation groupCreationInformation = new GroupCreationInformation();
                     groupCreationInformation.Description = group.Description;
@@ -149,7 +149,7 @@ namespace Sharezbold.ElementsMigration.UserManagement
 
             foreach (var group in groupCollection)
             {
-                names.Add(group.LoginName);
+                names.Add(group.Title);
             }
 
             return names;
