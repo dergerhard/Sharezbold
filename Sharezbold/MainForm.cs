@@ -1,35 +1,36 @@
-﻿using Microsoft.SharePoint.Client;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Sharezbold.Settings;
-using System.IO;
-using System.Xml.Serialization;
-using System.Xml;
-using Sharezbold.ContentMigration;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="MainForm.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 namespace Sharezbold
 {
-    public partial class MainForm : System.Windows.Forms.Form
-    {
-        /// <summary>
-        /// next allowed tab page
-        /// </summary>
-        private TabPage allowNext;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Data;
+    using System.Diagnostics;
+    using System.Drawing;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+    using System.Xml;
+    using System.Xml.Serialization;
+    using ContentMigration;
+    using Microsoft.SharePoint.Client;
+    using Sharezbold.ContentMigration;
+    using Sharezbold.Settings;
 
-        /// <summary>
-        /// previous allowed tab page
-        /// </summary>
-        private TabPage allowPrevious;
-        
+    /// <summary>
+    /// The main form of the program
+    /// </summary>
+    public partial class MainForm : System.Windows.Forms.Form
+    {       
         /// <summary>
         /// represents the migration settings/profile
         /// </summary>
@@ -50,16 +51,17 @@ namespace Sharezbold
         /// </summary>
         private PleaseWaitForm waitForm = new PleaseWaitForm();
 
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainForm"/> class.
+        /// </summary>
         public MainForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             
-            this.allowNext = this.tabPageContentSelection;
-            this.allowPrevious = null;
-            //this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
+            // this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
+            this.treeViewContentSelection.CheckBoxes = true;
 
-            //TODO: delete this
+            // TODO: delete this
             TextReader reader = new StreamReader("c:\\test.xml");
             XmlSerializer serializer = new XmlSerializer(typeof(MigrationSettings));
             MigrationSettings settings = (MigrationSettings)serializer.Deserialize(reader);
@@ -85,8 +87,6 @@ namespace Sharezbold
         private void ButtonStartMigration_Click(object sender, EventArgs e)
         {
             this.tabControl1.SelectedTab = this.tabPageMigrationProgress;
-            this.allowNext = this.tabPageMigrationProgress;
-            this.allowPrevious = this.tabPageContentSelection;
         }
 
         /// <summary>
@@ -96,15 +96,15 @@ namespace Sharezbold
         private void SettingsToUI(MigrationSettings settings)
         {
             this.settings = settings;
-            textBoxFromDomain.Text = settings.FromDomain;
-            textBoxFromHost.Text = settings.FromHost;
-            textBoxFromUserName.Text = settings.FromUserName;
-            textBoxFromPassword.Text = settings.FromPassword;
+            this.textBoxFromDomain.Text = settings.FromDomain;
+            this.textBoxFromHost.Text = settings.FromHost;
+            this.textBoxFromUserName.Text = settings.FromUserName;
+            this.textBoxFromPassword.Text = settings.FromPassword;
 
-            textBoxToDomain.Text = settings.ToDomain;
-            textBoxToHost.Text = settings.ToHost;
-            textBoxToUserName.Text = settings.ToUserName;
-            textBoxToPassword.Text = settings.ToPassword;
+            this.textBoxToDomain.Text = settings.ToDomain;
+            this.textBoxToHost.Text = settings.ToHost;
+            this.textBoxToUserName.Text = settings.ToUserName;
+            this.textBoxToPassword.Text = settings.ToPassword;
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Sharezbold
             this.settings.ToHost = textBoxToHost.Text;
             this.settings.ToUserName = textBoxToUserName.Text;
             this.settings.ToPassword = textBoxToPassword.Text;
-            return settings;
+            return this.settings;
         }
 
         /// <summary>
@@ -151,12 +151,12 @@ namespace Sharezbold
                 }
                 catch (XmlException xe)
                 {
-                    // TODO: Logger.....(xe.tostring)
+                    Debug.WriteLine(xe.ToString());
                     MessageBox.Show("XML reading error. The settings file is corrupted!");
                 }
                 catch (Exception ex)
                 {
-                    // TODO: Logger.....(xe.tostring)
+                    Debug.WriteLine(ex.ToString());
                     MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
             }
@@ -187,25 +187,15 @@ namespace Sharezbold
                 }
                 catch (XmlException xe)
                 {
+                    Debug.WriteLine(xe.ToString());
                     MessageBox.Show("XML writing error. The settings file could not be written correctly!");
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine(ex.ToString());
                     MessageBox.Show("Error: Could not write file to disk. Original error: " + ex.Message);
                 }
             }
-        }
-
-        /// <summary>
-        /// Previous button of content selection clicked
-        /// </summary>
-        /// <param name="sender">sender of the event</param>
-        /// <param name="e">event of the sender</param>
-        private void ButtonSelectionPrevious_Click(object sender, EventArgs e)
-        {
-            this.tabControl1.SelectedTab = this.tabPageConfiguration;
-            this.allowPrevious = null;
-            this.allowNext = this.tabPageContentSelection;
         }
 
         /// <summary>
@@ -215,45 +205,89 @@ namespace Sharezbold
         /// <param name="e">event of sender</param>
         private void ButtonConfigurationNext_Click(object sender, EventArgs e)
         {
-            this.tabControl1.SelectedTab = this.tabPageContentSelection;
-            this.allowNext = this.tabPageMigrationProgress;
-            this.allowPrevious = this.tabPageConfiguration;
+            try
+            {
+                treeViewContentSelection.Nodes.Clear();
+                this.UIToSettings();
+                this.waitForm.Show();
 
-            //waitForm.Show();
-            this.UIToSettings();
-            this.connectToSource();
-            this.loadMigrateFromTree();
-            //waitForm.Hide();
+                // this is your presumably long-running method
+                Action exec = this.ApplyConfigurationAndLoadTree;
+                BackgroundWorker b = new BackgroundWorker();
+
+                // set the worker to try to login
+                b.DoWork += (object sender1, DoWorkEventArgs e1) =>
+                {
+                    exec.Invoke();
+                };
+
+                // set the worker to close your progress form when it's completed
+                b.RunWorkerCompleted += (object sender2, RunWorkerCompletedEventArgs e2) =>
+                {
+                    this.waitForm.Hide();
+                    if (e2.Error != null)
+                    {
+                        MessageBox.Show(e2.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        this.tabControl1.SelectedTab = this.tabPageContentSelection;
+                    }
+                };
+
+                // start the worker
+                b.RunWorkerAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Tries to connect to the server and loads the migration tree
+        /// </summary>
+        private void ApplyConfigurationAndLoadTree()
+        {
+            try
+            {
+                this.ConnectToSource();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                throw new LoginFailedException("Could not connect to source SharePoint. Please check your login Data");
+            }
+
+            this.LoadMigrateFromTree();
         }
 
         /// <summary>
         /// Connects to the source, provides context
         /// </summary>
-        private void connectToSource()
+        private void ConnectToSource()
         {
             this.UIToSettings();
-            this.source = new ClientContext(settings.FromHost);
-
+            this.source = new ClientContext(this.settings.FromHost);
             var cc = new CredentialCache();
-            cc.Add(new Uri(source.Url), "NTLM", new NetworkCredential(settings.FromUserName, settings.FromPassword, settings.FromDomain));
-            source.Credentials = cc;
-            source.ExecuteQuery();
+            cc.Add(new Uri(this.source.Url), "NTLM", new NetworkCredential(this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain));
+            this.source.Credentials = cc;
+            this.source.ExecuteQuery();
         }
 
         /// <summary>
         /// Connects to the destination, provides context
         /// </summary>
-        private void connectToDestination()
+        private void ConnectToDestination()
         {
-
         }
 
         /// <summary>
         /// Loads the migration Tree
         /// </summary>
-        private void loadMigrateFromTree()
+        private void LoadMigrateFromTree()
         {
-            ContentMigrator cm = new ContentMigrator(source, destination);
+            ContentMigrator cm = new ContentMigrator(this.source, this.destination);
             this.treeViewContentSelection.Nodes.Add(cm.GenerateMigrationTree());
                 
             /*
@@ -290,7 +324,5 @@ namespace Sharezbold
                 //if (fileStream != null) fileStream.Close();
             }*/
         }
-
-       
     }
 }

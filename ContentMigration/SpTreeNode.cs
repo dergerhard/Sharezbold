@@ -18,20 +18,8 @@ namespace Sharezbold.ContentMigration
     /// </summary>
     public class SpTreeNode : TreeNode
     {
-        private object dataObject;
-
         /// <summary>
-        /// the data object represents the object that correspondes to the visual entry of the tree view
-        /// </summary>
-        public object DataObject
-        {
-            get;
-            set;
-        }
-
-        
-        /// <summary>
-        /// just a copy of the original one from tree node
+        /// Initializes a new instance of the <see cref="SpTreeNode"/> class.
         /// </summary>
         /// <param name="identifier">text that will be displayed</param>
         public SpTreeNode(string identifier)
@@ -40,13 +28,22 @@ namespace Sharezbold.ContentMigration
         }
 
         /// <summary>
-        /// offers a way to put name and data object to a tree node
+        /// Initializes a new instance of the <see cref="SpTreeNode"/> class. Offers a way to store treenode and corresponding object together.
         /// </summary>
         /// <param name="identifier">text to be displayed in the tree view</param>
         /// <param name="dataObject">data object of the node</param>
-        public SpTreeNode(string identifier, object dataObject) : base (identifier)
+        public SpTreeNode(string identifier, object dataObject) : base(identifier)
         {
             this.DataObject = dataObject;
+        }
+
+        /// <summary>
+        /// Gets or sets the data object that represents the object that correspondes to the visual entry of the tree view
+        /// </summary>
+        public object DataObject
+        {
+            get;
+            set;
         }
     }
 }

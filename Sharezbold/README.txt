@@ -127,3 +127,19 @@ Mittwoch, Integration + Präsentationsvorbereitung
 // </copyright>
 // <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
 //-----------------------------------------------------------------------
+
+
+Review Infos Gerhard:
+###############################
++ es war nicht klar, dass beim laden des objekts nicht alle Daten geladen werden - dass man das explizit angeben muss hat stunden gekostet
+	ListItemCollection listItemColl = li.GetItems(cq);
+	context.Load(listItemColl, items => items.Include(
+                    item => item.Id,
+                    item => item.DisplayName));
+	context.ExecuteQuery();
+	
++ Beim Client Object Model ist es offensichtlich nciht möglich alles Site Collections zu laden. Die Site Collection ist die oberste Ebene
++ Web Service für migration
+
+Async Programming
+http://msdn.microsoft.com/de-de/library/vstudio/hh191443.aspx
