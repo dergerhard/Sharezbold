@@ -9,20 +9,11 @@
 
     public class Sharepoint2013Migrator : IElementsMigrator
     {
-
         private AbstractMigrator userGroupMigrator;
 
         public Sharepoint2013Migrator(ClientContext clientContextSource, ClientContext clientContextTarget)
         {
-            /*
-            this.contentTypesDownloader = new ContentTypesDownloader(clientContextSource);
-            this.userManagementDownloader = new UserManagementDownloader(clientContextSource);
-
-            this.contentTypesUploader = new ContentTypesUploader(clientContextTarget);
-            this.userManagementUploader = new UserManagementUploader(clientContextTarget);
-
-            this.userGroupMigrator = new UserGroupMigrator(clientContextSource, clientContextTarget);
-        */}
+        }
 
         public void MigrateContentTypes()
         {
@@ -46,6 +37,7 @@
 
         public void MigratePermissionlevels()
         {
+            ////TODO role-migration
             throw new NotImplementedException();
         }
 
