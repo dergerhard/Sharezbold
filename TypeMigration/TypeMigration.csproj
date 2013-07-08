@@ -56,6 +56,7 @@
     <Compile Include="AbstractMigrator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoleMigrator.cs" />
     <Compile Include="Sharepoint2013Migrator.cs" />
     <Compile Include="UserGroupMigrator.cs" />
     <Compile Include="ElementsMigrationException.cs" />
