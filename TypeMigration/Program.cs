@@ -20,7 +20,7 @@ namespace TypeMigration
             sourceClientContext.Credentials = credential;
             targetClientContext.Credentials = credential;
 
-            IElementsMigrator migrator = new Sharepoint2013Migrator(sourceClientContext, targetClientContext);
+            IElementsMigrator migrator = new Sharepoint2010And2013Migrator(sourceClientContext, targetClientContext);
 
             // migrator.MigrateContentTypes();
             migrator.MigrateGroup();
