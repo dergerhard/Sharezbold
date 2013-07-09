@@ -22,8 +22,14 @@ namespace TypeMigration
 
             IElementsMigrator migrator = new Sharepoint2010And2013Migrator(sourceClientContext, targetClientContext);
 
+            // migrator.MigrateGroup();
+            // migrator.MigratePermissionlevels();
+            // migrator.MigrateSiteColumns();
             // migrator.MigrateContentTypes();
-            migrator.MigrateGroup();
+            // migrator.MigrateUser();
+            // migrator.MigrateWorkflow();
+
+            // TODO SharePoint SiteUsers does not exist
 
             Console.WriteLine("======== FINISHED TEST APLLICATION FOR MIGRATION =============");
             Console.ReadKey();
