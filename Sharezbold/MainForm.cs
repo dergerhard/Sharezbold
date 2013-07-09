@@ -226,6 +226,9 @@ namespace Sharezbold
         {
             try
             {
+                // check if all values are set:
+                this.ValidateInputFields();
+
                 treeViewContentSelection.Nodes.Clear();
                 this.UIToSettings();
                 this.waitForm.Show();
@@ -260,6 +263,23 @@ namespace Sharezbold
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Validates input fields of target and source-server-configs.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">if any input-field is null or empty</exception>
+        private void ValidateInputFields()
+        {
+            if (string.IsNullOrEmpty(this.textBoxFromDomain.Text) || string.IsNullOrEmpty(this.textBoxFromHost.Text) || string.IsNullOrEmpty(this.textBoxFromUserName.Text) || string.IsNullOrEmpty(this.textBoxFromPassword.Text))
+            {
+                throw new ArgumentNullException("Values for source-server must not be empty!");
+            }
+
+            if (string.IsNullOrEmpty(this.textBoxToDomain.Text) || string.IsNullOrEmpty(this.textBoxToHost.Text) || string.IsNullOrEmpty(this.textBoxToUserName.Text) || string.IsNullOrEmpty(this.textBoxToPassword.Text))
+            {
+                throw new ArgumentNullException("Values for target-server must not be empty!");
             }
         }
 
@@ -299,6 +319,11 @@ namespace Sharezbold
         /// </summary>
         private void ConnectToDestination()
         {
+            this.destination = new ClientContext(this.settings.FromHost);
+            var cc = new CredentialCache();
+            cc.Add(new Uri(this.source.Url), "NTLM", new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain));
+            this.source.Credentials = cc;
+            this.source.ExecuteQuery();
         }
 
         /// <summary>
@@ -393,9 +418,32 @@ namespace Sharezbold
             }
         }
 
+        /// <summary>
+        /// Migrates the elements.
+        /// </summary>
+        /// <param name="sender">sender of the event</param>
+        /// <param name="e">EventArgs itself</param>
         private void buttonElementsMigration_Click(object sender, EventArgs e)
         {
-            //// TODO start elements migration
+            try
+            {
+                this.ValidateInputFields();
+            }
+            catch (ArgumentNullException ex)
+            {
+                this.tabPageConfiguration.Show();
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return;
+            }
+
+            if (destination == null)
+            {
+                this.ConnectToDestination();
+            }
+
+            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(source, destination);
+            migrationWorker.StartMigration(checkBoxMigrateContentType.Checked, checkBoxMigrateUser.Checked, checkBoxMigrateGroup.Checked, checkBoxMigrateSiteColumns.Checked, checkBoxMigratePermissionlevels.Checked, checkBoxMigrateWorkflow.Checked);
         }
     }
 }
