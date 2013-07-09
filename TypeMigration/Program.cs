@@ -25,8 +25,8 @@ namespace TypeMigration
             // migrator.MigrateGroup();
             // migrator.MigratePermissionlevels();
             // migrator.MigrateSiteColumns();
-            // migrator.MigrateContentTypes();
-            migrator.MigrateUser();
+            migrator.MigrateContentTypes();
+            // migrator.MigrateUser();
             // migrator.MigrateWorkflow();
 
             // TODO SharePoint SiteUsers does not exist
