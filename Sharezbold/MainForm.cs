@@ -358,21 +358,49 @@ namespace Sharezbold
                 e.Cancel = true;
         }
 
+
+        private ListView.ListViewItemCollection getItemsToMigrate()
+        {
+            ListView.ListViewItemCollection list = new ListView.ListViewItemCollection(listViewMigrationContent);
+            
+
+            //List<SpListViewItem> list = new List<SpListViewItem>();
+
+            foreach (TreeNode web in sourceTreeRoot.Nodes)
+            {
+                if (web.Checked)
+                {
+                    list.Add(new SpListViewItem(((SpTreeNode)web).MigrationObject));
+                }
+                foreach (TreeNode li in web.Nodes)
+                {
+                    if (li.Checked)
+                    {
+                        list.Add(new SpListViewItem(((SpTreeNode)li).MigrationObject));
+                    }
+                }
+            }
+
+            return list;
+        }
+
+
         private void ButtonConfigureMigration_Click(object sender, EventArgs e)
         {
+
+            /*
             //make list of items to move
             IEnumerable<SpTreeNode> list = new List<SpTreeNode>();
 
-
+            listViewMigrationContent.Items.Add(new SpListViewItem("abc", 0, new SpTreeNode("abc")));
             listViewMigrationContent.Items.Add("Web: Home", 0);
-            listViewMigrationContent.Items.Add("\tList: TestList", 1);
-            listViewMigrationContent.Items.Add("\tList: New list", 1);
+            listViewMigrationContent.Items.Add("        List: TestList", 1);
+            listViewMigrationContent.Items.Add("        List: New list", 1);
 
-            listViewMigrationContent.Items.Add("\t\tListItem: TestList", 0);
-            listViewMigrationContent.Items.Add("\t\tListItem: New list", 1);
-
-
-
+            listViewMigrationContent.Items.Add("                ListItem: TestList", 0);
+            listViewMigrationContent.Items.Add("                ListItem: New list", 1);
+            */
+            listViewMigrationContent.Items.AddRange(getItemsToMigrate());
             //a.GetType() == typeof(Dog)
         }
 

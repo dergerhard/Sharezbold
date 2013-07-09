@@ -55,7 +55,7 @@ namespace Sharezbold.ContentMigration
                 Debug.WriteLine(e.ToString()); 
             }
 
-            SpTreeNode root = new SpTreeNode(web.Title + url, web);
+            SpTreeNode root = new SpTreeNode(new MigrationObject(web.Title + url, web));
             root.ImageIndex = 1;
             root.SelectedImageIndex = 1;
 
@@ -86,7 +86,7 @@ namespace Sharezbold.ContentMigration
 
                 foreach (List li in listColl)
                 {
-                    var spList = new SpTreeNode(li.Title, li);
+                    var spList = new SpTreeNode(new MigrationObject(li.Title, li));
                     if (li.BaseType == BaseType.DocumentLibrary)
                     {
                         spList.ImageIndex = 3;
@@ -115,14 +115,14 @@ namespace Sharezbold.ContentMigration
                         context.Load(lii);
                         context.ExecuteQuery();
 
-                        var spListItem = new SpTreeNode(lii.DisplayName + "", lii);
+                        var spListItem = new SpTreeNode(new MigrationObject(lii.DisplayName + "", lii));
                         var fieldValues = lii.FieldValues;
 
                         foreach (KeyValuePair<string, object> entry in fieldValues)
                         {
                             if (!entry.Key.Contains("_"))
                             {
-                                spListItem.Nodes.Add(new SpTreeNode(entry.Key + ": " + entry.Value, entry));
+                                spListItem.Nodes.Add(new SpTreeNode(new MigrationObject(entry.Key + ": " + entry.Value, entry)));
                             }
                         }
 

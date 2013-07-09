@@ -34,6 +34,10 @@ namespace Sharezbold
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveMigrationProfileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadMigrationProfileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dateiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadMigrationProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveMigrationProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,43 +47,38 @@ namespace Sharezbold
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.buttonConfigurationNext = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.textBoxToHost = new System.Windows.Forms.TextBox();
             this.textBoxToUserName = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.textBoxToDomain = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.textBoxToPassword = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.textBoxFromHost = new System.Windows.Forms.TextBox();
             this.textBoxFromUserName = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.textBoxFromDomain = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.textBoxFromPassword = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.tabPageContentSelection = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.buttonConfigureMigration = new System.Windows.Forms.Button();
             this.treeViewContentSelection = new System.Windows.Forms.TreeView();
             this.imageListTreeView = new System.Windows.Forms.ImageList(this.components);
+            this.tabPageMigrationPreparation = new System.Windows.Forms.TabPage();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.listViewMigrationContent = new System.Windows.Forms.ListView();
+            this.imageListMigrationContent = new System.Windows.Forms.ImageList(this.components);
+            this.buttonStartMigration = new System.Windows.Forms.Button();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.tabPageMigrationProgress = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveMigrationProfileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadMigrationProfileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabPageMigrationPreparation = new System.Windows.Forms.TabPage();
-            this.listBoxMigrationContent = new System.Windows.Forms.ListBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.buttonStartMigration = new System.Windows.Forms.Button();
-            this.buttonConfigureMigration = new System.Windows.Forms.Button();
-            this.listViewMigrationContent = new System.Windows.Forms.ListView();
-            this.imageListMigrationContent = new System.Windows.Forms.ImageList(this.components);
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
@@ -88,11 +87,11 @@ namespace Sharezbold
             this.groupBox1.SuspendLayout();
             this.tabPageContentSelection.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            this.tabPageMigrationProgress.SuspendLayout();
-            this.groupBox5.SuspendLayout();
             this.tabPageMigrationPreparation.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
+            this.tabPageMigrationProgress.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -104,6 +103,37 @@ namespace Sharezbold
             this.menuStrip1.Size = new System.Drawing.Size(1031, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveMigrationProfileToolStripMenuItem1,
+            this.loadMigrationProfileToolStripMenuItem1,
+            this.closeToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // saveMigrationProfileToolStripMenuItem1
+            // 
+            this.saveMigrationProfileToolStripMenuItem1.Name = "saveMigrationProfileToolStripMenuItem1";
+            this.saveMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
+            this.saveMigrationProfileToolStripMenuItem1.Text = "Save Migration Profile ...";
+            this.saveMigrationProfileToolStripMenuItem1.Click += new System.EventHandler(this.SaveMigrationProfileToolStripMenuItem_Click);
+            // 
+            // loadMigrationProfileToolStripMenuItem1
+            // 
+            this.loadMigrationProfileToolStripMenuItem1.Name = "loadMigrationProfileToolStripMenuItem1";
+            this.loadMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
+            this.loadMigrationProfileToolStripMenuItem1.Text = "Load Migration Profile ...";
+            this.loadMigrationProfileToolStripMenuItem1.Click += new System.EventHandler(this.LoadMigrationProfileToolStripMenuItem_Click);
+            // 
+            // closeToolStripMenuItem
+            // 
+            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.closeToolStripMenuItem.Text = "Close";
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
             // dateiToolStripMenuItem
             // 
@@ -198,15 +228,6 @@ namespace Sharezbold
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Destination Configuration";
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(17, 32);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(56, 13);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Host:        ";
-            // 
             // textBoxToHost
             // 
             this.textBoxToHost.Location = new System.Drawing.Point(100, 32);
@@ -221,23 +242,21 @@ namespace Sharezbold
             this.textBoxToUserName.Size = new System.Drawing.Size(200, 20);
             this.textBoxToUserName.TabIndex = 3;
             // 
-            // label6
+            // label5
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(17, 58);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(58, 13);
-            this.label6.TabIndex = 1;
-            this.label6.Text = "Username:";
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(17, 32);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(56, 13);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Host:        ";
             // 
-            // label7
+            // textBoxToDomain
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(17, 84);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(46, 13);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Domain:";
+            this.textBoxToDomain.Location = new System.Drawing.Point(100, 84);
+            this.textBoxToDomain.Name = "textBoxToDomain";
+            this.textBoxToDomain.Size = new System.Drawing.Size(200, 20);
+            this.textBoxToDomain.TabIndex = 6;
             // 
             // label8
             // 
@@ -248,13 +267,6 @@ namespace Sharezbold
             this.label8.TabIndex = 5;
             this.label8.Text = "Password:";
             // 
-            // textBoxToDomain
-            // 
-            this.textBoxToDomain.Location = new System.Drawing.Point(100, 84);
-            this.textBoxToDomain.Name = "textBoxToDomain";
-            this.textBoxToDomain.Size = new System.Drawing.Size(200, 20);
-            this.textBoxToDomain.TabIndex = 6;
-            // 
             // textBoxToPassword
             // 
             this.textBoxToPassword.Location = new System.Drawing.Point(100, 110);
@@ -262,6 +274,24 @@ namespace Sharezbold
             this.textBoxToPassword.PasswordChar = '*';
             this.textBoxToPassword.Size = new System.Drawing.Size(200, 20);
             this.textBoxToPassword.TabIndex = 7;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(17, 84);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(46, 13);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Domain:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(17, 58);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(58, 13);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "Username:";
             // 
             // groupBox1
             // 
@@ -280,15 +310,6 @@ namespace Sharezbold
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Source Configuration";
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(17, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Site Collection:";
-            // 
             // textBoxFromHost
             // 
             this.textBoxFromHost.Location = new System.Drawing.Point(100, 28);
@@ -303,23 +324,21 @@ namespace Sharezbold
             this.textBoxFromUserName.Size = new System.Drawing.Size(200, 20);
             this.textBoxFromUserName.TabIndex = 3;
             // 
-            // label2
+            // label1
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(17, 54);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(58, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Username:";
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(17, 28);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(77, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Site Collection:";
             // 
-            // label3
+            // textBoxFromDomain
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(17, 80);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(46, 13);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Domain:";
+            this.textBoxFromDomain.Location = new System.Drawing.Point(100, 80);
+            this.textBoxFromDomain.Name = "textBoxFromDomain";
+            this.textBoxFromDomain.Size = new System.Drawing.Size(200, 20);
+            this.textBoxFromDomain.TabIndex = 6;
             // 
             // label4
             // 
@@ -330,13 +349,6 @@ namespace Sharezbold
             this.label4.TabIndex = 5;
             this.label4.Text = "Password:";
             // 
-            // textBoxFromDomain
-            // 
-            this.textBoxFromDomain.Location = new System.Drawing.Point(100, 80);
-            this.textBoxFromDomain.Name = "textBoxFromDomain";
-            this.textBoxFromDomain.Size = new System.Drawing.Size(200, 20);
-            this.textBoxFromDomain.TabIndex = 6;
-            // 
             // textBoxFromPassword
             // 
             this.textBoxFromPassword.Location = new System.Drawing.Point(100, 106);
@@ -344,6 +356,24 @@ namespace Sharezbold
             this.textBoxFromPassword.PasswordChar = '*';
             this.textBoxFromPassword.Size = new System.Drawing.Size(200, 20);
             this.textBoxFromPassword.TabIndex = 7;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(17, 80);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(46, 13);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "Domain:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(17, 54);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(58, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Username:";
             // 
             // tabPageContentSelection
             // 
@@ -366,6 +396,16 @@ namespace Sharezbold
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Content Selection";
+            // 
+            // buttonConfigureMigration
+            // 
+            this.buttonConfigureMigration.Location = new System.Drawing.Point(899, 346);
+            this.buttonConfigureMigration.Name = "buttonConfigureMigration";
+            this.buttonConfigureMigration.Size = new System.Drawing.Size(115, 23);
+            this.buttonConfigureMigration.TabIndex = 1;
+            this.buttonConfigureMigration.Text = "Configure Migration";
+            this.buttonConfigureMigration.UseVisualStyleBackColor = true;
+            this.buttonConfigureMigration.Click += new System.EventHandler(this.ButtonConfigureMigration_Click);
             // 
             // treeViewContentSelection
             // 
@@ -390,6 +430,64 @@ namespace Sharezbold
             this.imageListTreeView.Images.SetKeyName(1, "site.png");
             this.imageListTreeView.Images.SetKeyName(2, "list.gif");
             this.imageListTreeView.Images.SetKeyName(3, "library.png");
+            // 
+            // tabPageMigrationPreparation
+            // 
+            this.tabPageMigrationPreparation.Controls.Add(this.groupBox6);
+            this.tabPageMigrationPreparation.Location = new System.Drawing.Point(4, 22);
+            this.tabPageMigrationPreparation.Name = "tabPageMigrationPreparation";
+            this.tabPageMigrationPreparation.Size = new System.Drawing.Size(1023, 380);
+            this.tabPageMigrationPreparation.TabIndex = 3;
+            this.tabPageMigrationPreparation.Text = "Migration Preparation";
+            this.tabPageMigrationPreparation.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.buttonStartMigration);
+            this.groupBox6.Controls.Add(this.groupBox7);
+            this.groupBox6.Location = new System.Drawing.Point(8, 3);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(1007, 369);
+            this.groupBox6.TabIndex = 1;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Migration Preparation";
+            // 
+            // listViewMigrationContent
+            // 
+            this.listViewMigrationContent.Location = new System.Drawing.Point(15, 19);
+            this.listViewMigrationContent.MultiSelect = false;
+            this.listViewMigrationContent.Name = "listViewMigrationContent";
+            this.listViewMigrationContent.Size = new System.Drawing.Size(231, 299);
+            this.listViewMigrationContent.SmallImageList = this.imageListMigrationContent;
+            this.listViewMigrationContent.TabIndex = 3;
+            this.listViewMigrationContent.UseCompatibleStateImageBehavior = false;
+            this.listViewMigrationContent.View = System.Windows.Forms.View.List;
+            // 
+            // imageListMigrationContent
+            // 
+            this.imageListMigrationContent.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListMigrationContent.ImageStream")));
+            this.imageListMigrationContent.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListMigrationContent.Images.SetKeyName(0, "error.png");
+            this.imageListMigrationContent.Images.SetKeyName(1, "ok.png");
+            // 
+            // buttonStartMigration
+            // 
+            this.buttonStartMigration.Location = new System.Drawing.Point(901, 340);
+            this.buttonStartMigration.Name = "buttonStartMigration";
+            this.buttonStartMigration.Size = new System.Drawing.Size(100, 23);
+            this.buttonStartMigration.TabIndex = 2;
+            this.buttonStartMigration.Text = "start migration";
+            this.buttonStartMigration.UseVisualStyleBackColor = true;
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.listViewMigrationContent);
+            this.groupBox7.Location = new System.Drawing.Point(6, 19);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(271, 334);
+            this.groupBox7.TabIndex = 1;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Migration Element Configuration";
             // 
             // tabPageMigrationProgress
             // 
@@ -430,114 +528,6 @@ namespace Sharezbold
             this.button1.Text = "Finish & Exit";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // fileToolStripMenuItem
-            // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveMigrationProfileToolStripMenuItem1,
-            this.loadMigrationProfileToolStripMenuItem1,
-            this.closeToolStripMenuItem});
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
-            this.fileToolStripMenuItem.Text = "File";
-            // 
-            // saveMigrationProfileToolStripMenuItem1
-            // 
-            this.saveMigrationProfileToolStripMenuItem1.Name = "saveMigrationProfileToolStripMenuItem1";
-            this.saveMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
-            this.saveMigrationProfileToolStripMenuItem1.Text = "Save Migration Profile ...";
-            this.saveMigrationProfileToolStripMenuItem1.Click += new System.EventHandler(this.SaveMigrationProfileToolStripMenuItem_Click);
-            // 
-            // loadMigrationProfileToolStripMenuItem1
-            // 
-            this.loadMigrationProfileToolStripMenuItem1.Name = "loadMigrationProfileToolStripMenuItem1";
-            this.loadMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
-            this.loadMigrationProfileToolStripMenuItem1.Text = "Load Migration Profile ...";
-            this.loadMigrationProfileToolStripMenuItem1.Click += new System.EventHandler(this.LoadMigrationProfileToolStripMenuItem_Click);
-            // 
-            // closeToolStripMenuItem
-            // 
-            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-            this.closeToolStripMenuItem.Text = "Close";
-            this.closeToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
-            // 
-            // tabPageMigrationPreparation
-            // 
-            this.tabPageMigrationPreparation.Controls.Add(this.groupBox6);
-            this.tabPageMigrationPreparation.Location = new System.Drawing.Point(4, 22);
-            this.tabPageMigrationPreparation.Name = "tabPageMigrationPreparation";
-            this.tabPageMigrationPreparation.Size = new System.Drawing.Size(1023, 380);
-            this.tabPageMigrationPreparation.TabIndex = 3;
-            this.tabPageMigrationPreparation.Text = "Migration Preparation";
-            this.tabPageMigrationPreparation.UseVisualStyleBackColor = true;
-            // 
-            // listBoxMigrationContent
-            // 
-            this.listBoxMigrationContent.FormattingEnabled = true;
-            this.listBoxMigrationContent.Location = new System.Drawing.Point(17, 19);
-            this.listBoxMigrationContent.Name = "listBoxMigrationContent";
-            this.listBoxMigrationContent.Size = new System.Drawing.Size(233, 303);
-            this.listBoxMigrationContent.TabIndex = 0;
-            // 
-            // groupBox6
-            // 
-            this.groupBox6.Controls.Add(this.listViewMigrationContent);
-            this.groupBox6.Controls.Add(this.buttonStartMigration);
-            this.groupBox6.Controls.Add(this.groupBox7);
-            this.groupBox6.Location = new System.Drawing.Point(8, 3);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(1007, 369);
-            this.groupBox6.TabIndex = 1;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Migration Preparation";
-            // 
-            // groupBox7
-            // 
-            this.groupBox7.Controls.Add(this.listBoxMigrationContent);
-            this.groupBox7.Location = new System.Drawing.Point(6, 19);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(271, 334);
-            this.groupBox7.TabIndex = 1;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Migration Element Configuration";
-            // 
-            // buttonStartMigration
-            // 
-            this.buttonStartMigration.Location = new System.Drawing.Point(901, 340);
-            this.buttonStartMigration.Name = "buttonStartMigration";
-            this.buttonStartMigration.Size = new System.Drawing.Size(100, 23);
-            this.buttonStartMigration.TabIndex = 2;
-            this.buttonStartMigration.Text = "start migration";
-            this.buttonStartMigration.UseVisualStyleBackColor = true;
-            // 
-            // buttonConfigureMigration
-            // 
-            this.buttonConfigureMigration.Location = new System.Drawing.Point(899, 346);
-            this.buttonConfigureMigration.Name = "buttonConfigureMigration";
-            this.buttonConfigureMigration.Size = new System.Drawing.Size(115, 23);
-            this.buttonConfigureMigration.TabIndex = 1;
-            this.buttonConfigureMigration.Text = "Configure Migration";
-            this.buttonConfigureMigration.UseVisualStyleBackColor = true;
-            this.buttonConfigureMigration.Click += new System.EventHandler(this.ButtonConfigureMigration_Click);
-            // 
-            // listViewMigrationContent
-            // 
-            this.listViewMigrationContent.Location = new System.Drawing.Point(388, 76);
-            this.listViewMigrationContent.MultiSelect = false;
-            this.listViewMigrationContent.Name = "listViewMigrationContent";
-            this.listViewMigrationContent.Size = new System.Drawing.Size(231, 217);
-            this.listViewMigrationContent.SmallImageList = this.imageListMigrationContent;
-            this.listViewMigrationContent.TabIndex = 3;
-            this.listViewMigrationContent.UseCompatibleStateImageBehavior = false;
-            this.listViewMigrationContent.View = System.Windows.Forms.View.List;
-            // 
-            // imageListMigrationContent
-            // 
-            this.imageListMigrationContent.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListMigrationContent.ImageStream")));
-            this.imageListMigrationContent.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListMigrationContent.Images.SetKeyName(0, "error.png");
-            this.imageListMigrationContent.Images.SetKeyName(1, "ok.png");
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -559,11 +549,11 @@ namespace Sharezbold
             this.groupBox1.PerformLayout();
             this.tabPageContentSelection.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
-            this.tabPageMigrationProgress.ResumeLayout(false);
-            this.groupBox5.ResumeLayout(false);
             this.tabPageMigrationPreparation.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
+            this.tabPageMigrationProgress.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -613,7 +603,6 @@ namespace Sharezbold
         private System.Windows.Forms.TabPage tabPageMigrationPreparation;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.ListBox listBoxMigrationContent;
         private System.Windows.Forms.Button buttonConfigureMigration;
         private System.Windows.Forms.Button buttonStartMigration;
         private System.Windows.Forms.ListView listViewMigrationContent;
