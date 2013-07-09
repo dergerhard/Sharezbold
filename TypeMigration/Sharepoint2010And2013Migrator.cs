@@ -34,8 +34,7 @@ namespace Sharezbold.ElementsMigration
             this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_GROUP, new UserGroupMigrator(sourceClientContext, targetClientContext)));
             this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_PERMISSION, new RoleMigrator(sourceClientContext, targetClientContext)));
             this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_USER, new UserMigrator(sourceClientContext, targetClientContext)));
-
-            //// migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_SITE_COLUMNS, new ContentTypesMigrator(clientContextSource, clientContextTarget)));
+            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_SITE_COLUMNS, new SiteColumsMigrator(sourceClientContext, targetClientContext)));
             //// migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_WORKFLOW, new ContentTypesMigrator(clientContextSource, clientContextTarget)));
         }
 
@@ -125,7 +124,18 @@ namespace Sharezbold.ElementsMigration
         /// <exception cref="NotImplementedException">Not implemented till now.</exception>
         public void MigrateSiteColumns()
         {
-            throw new NotImplementedException();
+            AbstractMigrator siteColumsMigrator = null;
+
+            foreach (var migrator in this.migrators)
+            {
+                if (migrator.Key == MigrationType.SHAREPOINT2010_2013_SITE_COLUMNS)
+                {
+                    siteColumsMigrator = migrator.Value;
+                    break;
+                }
+            }
+
+            siteColumsMigrator.Migrate();
         }
 
         /// <summary>
