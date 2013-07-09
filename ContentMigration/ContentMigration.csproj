@@ -51,6 +51,7 @@
     <Compile Include="ContentDownloader.cs" />
     <Compile Include="ContentMigrator.cs" />
     <Compile Include="ContentUploader.cs" />
+    <Compile Include="LoadingElementsException.cs" />
     <Compile Include="SpTreeNode.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

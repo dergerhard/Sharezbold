@@ -143,3 +143,16 @@ Review Infos Gerhard:
 
 Async Programming
 http://msdn.microsoft.com/de-de/library/vstudio/hh191443.aspx
+
+
+
+
+What to migrate
+Site Collection:
+	Name
+	Description
+	Url
+	Template
+	Primary Admin
+	Secondary Admin
+	Quota Template

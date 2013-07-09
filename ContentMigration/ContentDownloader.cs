@@ -37,10 +37,6 @@ namespace Sharezbold.ContentMigration
              * 	Field			|	SPField			+
              */
 
-/*            Site site = context.Site;
-            context.Load(site);
-            Site
-            */
             /// according to various sites, "site collections" (Site objects) cannot be loaded with client object model
             Web web = context.Web;
             context.Load(web);
@@ -62,17 +58,16 @@ namespace Sharezbold.ContentMigration
             SpTreeNode root = new SpTreeNode(web.Title + url, web);
             root.ImageIndex = 1;
             root.SelectedImageIndex = 1;
-            
-            //test
-            var listColl = new List<Microsoft.SharePoint.Client.List>();
+
             try
             {
-                Web currentWeb = web;//context.Site.OpenWeb(webURL);
+                var listColl = new List<Microsoft.SharePoint.Client.List>();
+                Web currentWeb = web;
 
                 /// load 
                 var query = from list in currentWeb.Lists
-                            where list.BaseType == BaseType.DocumentLibrary || list.BaseType==BaseType.GenericList 
-                            orderby list.BaseType
+                            where list.BaseType == BaseType.DocumentLibrary || list.BaseType == BaseType.GenericList
+                            //orderby list.BaseType
                             select list;
                 var AllLists = currentWeb.Lists;
                 var listCollection = context.LoadQuery(query.Include(myList => myList.Title,
@@ -87,88 +82,62 @@ namespace Sharezbold.ContentMigration
                 listColl.AddRange(from list in listCollection
                                   where !list.Hidden
                                   select list);
+
+
+                foreach (List li in listColl)
+                {
+                    var spList = new SpTreeNode(li.Title, li);
+                    if (li.BaseType == BaseType.DocumentLibrary)
+                    {
+                        spList.ImageIndex = 3;
+                        spList.SelectedImageIndex = 3;
+                    }
+                    else
+                    {
+                        spList.ImageIndex = 2;
+                        spList.SelectedImageIndex = 2;
+                    }
+                    
+                    CamlQuery cq = new CamlQuery();
+                    cq.ViewXml = "<Query><OrderBy><FieldRef Name='Id' /></OrderBy></Query>";
+
+                    ListItemCollection listItemColl = li.GetItems(cq);
+                    context.Load(listItemColl, items => items.Include(
+                        item => item.Id,
+                        item => item.DisplayName));
+
+                    //context.Load(listItemColl);
+                    context.ExecuteQuery();
+
+                    foreach (ListItem lii in listItemColl)
+                    {
+                        
+                        context.Load(lii);
+                        context.ExecuteQuery();
+
+                        var spListItem = new SpTreeNode(lii.DisplayName + "", lii);
+                        var fieldValues = lii.FieldValues;
+
+                        foreach (KeyValuePair<string, object> entry in fieldValues)
+                        {
+                            if (!entry.Key.Contains("_"))
+                            {
+                                spListItem.Nodes.Add(new SpTreeNode(entry.Key + ": " + entry.Value, entry));
+                            }
+                        }
+
+                        spList.Nodes.Add(spListItem);
+
+                    }
+                    root.Nodes.Add(spList);
+                }
+
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("Error: " + ex.ToString());
+                throw new LoadingElementsException("Error while loading the source elements. Original message: " + ex.Message);
             }
- 
-
-
-            /*
-            ListCollection listColl = web.Lists;
-            context.Load(listColl);
-            context.ExecuteQuery();
-
-            Debug.WriteLine("listcoll.count {0}", listColl.Count);*/
-            foreach (List li in listColl)
-            {
-                var spList = new SpTreeNode(li.Title, li);
-                if (li.BaseType == BaseType.DocumentLibrary)
-                {
-                    spList.ImageIndex = 3;
-                    spList.SelectedImageIndex = 3;
-                }
-                else
-                {
-                    spList.ImageIndex = 2;
-                    spList.SelectedImageIndex = 2;
-                }
-                CamlQuery cq = new CamlQuery();
-                cq.ViewXml = "<Query><OrderBy><FieldRef Name='Id' /></OrderBy></Query>";
-                
-
-                ListItemCollection listItemColl = li.GetItems(cq);
-                context.Load(listItemColl, items => items.Include(
-                    item => item.Id,
-                    item => item.DisplayName));
-
-                //context.Load(listItemColl);
-                context.ExecuteQuery();
-
-                foreach (ListItem lii in listItemColl)
-                {
-                    context.Load(lii);
-                    context.ExecuteQuery();
-                    var spListItem = new SpTreeNode(lii.DisplayName + "", lii);
-                    var fieldValues = lii.FieldValues;
-                    
-                    foreach (KeyValuePair<string, object> entry in fieldValues)
-                        spListItem.Nodes.Add(new SpTreeNode(entry.Key, entry));
-
-                    spList.Nodes.Add(spListItem);
-                }
-
-
-                root.Nodes.Add(spList);
-            }
-            
-            /*
-            foreach (Site site in context.Site)
-            {
-                                // Print the url and the number of webs in this SPSite.
-                                Console.WriteLine("\t\tPrimaryUri: {0}", site.PrimaryUri);
-                                Console.WriteLine("\t\tWebCount: {0}", site.AllWebs.Count);
-
-                                // Iterate trough each web.
-                                foreach (SPWeb web in site.AllWebs)
-                                {
-                                    // Print some information about the web.
-                                    Console.WriteLine("\t\t\tIsRootWeb: {0}", web.IsRootWeb);
-                                    Console.WriteLine("\t\t\tTitle: {0}", web.Title);
-                                    Console.WriteLine("\t\t\tListCount: {0}", web.Lists.Count);
-
-                                    // Iterate trough each list in the web.
-                                    foreach (SPList list in web.Lists)
-                                    {
-                                        // Print the title of the list.
-                                        Console.WriteLine("\t\t\t\tList Name:{0}", list.Title);
-                                    }
-                                }
-                            }*/
-                            
-
-
 
 
             return root;

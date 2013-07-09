@@ -30,7 +30,7 @@ namespace Sharezbold
     /// The main form of the program
     /// </summary>
     public partial class MainForm : System.Windows.Forms.Form
-    {       
+    {
         /// <summary>
         /// represents the migration settings/profile
         /// </summary>
@@ -52,12 +52,22 @@ namespace Sharezbold
         private PleaseWaitForm waitForm = new PleaseWaitForm();
 
         /// <summary>
+        /// If true, checking, collapsing and expanding tree nodes is not possible
+        /// </summary>
+        private bool treeViewContentSelectionDisabled = false;
+
+        /// <summary>
+        /// Root node of the source migration tree
+        /// </summary>
+        private SpTreeNode sourceTreeRoot;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
         /// </summary>
         public MainForm()
         {
             this.InitializeComponent();
-            
+
             // this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
             this.treeViewContentSelection.CheckBoxes = true;
 
@@ -79,6 +89,9 @@ namespace Sharezbold
             this.Close();
         }
 
+
+
+
         /// <summary>
         /// Start with the migration
         /// </summary>
@@ -86,7 +99,13 @@ namespace Sharezbold
         /// <param name="e">event of the sender</param>
         private void ButtonStartMigration_Click(object sender, EventArgs e)
         {
-            this.tabControl1.SelectedTab = this.tabPageMigrationProgress;
+            //this.tabControl1.SelectedTab = this.tabPageMigrationProgress;
+            treeViewContentSelection.ExpandAll();
+            treeViewContentSelectionDisabled = true;
+
+            treeViewContentSelection.SelectedNode = treeViewContentSelection.Nodes[0];
+
+
         }
 
         /// <summary>
@@ -288,41 +307,73 @@ namespace Sharezbold
         private void LoadMigrateFromTree()
         {
             ContentMigrator cm = new ContentMigrator(this.source, this.destination);
-            this.treeViewContentSelection.Nodes.Add(cm.GenerateMigrationTree());
-                
-            /*
-            Web web = source.Web;
+            sourceTreeRoot = cm.GenerateMigrationTree();
+            this.treeViewContentSelection.Nodes.Add(sourceTreeRoot);
+        }
 
-            // Retrieve all lists from the server. 
-            source.Load(web.Lists,
-                         lists => lists.Include(list => list.Title, // For Each list, retrieve Title and Id
-                                                list => list.Id));
-
-            // Execute query. 
-            source.ExecuteQuery();
-
-            // Enumerate the web.Lists. 
-            foreach (List list in web.Lists)
+        /// <summary>
+        /// Checks all child nodes recursively
+        /// </summary>
+        /// <param name="treeNode">the root to start checking</param>
+        /// <param name="nodeChecked">the check state (true if it should be checked)</param>
+        private void CheckAllChildNodes(TreeNode treeNode, bool nodeChecked)
+        {
+            foreach (TreeNode node in treeNode.Nodes)
             {
-                Debug.WriteLine(list.Title);
+                node.Checked = nodeChecked;
+                if (node.Nodes.Count > 0)
+                {
+                    // If the current node has child nodes, call the CheckAllChildsNodes method recursively.
+                    this.CheckAllChildNodes(node, nodeChecked);
+                }
             }
+        }
 
-            try
+        /// <summary>
+        /// Checks all child nodes recursively
+        /// </summary>
+        /// <param name="sender">sender of the event</param>
+        /// <param name="e">event arguments</param>
+        private void TreeViewContentSelection_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            // The code only executes if the user caused the checked state to change.
+            if (e.Action != TreeViewAction.Unknown)
             {
-                
-                
+                if (e.Node.Nodes.Count > 0)
+                {
+                    this.CheckAllChildNodes(e.Node, e.Node.Checked);
+                }
             }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception.Message);
-                Console.WriteLine(exception.StackTrace);
-                MessageBox.Show(exception.Message);
-            }
-            finally
-            {
-                //if (writer != null) writer.Close();
-                //if (fileStream != null) fileStream.Close();
-            }*/
+        }
+
+        /// <summary>
+        /// This method avoids the events BeforeExpand, BeforeCollapse, BeforeSelect and BeforeCheck to work during migration
+        /// </summary>
+        /// <param name="sender">the sender of the event</param>
+        /// <param name="e">the event arguments</param>
+        private void TreeViewContentSelection_DisableOrEnableEvent(object sender, TreeViewCancelEventArgs e)
+        {
+            // disable for migration configuration
+            if (treeViewContentSelectionDisabled)
+                e.Cancel = true;
+        }
+
+        private void ButtonConfigureMigration_Click(object sender, EventArgs e)
+        {
+            //make list of items to move
+            IEnumerable<SpTreeNode> list = new List<SpTreeNode>();
+
+
+            listViewMigrationContent.Items.Add("Web: Home", 0);
+            listViewMigrationContent.Items.Add("\tList: TestList", 1);
+            listViewMigrationContent.Items.Add("\tList: New list", 1);
+
+            listViewMigrationContent.Items.Add("\t\tListItem: TestList", 0);
+            listViewMigrationContent.Items.Add("\t\tListItem: New list", 1);
+
+
+
+            //a.GetType() == typeof(Dog)
         }
     }
 }
