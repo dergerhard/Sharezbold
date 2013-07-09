@@ -48,7 +48,7 @@ namespace Sharezbold.ElementsMigration
         SHAREPOINT2010_2013_CONTENT_TYPES,
 
         /// <summary>
-        /// For migrate the User from MOSS Sharepoint or 2013 to 2013.
+        /// For migrate the User from MOSS Sharepoint or 2010 to 2013.
         /// </summary>
         SHAREPOINT2010_USER,
 

@@ -22,9 +22,9 @@ namespace Sharezbold.ElementsMigration
         private LinkedList<KeyValuePair<MigrationType, AbstractMigrator>> migrators;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Sharepoint2013Migrator"/> class.
+        /// Initializes a new instance of the <see cref="Sharepoint2010Migrator"/> class.
         /// </summary>
-        /// <param name="sourceClientContext">ClientContext of the source SharePoint (2010/2013)</param>
+        /// <param name="sourceClientContext">ClientContext of the source SharePoint (2010)</param>
         /// <param name="targetClientContext">ClientContext of the target SharePoint (2013)</param>
         public Sharepoint2010Migrator(ClientContext sourceClientContext, ClientContext targetClientContext)
         {

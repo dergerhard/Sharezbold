@@ -20,7 +20,7 @@ namespace Sharezbold.ElementsMigration
     internal class Sharepoint2010UserMigrator : AbstractMigrator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Sharepoint2013UserMigrator"/> class.
+        /// Initializes a new instance of the <see cref="Sharepoint2010UserMigrator"/> class.
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>

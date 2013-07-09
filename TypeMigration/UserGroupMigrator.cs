@@ -15,17 +15,7 @@ namespace Sharezbold.ElementsMigration
     /// This class is responsible to migrate the Groups.
     /// </summary>
     internal class UserGroupMigrator : AbstractMigrator
-    {/*
-        /// <summary>
-        /// ClientContext of source SharePoint.
-        /// </summary>
-        private ClientContext sourceClientContext;
-
-        /// <summary>
-        /// ClientContext of target SharePoint.
-        /// </summary>
-        private ClientContext targetClientContext;
-        */
+    {
         /// <summary>
         /// Groups hold for adaption.
         /// </summary>
