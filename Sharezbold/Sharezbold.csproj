@@ -65,6 +65,7 @@
     <Compile Include="Settings\MigrationSettings.cs">
       <DependentUpon>MigrationSettings.xsd</DependentUpon>
     </Compile>
+    <Compile Include="SpListViewItem.cs" />
     <Compile Include="TablessControl.cs">
       <SubType>Component</SubType>
     </Compile>

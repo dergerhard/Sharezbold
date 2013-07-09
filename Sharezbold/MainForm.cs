@@ -346,6 +346,7 @@ namespace Sharezbold
             foreach (TreeNode node in treeNode.Nodes)
             {
                 node.Checked = nodeChecked;
+                ((SpTreeNode)node).MigrationObject.Skip = !nodeChecked;
                 if (node.Nodes.Count > 0)
                 {
                     // If the current node has child nodes, call the CheckAllChildsNodes method recursively.
@@ -364,6 +365,7 @@ namespace Sharezbold
             // The code only executes if the user caused the checked state to change.
             if (e.Action != TreeViewAction.Unknown)
             {
+                ((SpTreeNode)e.Node).MigrationObject.Skip = !e.Node.Checked;
                 if (e.Node.Nodes.Count > 0)
                 {
                     this.CheckAllChildNodes(e.Node, e.Node.Checked);
@@ -383,21 +385,33 @@ namespace Sharezbold
                 e.Cancel = true;
         }
 
+        /// <summary>
+        /// Loads the items to configure to the listViewMigrationContent
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ButtonConfigureMigration_Click(object sender, EventArgs e)
         {
-            //make list of items to move
-            IEnumerable<SpTreeNode> list = new List<SpTreeNode>();
+            if (sourceTreeRoot.Checked)
+            {
+                listViewMigrationContent.Items.Add(new SpListViewItem(sourceTreeRoot.MigrationObject));
+            }
+            foreach (TreeNode web in sourceTreeRoot.Nodes)
+            {
+                if (web.Checked)
+                {
+                    listViewMigrationContent.Items.Add(new SpListViewItem(((SpTreeNode)web).MigrationObject));
+                }
+                foreach (TreeNode li in web.Nodes)
+                {
+                    if (li.Checked)
+                    {
+                        listViewMigrationContent.Items.Add(new SpListViewItem(((SpTreeNode)li).MigrationObject));
+                    }
+                }
+            }
 
-
-            listViewMigrationContent.Items.Add("Web: Home", 0);
-            listViewMigrationContent.Items.Add("\tList: TestList", 1);
-            listViewMigrationContent.Items.Add("\tList: New list", 1);
-
-            listViewMigrationContent.Items.Add("\t\tListItem: TestList", 0);
-            listViewMigrationContent.Items.Add("\t\tListItem: New list", 1);
-
-
-
+            //listViewMigrationContent.Items.AddRange(list);
             //a.GetType() == typeof(Dog)
         }
 
