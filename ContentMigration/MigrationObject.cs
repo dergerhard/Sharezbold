@@ -23,7 +23,7 @@ namespace Sharezbold.ContentMigration
         /// </summary>
         /// <param name="identifier">text to be displayed in the tree view</param>
         /// <param name="dataObject">data object of the node</param>
-        /// <param name="type">Type of the migration</param>
+        /// <param name="skip">skip this object or not</param>
         /// <param name="destinationObject"></param>
         public MigrationObject(string identifier, object dataObject, bool skip=true, object destinationObject=null)
         {

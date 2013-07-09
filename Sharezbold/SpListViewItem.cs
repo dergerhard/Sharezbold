@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 namespace Sharezbold
 {
+    using Microsoft.SharePoint.Client;
     using Sharezbold.ContentMigration;
     using System;
     using System.Collections.Generic;
@@ -28,7 +29,20 @@ namespace Sharezbold
         public SpListViewItem(MigrationObject migrationObject) : base(migrationObject.Identifier, migrationObject.ReadyForMigration ? 1 : 0)
         {
             this.MigrationObject = migrationObject;
-            this.Text = "     " + this.Text;
+
+            /*if (this.MigrationObject.DataObject.GetType()==typeof(Web))
+            {
+                this.Text 
+            }
+            else */
+            if (this.MigrationObject.DataObject.GetType()==typeof(List))
+            {
+                this.Text = "          " + this.Text;
+            }
+            else if (this.MigrationObject.DataObject.GetType()==typeof(ListItem))
+            {
+                this.Text = "                    " + this.Text;
+            }
         }
 
         /// <summary>
