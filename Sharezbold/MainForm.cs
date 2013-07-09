@@ -377,24 +377,23 @@ namespace Sharezbold
         }
 
         /// <summary>
-        /// Sets all elements to selected, when Content-Type is choosen.
+        /// Checks all checkboxes, if Content-Type is checked.
         /// </summary>
-        /// <param name="sender">the sender of the event</param>
-        /// <param name="e">the event-args itself</param>
-        private void checkBoxContentTypeMigration_CheckedChanged(object sender, EventArgs e)
+        /// <param name="sender">sender of the event</param>
+        /// <param name="e">the EventArgs itself</param>
+        private void checkBoxMigrateContentType_CheckedChanged(object sender, EventArgs e)
         {
-            /*
-            if (this.checkBoxContentTypeMigration.Checked)
+            if (checkBoxMigrateContentType.Checked)
             {
-                this.checkBoxGroups.Checked = true;
-                this.checkBoxPermissionLevels.Checked = true;
-                this.checkBoxSiteColumns.Checked = true;
-                this.checkBoxUsers.Checked = true;
-                this.checkBoxWorkflows.Checked = true;
-            }*/
+                checkBoxMigrateGroup.Checked = true;
+                checkBoxMigratePermissionlevels.Checked = true;
+                checkBoxMigrateSiteColumns.Checked = true;
+                checkBoxMigrateUser.Checked = true;
+                checkBoxMigrateWorkflow.Checked = true;
+            }
         }
 
-        private void buttonStartElementsMigration_Click(object sender, EventArgs e)
+        private void buttonElementsMigration_Click(object sender, EventArgs e)
         {
             //// TODO start elements migration
         }
