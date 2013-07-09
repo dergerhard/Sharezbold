@@ -68,6 +68,7 @@ namespace Sharezbold
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
+<<<<<<< HEAD
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveMigrationProfileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.loadMigrationProfileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,6 +82,17 @@ namespace Sharezbold
             this.listViewMigrationContent = new System.Windows.Forms.ListView();
             this.imageListMigrationContent = new System.Windows.Forms.ImageList(this.components);
             this.menuStrip1.SuspendLayout();
+=======
+            this.tabPageElementsMigration = new System.Windows.Forms.TabPage();
+            this.checkBoxContentTypeMigration = new System.Windows.Forms.CheckBox();
+            this.checkBoxSiteColumns = new System.Windows.Forms.CheckBox();
+            this.checkBoxPermissionLevels = new System.Windows.Forms.CheckBox();
+            this.checkBoxUsers = new System.Windows.Forms.CheckBox();
+            this.checkBoxGroups = new System.Windows.Forms.CheckBox();
+            this.checkBoxWorkflows = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.buttonStartElementsMigration = new System.Windows.Forms.Button();
+>>>>>>> 29bafc98260d48b51b635e727574ed528646689f
             this.tabControl1.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -90,9 +102,13 @@ namespace Sharezbold
             this.groupBox4.SuspendLayout();
             this.tabPageMigrationProgress.SuspendLayout();
             this.groupBox5.SuspendLayout();
+<<<<<<< HEAD
             this.tabPageMigrationPreparation.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
+=======
+            this.tabPageElementsMigration.SuspendLayout();
+>>>>>>> 29bafc98260d48b51b635e727574ed528646689f
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -118,21 +134,21 @@ namespace Sharezbold
             // loadMigrationProfileToolStripMenuItem
             // 
             this.loadMigrationProfileToolStripMenuItem.Name = "loadMigrationProfileToolStripMenuItem";
-            this.loadMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.loadMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.loadMigrationProfileToolStripMenuItem.Text = "Load Migration profile";
             this.loadMigrationProfileToolStripMenuItem.Click += new System.EventHandler(this.LoadMigrationProfileToolStripMenuItem_Click);
             // 
             // saveMigrationProfileToolStripMenuItem
             // 
             this.saveMigrationProfileToolStripMenuItem.Name = "saveMigrationProfileToolStripMenuItem";
-            this.saveMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.saveMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.saveMigrationProfileToolStripMenuItem.Text = "Save Migration profile";
             this.saveMigrationProfileToolStripMenuItem.Click += new System.EventHandler(this.SaveMigrationProfileToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.exitToolStripMenuItem.Text = "Beenden";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -142,6 +158,7 @@ namespace Sharezbold
             this.tabControl1.Controls.Add(this.tabPageContentSelection);
             this.tabControl1.Controls.Add(this.tabPageMigrationPreparation);
             this.tabControl1.Controls.Add(this.tabPageMigrationProgress);
+            this.tabControl1.Controls.Add(this.tabPageElementsMigration);
             this.tabControl1.Location = new System.Drawing.Point(0, 27);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -430,6 +447,7 @@ namespace Sharezbold
             this.button1.Text = "Finish & Exit";
             this.button1.UseVisualStyleBackColor = true;
             // 
+<<<<<<< HEAD
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -537,6 +555,106 @@ namespace Sharezbold
             this.imageListMigrationContent.TransparentColor = System.Drawing.Color.Transparent;
             this.imageListMigrationContent.Images.SetKeyName(0, "error.png");
             this.imageListMigrationContent.Images.SetKeyName(1, "ok.png");
+=======
+            // tabPageElementsMigration
+            // 
+            this.tabPageElementsMigration.Controls.Add(this.buttonStartElementsMigration);
+            this.tabPageElementsMigration.Controls.Add(this.label9);
+            this.tabPageElementsMigration.Controls.Add(this.checkBoxWorkflows);
+            this.tabPageElementsMigration.Controls.Add(this.checkBoxGroups);
+            this.tabPageElementsMigration.Controls.Add(this.checkBoxUsers);
+            this.tabPageElementsMigration.Controls.Add(this.checkBoxPermissionLevels);
+            this.tabPageElementsMigration.Controls.Add(this.checkBoxSiteColumns);
+            this.tabPageElementsMigration.Controls.Add(this.checkBoxContentTypeMigration);
+            this.tabPageElementsMigration.Location = new System.Drawing.Point(4, 22);
+            this.tabPageElementsMigration.Name = "tabPageElementsMigration";
+            this.tabPageElementsMigration.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageElementsMigration.Size = new System.Drawing.Size(1023, 380);
+            this.tabPageElementsMigration.TabIndex = 3;
+            this.tabPageElementsMigration.Text = "Elements Migration";
+            this.tabPageElementsMigration.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxContentTypeMigration
+            // 
+            this.checkBoxContentTypeMigration.AutoSize = true;
+            this.checkBoxContentTypeMigration.Location = new System.Drawing.Point(32, 94);
+            this.checkBoxContentTypeMigration.Name = "checkBoxContentTypeMigration";
+            this.checkBoxContentTypeMigration.Size = new System.Drawing.Size(130, 17);
+            this.checkBoxContentTypeMigration.TabIndex = 0;
+            this.checkBoxContentTypeMigration.Text = "Migrate ContentTypes";
+            this.checkBoxContentTypeMigration.UseVisualStyleBackColor = true;
+            this.checkBoxContentTypeMigration.CheckedChanged += new System.EventHandler(this.checkBoxContentTypeMigration_CheckedChanged);
+            // 
+            // checkBoxSiteColumns
+            // 
+            this.checkBoxSiteColumns.AutoSize = true;
+            this.checkBoxSiteColumns.Location = new System.Drawing.Point(32, 135);
+            this.checkBoxSiteColumns.Name = "checkBoxSiteColumns";
+            this.checkBoxSiteColumns.Size = new System.Drawing.Size(125, 17);
+            this.checkBoxSiteColumns.TabIndex = 1;
+            this.checkBoxSiteColumns.Text = "Migrate Site-Columns";
+            this.checkBoxSiteColumns.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxPermissionLevels
+            // 
+            this.checkBoxPermissionLevels.AutoSize = true;
+            this.checkBoxPermissionLevels.Location = new System.Drawing.Point(32, 176);
+            this.checkBoxPermissionLevels.Name = "checkBoxPermissionLevels";
+            this.checkBoxPermissionLevels.Size = new System.Drawing.Size(148, 17);
+            this.checkBoxPermissionLevels.TabIndex = 2;
+            this.checkBoxPermissionLevels.Text = "Migrate Permission-Levels";
+            this.checkBoxPermissionLevels.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxUsers
+            // 
+            this.checkBoxUsers.AutoSize = true;
+            this.checkBoxUsers.Location = new System.Drawing.Point(32, 213);
+            this.checkBoxUsers.Name = "checkBoxUsers";
+            this.checkBoxUsers.Size = new System.Drawing.Size(91, 17);
+            this.checkBoxUsers.TabIndex = 3;
+            this.checkBoxUsers.Text = "Migrate Users";
+            this.checkBoxUsers.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxGroups
+            // 
+            this.checkBoxGroups.AutoSize = true;
+            this.checkBoxGroups.Location = new System.Drawing.Point(32, 251);
+            this.checkBoxGroups.Name = "checkBoxGroups";
+            this.checkBoxGroups.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxGroups.TabIndex = 4;
+            this.checkBoxGroups.Text = "Migrate Groups";
+            this.checkBoxGroups.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxWorkflows
+            // 
+            this.checkBoxWorkflows.AutoSize = true;
+            this.checkBoxWorkflows.Location = new System.Drawing.Point(32, 288);
+            this.checkBoxWorkflows.Name = "checkBoxWorkflows";
+            this.checkBoxWorkflows.Size = new System.Drawing.Size(114, 17);
+            this.checkBoxWorkflows.TabIndex = 5;
+            this.checkBoxWorkflows.Text = "Migrate Workflows";
+            this.checkBoxWorkflows.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(32, 25);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(207, 24);
+            this.label9.TabIndex = 6;
+            this.label9.Text = "Migrate the Elements";
+            // 
+            // buttonStartElementsMigration
+            // 
+            this.buttonStartElementsMigration.Location = new System.Drawing.Point(32, 336);
+            this.buttonStartElementsMigration.Name = "buttonStartElementsMigration";
+            this.buttonStartElementsMigration.Size = new System.Drawing.Size(91, 23);
+            this.buttonStartElementsMigration.TabIndex = 7;
+            this.buttonStartElementsMigration.Text = "Start Migration";
+            this.buttonStartElementsMigration.UseVisualStyleBackColor = true;
+            this.buttonStartElementsMigration.Click += new System.EventHandler(this.buttonStartElementsMigration_Click);
+>>>>>>> 29bafc98260d48b51b635e727574ed528646689f
             // 
             // MainForm
             // 
@@ -548,8 +666,6 @@ namespace Sharezbold
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Sharezbold-UI";
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPageConfiguration.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
@@ -561,9 +677,14 @@ namespace Sharezbold
             this.groupBox4.ResumeLayout(false);
             this.tabPageMigrationProgress.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
+<<<<<<< HEAD
             this.tabPageMigrationPreparation.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
+=======
+            this.tabPageElementsMigration.ResumeLayout(false);
+            this.tabPageElementsMigration.PerformLayout();
+>>>>>>> 29bafc98260d48b51b635e727574ed528646689f
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -606,6 +727,7 @@ namespace Sharezbold
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ImageList imageListTreeView;
+<<<<<<< HEAD
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveMigrationProfileToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem loadMigrationProfileToolStripMenuItem1;
@@ -618,5 +740,16 @@ namespace Sharezbold
         private System.Windows.Forms.Button buttonStartMigration;
         private System.Windows.Forms.ListView listViewMigrationContent;
         private System.Windows.Forms.ImageList imageListMigrationContent;
+=======
+        private System.Windows.Forms.TabPage tabPageElementsMigration;
+        private System.Windows.Forms.CheckBox checkBoxWorkflows;
+        private System.Windows.Forms.CheckBox checkBoxGroups;
+        private System.Windows.Forms.CheckBox checkBoxUsers;
+        private System.Windows.Forms.CheckBox checkBoxPermissionLevels;
+        private System.Windows.Forms.CheckBox checkBoxSiteColumns;
+        private System.Windows.Forms.CheckBox checkBoxContentTypeMigration;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button buttonStartElementsMigration;
+>>>>>>> 29bafc98260d48b51b635e727574ed528646689f
     }
 }
