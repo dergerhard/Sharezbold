@@ -62,11 +62,11 @@ namespace Sharezbold
             this.treeViewContentSelection.CheckBoxes = true;
 
             // TODO: delete this
-            TextReader reader = new StreamReader("c:\\test.xml");
-            XmlSerializer serializer = new XmlSerializer(typeof(MigrationSettings));
+            TextReader reader = new StreamReader(@"C:\temp\test.xml");
+            /*XmlSerializer serializer = new XmlSerializer(typeof(MigrationSettings));
             MigrationSettings settings = (MigrationSettings)serializer.Deserialize(reader);
             reader.Close();
-            this.SettingsToUI(settings);
+            this.SettingsToUI(settings);*/
         }
 
         /// <summary>
@@ -323,6 +323,28 @@ namespace Sharezbold
                 //if (writer != null) writer.Close();
                 //if (fileStream != null) fileStream.Close();
             }*/
+        }
+
+        /// <summary>
+        /// Sets all elements to selected, when Content-Type is choosen.
+        /// </summary>
+        /// <param name="sender">the sender of the event</param>
+        /// <param name="e">the event-args itself</param>
+        private void checkBoxContentTypeMigration_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.checkBoxContentTypeMigration.Checked)
+            {
+                this.checkBoxGroups.Checked = true;
+                this.checkBoxPermissionLevels.Checked = true;
+                this.checkBoxSiteColumns.Checked = true;
+                this.checkBoxUsers.Checked = true;
+                this.checkBoxWorkflows.Checked = true;
+            }
+        }
+
+        private void buttonStartElementsMigration_Click(object sender, EventArgs e)
+        {
+            //// TODO start elements migration
         }
     }
 }
