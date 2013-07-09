@@ -20,13 +20,13 @@ namespace TypeMigration
             sourceClientContext.Credentials = credential;
             targetClientContext.Credentials = credential;
 
-            IElementsMigrator migrator = new Sharepoint2010And2013Migrator(sourceClientContext, targetClientContext);
+            IElementsMigrator migrator = new Sharepoint2010Migrator(sourceClientContext, targetClientContext);
 
             // migrator.MigrateGroup();
             // migrator.MigratePermissionlevels();
             // migrator.MigrateSiteColumns();
             // migrator.MigrateContentTypes();
-            // migrator.MigrateUser();
+            migrator.MigrateUser();
             // migrator.MigrateWorkflow();
 
             // TODO SharePoint SiteUsers does not exist

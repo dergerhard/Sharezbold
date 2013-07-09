@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Sharepoint2010And2013Migrator.cs" company="FH Wiener Neustadt">
+// <copyright file="Sharepoint2010Migrator.cs" company="FH Wiener Neustadt">
 //     Copyright (c) FH Wiener Neustadt. All rights reserved.
 // </copyright>
 // <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
@@ -14,7 +14,7 @@ namespace Sharezbold.ElementsMigration
     /// <summary>
     /// Migrator for Sharepoint 2010 to Sharepoint 2013 and Sharepoint 2013 to Sharepoint 2010.
     /// </summary>
-    public class Sharepoint2010And2013Migrator : IElementsMigrator
+    public class Sharepoint2010Migrator : IElementsMigrator
     {
         /// <summary>
         /// Holds the different migrator classes.
@@ -22,18 +22,18 @@ namespace Sharezbold.ElementsMigration
         private LinkedList<KeyValuePair<MigrationType, AbstractMigrator>> migrators;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Sharepoint2010And2013Migrator"/> class.
+        /// Initializes a new instance of the <see cref="Sharepoint2013Migrator"/> class.
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of the source SharePoint (2010/2013)</param>
         /// <param name="targetClientContext">ClientContext of the target SharePoint (2013)</param>
-        public Sharepoint2010And2013Migrator(ClientContext sourceClientContext, ClientContext targetClientContext)
+        public Sharepoint2010Migrator(ClientContext sourceClientContext, ClientContext targetClientContext)
         {
             this.migrators = new LinkedList<KeyValuePair<MigrationType, AbstractMigrator>>();
 
             this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_CONTENT_TYPES, new ContentTypesMigrator(sourceClientContext, targetClientContext)));
             this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_GROUP, new UserGroupMigrator(sourceClientContext, targetClientContext)));
             this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_PERMISSION, new RoleMigrator(sourceClientContext, targetClientContext)));
-            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_USER, new UserMigrator(sourceClientContext, targetClientContext)));
+            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_USER, new Sharepoint2010UserMigrator(sourceClientContext, targetClientContext)));
             this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_SITE_COLUMNS, new SiteColumsMigrator(sourceClientContext, targetClientContext)));
             //// migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_WORKFLOW, new ContentTypesMigrator(clientContextSource, clientContextTarget)));
         }
@@ -68,7 +68,7 @@ namespace Sharezbold.ElementsMigration
 
             foreach (var migrator in this.migrators)
             {
-                if (migrator.Key == MigrationType.SHAREPOINT2010_2013_USER)
+                if (migrator.Key == MigrationType.SHAREPOINT2010_USER)
                 {
                     userMigrator = migrator.Value;
                     break;

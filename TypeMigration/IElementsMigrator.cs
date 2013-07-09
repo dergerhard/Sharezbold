@@ -8,7 +8,7 @@ namespace Sharezbold.ElementsMigration
 {
     /// <summary>
     /// Interface for migrate between different SharePoint-Versions.
-    /// To use the concret SharePoint version use the class <see cref="Sharepoint2010And2013Migrator"/> for SharePoint 2010 and 2013.
+    /// To use the concret SharePoint version use the class <see cref="Sharepoint2013Migrator"/> for SharePoint 2010 and 2013.
     /// </summary>
     public interface IElementsMigrator
     {

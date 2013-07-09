@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="UserMigrator.cs" company="FH Wiener Neustadt">
+// <copyright file="Sharepoint2013UserMigrator.cs" company="FH Wiener Neustadt">
 //     Copyright (c) FH Wiener Neustadt. All rights reserved.
 // </copyright>
 // <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
@@ -17,14 +17,14 @@ namespace Sharezbold.ElementsMigration
     /// <summary>
     /// Migrates the SiteUser from the source SharePoint to the target SharePoint.
     /// </summary>
-    internal class UserMigrator : AbstractMigrator
+    internal class Sharepoint2013UserMigrator : AbstractMigrator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserMigrator"/> class.
+        /// Initializes a new instance of the <see cref="Sharepoint2013UserMigrator"/> class.
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
-        internal UserMigrator(ClientContext sourceClientContext, ClientContext targetClientContext) : base(sourceClientContext, targetClientContext)
+        internal Sharepoint2013UserMigrator(ClientContext sourceClientContext, ClientContext targetClientContext) : base(sourceClientContext, targetClientContext)
         {
         }
 
