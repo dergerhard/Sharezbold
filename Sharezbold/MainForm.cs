@@ -23,7 +23,6 @@ namespace Sharezbold
     using System.Xml.Serialization;
     using ContentMigration;
     using Microsoft.SharePoint.Client;
-    using Sharezbold.ContentMigration;
     using Sharezbold.Settings;
 
     /// <summary>
@@ -88,9 +87,6 @@ namespace Sharezbold
         {
             this.Close();
         }
-
-
-
 
         /// <summary>
         /// Start with the migration
@@ -253,7 +249,7 @@ namespace Sharezbold
                     }
                     else
                     {
-                        this.tabControl1.SelectedTab = this.tabPageContentSelection;
+                        this.tabControMain.SelectedTab = this.tabPageContentSelection;
                     }
                 };
 
@@ -457,7 +453,7 @@ namespace Sharezbold
             }
 
             ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(source, destination);
-            migrationWorker.StartMigration(checkBoxMigrateContentType.Checked, checkBoxMigrateUser.Checked, checkBoxMigrateGroup.Checked, checkBoxMigrateSiteColumns.Checked, checkBoxMigratePermissionlevels.Checked, checkBoxMigrateWorkflow.Checked);
+            migrationWorker.StartMigration(checkBoxMigratePermissionlevels.Checked, checkBoxMigrateUser.Checked, checkBoxMigrateGroup.Checked, checkBoxMigrateSiteColumns.Checked, checkBoxMigratePermissionlevels.Checked, checkBoxMigrateWorkflow.Checked);
         }
     }
 }
