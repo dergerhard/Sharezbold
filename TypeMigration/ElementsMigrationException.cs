@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="UserMigrationException.cs" company="FH Wiener Neustadt">
+// <copyright file="ElementsMigrationException.cs" company="FH Wiener Neustadt">
 //     Copyright (c) FH Wiener Neustadt. All rights reserved.
 // </copyright>
 // <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>

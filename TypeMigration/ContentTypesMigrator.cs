@@ -64,6 +64,10 @@ namespace Sharezbold.ElementsMigration
 
                     this.CreateContentType(contentTypeCollectionSourceServer, contentTypeCollectionTargetServer, contentType);
                 }
+                else
+                {
+                    Console.WriteLine("don't have to migrate '{0}'", contentType.Name);
+                }
             }
 
             try

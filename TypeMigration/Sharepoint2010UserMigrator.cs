@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="UserMigrator.cs" company="FH Wiener Neustadt">
+// <copyright file="Sharepoint2010UserMigrator.cs" company="FH Wiener Neustadt">
 //     Copyright (c) FH Wiener Neustadt. All rights reserved.
 // </copyright>
 // <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
@@ -17,14 +17,15 @@ namespace Sharezbold.ElementsMigration
     /// <summary>
     /// Migrates the SiteUser from the source SharePoint to the target SharePoint.
     /// </summary>
-    internal class UserMigrator : AbstractMigrator
+    internal class Sharepoint2010UserMigrator : AbstractMigrator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserMigrator"/> class.
+        /// Initializes a new instance of the <see cref="Sharepoint2010UserMigrator"/> class.
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
-        internal UserMigrator(ClientContext sourceClientContext, ClientContext targetClientContext) : base(sourceClientContext, targetClientContext)
+        internal Sharepoint2010UserMigrator(ClientContext sourceClientContext, ClientContext targetClientContext)
+            : base(sourceClientContext, targetClientContext)
         {
         }
 
@@ -76,7 +77,7 @@ namespace Sharezbold.ElementsMigration
                 Console.WriteLine("Exception during importing the SiteUsers.", e);
                 throw new ElementsMigrationException("Exception during importing the SiteUsers.", e);
             }
-        } 
+        }
 
         /// <summary>
         /// Get all users of the given SharePoint.
@@ -87,17 +88,51 @@ namespace Sharezbold.ElementsMigration
         private UserCollection GetAllUser(ClientContext clientContext)
         {
             Web web = clientContext.Web;
-            UserCollection userCollection = web.SiteUsers;
+
+            GroupCollection groups = web.SiteGroups;
 
             try
             {
-                clientContext.Load(userCollection);
+                clientContext.Load(groups);
                 clientContext.ExecuteQuery();
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception during fetching the SiteUsers.", e);
-                throw new ElementsMigrationException("Exception during fetching the SiteUsers.", e);
+                Console.WriteLine("Exception during fetching the Groups.", e);
+                throw new ElementsMigrationException("Exception during fetching the Groups.", e);
+            }
+
+            UserCollection userCollection = null;
+
+            foreach (var group in groups)
+            {
+                try
+                {
+                    clientContext.Load(group.Users);
+                    clientContext.ExecuteQuery();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception during fetching the Users.", e);
+                    throw new ElementsMigrationException("Exception during fetching the Users.", e);
+                }
+
+                if (group.Users == null || group.Users.Count == 0)
+                {
+                    continue;
+                }
+
+                if (userCollection == null)
+                {
+                    userCollection = group.Users;
+                }
+                else
+                {
+                    foreach (var user in group.Users)
+                    {
+                        userCollection.AddUser(user);
+                    }
+                }
             }
 
             return userCollection;
