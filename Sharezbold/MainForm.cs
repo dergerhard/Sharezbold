@@ -76,6 +76,15 @@ namespace Sharezbold
             MigrationSettings settings = (MigrationSettings)serializer.Deserialize(reader);
             reader.Close();
             this.SettingsToUI(settings);*/
+
+            this.listViewMigrationContent.Scrollable=true;
+            
+            ColumnHeader header = new ColumnHeader();
+            header.Text = "Element";
+            header.Name = "col1";
+            header.Width = 400;
+            this.listViewMigrationContent.Columns.Add(header);
+
         }
 
         /// <summary>
@@ -95,11 +104,28 @@ namespace Sharezbold
         /// <param name="e">event of the sender</param>
         private void ButtonStartMigration_Click(object sender, EventArgs e)
         {
-            ////this.tabControl1.SelectedTab = this.tabPageMigrationProgress;
-            this.treeViewContentSelection.ExpandAll();
-            this.treeViewContentSelectionDisabled = true;
+            bool readyForMigration = true;
+            foreach (ListViewItem lvi in listViewMigrationContent.Items)
+            {
+                if (!((SpListViewItem)lvi).MigrationObject.ReadyForMigration)
+                {
+                    readyForMigration = false;
+                    break;
+                }
+            }
 
-            this.treeViewContentSelection.SelectedNode = this.treeViewContentSelection.Nodes[0];
+            if (readyForMigration)
+            {
+                this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
+                this.EnableTab(this.tabPageMigrationPreparation, false);
+                /// todo
+            }
+            else
+            {
+                MessageBox.Show("You have to configure all elements that should be migrated before you can start!",
+                    "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
         }
 
         /// <summary>
@@ -226,6 +252,7 @@ namespace Sharezbold
                 treeViewContentSelection.Nodes.Clear();
                 this.UIToSettings();
                 this.waitForm.Show();
+                this.EnableTab(this.tabPageConfiguration, false);
 
                 //// this is your presumably long-running method
                 Action exec = this.ApplyConfigurationAndLoadTree;
@@ -388,10 +415,11 @@ namespace Sharezbold
         /// <param name="e">the EventArgs itself</param>
         private void ButtonConfigureMigration_Click(object sender, EventArgs e)
         {
-            if (this.sourceTreeRoot.Checked)
+            /// Site collections not supported
+            /*if (this.sourceTreeRoot.Checked)
             {
                 listViewMigrationContent.Items.Add(new SpListViewItem(this.sourceTreeRoot.MigrationObject));
-            }
+            }*/
 
             foreach (TreeNode web in this.sourceTreeRoot.Nodes)
             {
@@ -406,11 +434,35 @@ namespace Sharezbold
                     {
                         listViewMigrationContent.Items.Add(new SpListViewItem(((SpTreeNode)li).MigrationObject));
                     }
+                    foreach (TreeNode lii in li.Nodes)
+                    {
+                        if (lii.Checked)
+                        {
+                            listViewMigrationContent.Items.Add(new SpListViewItem(((SpTreeNode)lii).MigrationObject));
+                        }
+                    }
                 }
             }
 
+            this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
+            this.EnableTab(this.tabPageContentSelection, false);
+
+
             ////listViewMigrationContent.Items.AddRange(list);
             ////a.GetType() == typeof(Dog)
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="enable"></param>
+        private void EnableTab(TabPage page, bool enable)
+        {
+            foreach (Control ctl in page.Controls)
+            {
+                ctl.Enabled = enable;
+            }
         }
 
         /// <summary>
@@ -456,6 +508,21 @@ namespace Sharezbold
 
             ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination);
             migrationWorker.StartMigration(this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
+        }
+
+        private void buttonStartMigration_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Method is invoked, when the selected Element is changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ListViewMigrationContent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
