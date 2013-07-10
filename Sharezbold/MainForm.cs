@@ -365,7 +365,7 @@ namespace Sharezbold
         private void LoadDestinationTree()
         {
             ContentDownloader downloader = new ContentDownloader(this.destination);
-            SpTreeNode node = downloader.GenerateMigrationTree();
+            SpTreeNode node = downloader.GenerateMigrationTree(false);
 
             // is needed for async loading
             this.Invoke(new LoadDestinationTreeFinishedDelegate(LoadDestinationTreeFinished), new object[] { node });
@@ -379,6 +379,7 @@ namespace Sharezbold
         {
             this.destinationTreeRoot = node;
             this.treeViewMigrateTo.Nodes.Add(this.destinationTreeRoot);
+            this.treeViewMigrateTo.ExpandAll();
             this.waitForm.Hide();
             this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
         }
@@ -584,7 +585,22 @@ namespace Sharezbold
         /// <param name="e"></param>
         private void ListViewMigrationContent_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if (listViewMigrationContent.SelectedItems.Count > 0)
+            {
+                MigrationObject mo = ((SpListViewItem)listViewMigrationContent.SelectedItems[0]).MigrationObject;
+                if (mo.DataObject.GetType() == typeof(Web))
+                {
+                    labelElementType.Text = "Web/Site";
+                }
+                else if (mo.DataObject.GetType() == typeof(List))
+                {
+                    labelElementType.Text = "List";
+                }
+                else
+                {
+                    labelElementType.Text = "List Item";
+                }
+            }
         }
     }
 }

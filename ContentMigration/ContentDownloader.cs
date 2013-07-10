@@ -30,7 +30,7 @@ namespace Sharezbold.ContentMigration
         /// <param name="web">web to start from</param>
         /// <param name="title">title to set to the node</param>
         /// <returns>a TreeNode for the TreeView</returns>
-        private SpTreeNode generateMigrationTreeGetWeb(Web web, string title)
+        private SpTreeNode generateMigrationTreeGetWeb(Web web, string title, bool includeListItems=true)
         {
             SpTreeNode root = new SpTreeNode(new MigrationObject(title, web));
 
@@ -71,48 +71,49 @@ namespace Sharezbold.ContentMigration
                     spList.SelectedImageIndex = 2;
                 }
 
-                CamlQuery cq = new CamlQuery();
-                cq.ViewXml = "<Query><OrderBy><FieldRef Name='Id' /></OrderBy></Query>";
-
-                ListItemCollection listItemColl = li.GetItems(cq);
-                context.Load(listItemColl, items => items.Include(
-                    item => item.Id,
-                    item => item.DisplayName));
-
-                //context.Load(listItemColl);
-                context.ExecuteQuery();
-
-                foreach (ListItem lii in listItemColl)
+                if (includeListItems)
                 {
-                    context.Load(lii);
+                    CamlQuery cq = new CamlQuery();
+                    cq.ViewXml = "<Query><OrderBy><FieldRef Name='Id' /></OrderBy></Query>";
+
+                    ListItemCollection listItemColl = li.GetItems(cq);
+                    context.Load(listItemColl, items => items.Include(
+                        item => item.Id,
+                        item => item.DisplayName));
+
+                    //context.Load(listItemColl);
                     context.ExecuteQuery();
 
-                    var spListItem = new SpTreeNode(new MigrationObject(lii.DisplayName + "", lii));
-                    /*
-                    var fieldValues = lii.FieldValues;
-
-                    foreach (KeyValuePair<string, object> entry in fieldValues)
+                    foreach (ListItem lii in listItemColl)
                     {
-                        if (!entry.Key.Contains("_"))
-                        {
-                            spListItem.Nodes.Add(new SpTreeNode(new MigrationObject(entry.Key + ": " + entry.Value, entry)));
-                        }
-                    }
-                    */
-                    spList.Nodes.Add(spListItem);
+                        context.Load(lii);
+                        context.ExecuteQuery();
 
+                        var spListItem = new SpTreeNode(new MigrationObject(lii.DisplayName + "", lii));
+                        /*
+                        var fieldValues = lii.FieldValues;
+
+                        foreach (KeyValuePair<string, object> entry in fieldValues)
+                        {
+                            if (!entry.Key.Contains("_"))
+                            {
+                                spListItem.Nodes.Add(new SpTreeNode(new MigrationObject(entry.Key + ": " + entry.Value, entry)));
+                            }
+                        }
+                        */
+                        spList.Nodes.Add(spListItem);
+                    }
                 }
                 root.Nodes.Add(spList);
             }
             return root;
-
         }
 
         /// <summary>
         /// Generates a root tree node of the selected site collection and populates it with its child elements
         /// </summary>
         /// <returns>The root tree node</returns>
-        public SpTreeNode GenerateMigrationTree()
+        public SpTreeNode GenerateMigrationTree(bool includeListItems=true)
         {
             /*
              * 	Client			|	Server
@@ -151,7 +152,7 @@ namespace Sharezbold.ContentMigration
             try
             {
                 //add the site collection itself
-                root.Nodes.Add(this.generateMigrationTreeGetWeb(web, web.Title));
+                root.Nodes.Add(this.generateMigrationTreeGetWeb(web, web.Title, includeListItems));
 
                 //retreive all webs in the site collection
                 var query1 = from webs in web.Webs
@@ -163,7 +164,7 @@ namespace Sharezbold.ContentMigration
                 //add the webs to the root node
                 foreach (Web w in webColl)
                 {
-                    root.Nodes.Add(this.generateMigrationTreeGetWeb(w, w.Title));
+                    root.Nodes.Add(this.generateMigrationTreeGetWeb(w, w.Title, includeListItems));
                 }
             }
             catch (Exception ex)

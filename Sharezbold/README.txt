@@ -139,7 +139,13 @@ Review Infos Gerhard:
 	context.ExecuteQuery();
 	
 + Beim Client Object Model ist es offensichtlich nciht möglich alles Site Collections zu laden. Die Site Collection ist die oberste Ebene
-+ Web Service für migration
++ Web Service für migration gibt es
++ im Client Object Model wird die SiteCollection wie ein Web behandelt
++ Asynchrones laden: 
+	Viele Methoden (async keyword, Threads, BackgroundWorker,...)
+	Zuerst mit BackgroundWorker --> handling ist aber sperrig
+	Jetzt mit delegates und BeginInvoke, Invoke und es ist einfach, übersichtlich und funktioniert fehlerfrei
+	http://dougzuck.com/c-ui-threading-example
 
 Async Programming
 http://msdn.microsoft.com/de-de/library/vstudio/hh191443.aspx
