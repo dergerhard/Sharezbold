@@ -92,6 +92,10 @@ namespace Sharezbold
             this.checkBoxMigrateSiteColumns = new System.Windows.Forms.CheckBox();
             this.checkBoxMigrateWorkflow = new System.Windows.Forms.CheckBox();
             this.checkBoxMigratePermissionlevels = new System.Windows.Forms.CheckBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.labelElementName = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.labelLegalType = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabControMain.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
@@ -472,7 +476,11 @@ namespace Sharezbold
             // groupBox8
             // 
             this.groupBox8.Controls.Add(this.treeViewMigrateTo);
+            this.groupBox8.Controls.Add(this.labelLegalType);
+            this.groupBox8.Controls.Add(this.labelElementName);
             this.groupBox8.Controls.Add(this.labelElementType);
+            this.groupBox8.Controls.Add(this.label11);
+            this.groupBox8.Controls.Add(this.label10);
             this.groupBox8.Controls.Add(this.label9);
             this.groupBox8.Location = new System.Drawing.Point(299, 19);
             this.groupBox8.Name = "groupBox8";
@@ -485,16 +493,17 @@ namespace Sharezbold
             // 
             this.treeViewMigrateTo.ImageIndex = 0;
             this.treeViewMigrateTo.ImageList = this.imageListTreeView;
-            this.treeViewMigrateTo.Location = new System.Drawing.Point(15, 88);
+            this.treeViewMigrateTo.Location = new System.Drawing.Point(15, 102);
             this.treeViewMigrateTo.Name = "treeViewMigrateTo";
             this.treeViewMigrateTo.SelectedImageIndex = 0;
-            this.treeViewMigrateTo.Size = new System.Drawing.Size(232, 230);
+            this.treeViewMigrateTo.Size = new System.Drawing.Size(232, 216);
             this.treeViewMigrateTo.TabIndex = 5;
+            this.treeViewMigrateTo.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeViewMigrateTo_AfterSelect);
             // 
             // labelElementType
             // 
             this.labelElementType.AutoSize = true;
-            this.labelElementType.Location = new System.Drawing.Point(120, 30);
+            this.labelElementType.Location = new System.Drawing.Point(156, 30);
             this.labelElementType.Name = "labelElementType";
             this.labelElementType.Size = new System.Drawing.Size(91, 13);
             this.labelElementType.TabIndex = 4;
@@ -505,9 +514,9 @@ namespace Sharezbold
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(12, 30);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 13);
+            this.label9.Size = new System.Drawing.Size(112, 13);
             this.label9.TabIndex = 3;
-            this.label9.Text = "Element Type:";
+            this.label9.Text = "Source Element Type:";
             // 
             // buttonStartMigration
             // 
@@ -687,6 +696,42 @@ namespace Sharezbold
             this.checkBoxMigratePermissionlevels.Text = "Migrate PermissionLevels";
             this.checkBoxMigratePermissionlevels.UseVisualStyleBackColor = true;
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(12, 53);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(116, 13);
+            this.label10.TabIndex = 3;
+            this.label10.Text = "Source Element Name:";
+            // 
+            // labelElementName
+            // 
+            this.labelElementName.AutoSize = true;
+            this.labelElementName.Location = new System.Drawing.Point(156, 53);
+            this.labelElementName.Name = "labelElementName";
+            this.labelElementName.Size = new System.Drawing.Size(95, 13);
+            this.labelElementName.TabIndex = 4;
+            this.labelElementName.Text = "labelElementName";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(12, 77);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(119, 13);
+            this.label11.TabIndex = 3;
+            this.label11.Text = "Legal Destination Type:";
+            // 
+            // labelLegalType
+            // 
+            this.labelLegalType.AutoSize = true;
+            this.labelLegalType.Location = new System.Drawing.Point(156, 77);
+            this.labelLegalType.Name = "labelLegalType";
+            this.labelLegalType.Size = new System.Drawing.Size(79, 13);
+            this.labelLegalType.TabIndex = 4;
+            this.labelLegalType.Text = "labelLegalType";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -783,5 +828,9 @@ namespace Sharezbold
         private System.Windows.Forms.Label labelElementType;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TreeView treeViewMigrateTo;
+        private System.Windows.Forms.Label labelLegalType;
+        private System.Windows.Forms.Label labelElementName;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label10;
     }
 }

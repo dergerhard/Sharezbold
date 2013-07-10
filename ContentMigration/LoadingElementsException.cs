@@ -13,12 +13,12 @@ namespace Sharezbold.ContentMigration
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Exception to indicate that loding some elements failed
+    /// Exception to indicate that loading some elements failed
     /// </summary>
     public class LoadingElementsException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoginFailedException"/> class.
+        /// Initializes a new instance of the <see cref="LoadingElementsException"/> class.
         /// </summary>
         /// <param name="message">The exception-message.</param>
         public LoadingElementsException(string message)
@@ -27,7 +27,7 @@ namespace Sharezbold.ContentMigration
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoginFailedException"/> class.
+        /// Initializes a new instance of the <see cref="LoadingElementsException"/> class.
         /// </summary>
         /// <param name="message">The exception-message.</param>
         /// <param name="exception">The inner-exception.</param>

@@ -21,10 +21,8 @@ namespace Sharezbold.ContentMigration
     public class SpListViewItem : ListViewItem
     {
         /// <summary>
-        /// 
+        /// Represents a list view item with a migration object
         /// </summary>
-        /// <param name="text">Represents the display text</param>
-        /// <param name="imageIndex">Represents the image index</param>
         /// <param name="migrationObject">Represents the migration object</param>
         public SpListViewItem(MigrationObject migrationObject) : base(migrationObject.Identifier, migrationObject.ReadyForMigration ? 1 : 0)
         {
@@ -35,11 +33,11 @@ namespace Sharezbold.ContentMigration
                 this.Text 
             }
             else */
-            if (this.MigrationObject.DataObject.GetType()==typeof(List))
+            if (this.MigrationObject.DataObject.GetType() == typeof(List))
             {
                 this.Text = "          " + this.Text;
             }
-            else if (this.MigrationObject.DataObject.GetType()==typeof(ListItem))
+            else if (this.MigrationObject.DataObject.GetType() == typeof(ListItem))
             {
                 this.Text = "                    " + this.Text;
             }
@@ -61,6 +59,5 @@ namespace Sharezbold.ContentMigration
         {
             this.ImageIndex = this.MigrationObject.ReadyForMigration ? 1 : 0;
         }
-        
     }
 }

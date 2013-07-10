@@ -12,6 +12,10 @@ namespace Sharezbold.ElementsMigration
     {
         TypeMigration.GetGroupSharePoint2007.GetUserCollectionCompletedEventArgs users = new TypeMigration.GetGroupSharePoint2007.GetUserCollectionCompletedEventArgs(null, new Exception(), false, null);
 
+        public SharePoint2007Migrator()
+        {
+        }
+
         public override void Migrate()
         {
             //users.Result.

@@ -24,8 +24,8 @@ namespace Sharezbold.ContentMigration
         /// <param name="identifier">text to be displayed in the tree view</param>
         /// <param name="dataObject">data object of the node</param>
         /// <param name="skip">skip this object or not</param>
-        /// <param name="destinationObject"></param>
-        public MigrationObject(string identifier, object dataObject, bool skip=true, object destinationObject=null)
+        /// <param name="destinationObject">the destination object</param>
+        public MigrationObject(string identifier, object dataObject, bool skip = true, object destinationObject = null)
         {
             this.Identifier = identifier;
             this.DataObject = dataObject;
@@ -43,7 +43,7 @@ namespace Sharezbold.ContentMigration
         }
 
         /// <summary>
-        /// Gets or sets the data object that represents the object that correspondes to the visual entry of the tree view
+        /// Gets or sets the data object that represents the object that corresponds to the visual entry of the tree view
         /// </summary>
         public object DataObject
         {
@@ -52,7 +52,7 @@ namespace Sharezbold.ContentMigration
         }
         
         /// <summary>
-        /// Gets or sets the skip value (omitted if true)
+        /// Gets or sets a value indicating whether to skip or not(omitted if true)
         /// </summary>
         public bool Skip
         {
@@ -76,9 +76,14 @@ namespace Sharezbold.ContentMigration
         {
             get
             {
-                if (this.DataObject != null && DestinationObject != null || Skip == true)
+                if (this.DataObject != null && this.DestinationObject != null || this.Skip == true)
+                {
                     return true;
-                else return false;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 

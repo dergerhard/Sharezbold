@@ -70,7 +70,7 @@ namespace Sharezbold
                 }
                 catch (ElementsMigrationException e)
                 {
-                    this.listBoxLog.Text = listBoxLog.Text + "\n" + "ERROR during migrating Content-Types:";
+                    this.listBoxLog.Text = this.listBoxLog.Text + "\n" + "ERROR during migrating Content-Types:";
                     this.listBoxLog.Text += e.Message + "\n";
                     Console.WriteLine("ERROR during migrating Content-Types");
                     Console.WriteLine(e);

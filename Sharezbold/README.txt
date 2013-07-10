@@ -162,3 +162,16 @@ Site Collection:
 	Primary Admin
 	Secondary Admin
 	Quota Template
+
+
+
+	            /*
+             * 	Client          |  Server
+             * 	----------------------------------
+             * 	ClientContext	|  SPContext
+             * 	Site			|  SPSite			+ = Site Collection
+             * 	Web				|  SPWeb			+ = Web(site)
+             * 	List			|  sharepointList			+
+             * 	ListItem		|  sharepointListItem		+
+             * 	Field			|  SPField			+
+             */

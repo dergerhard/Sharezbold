@@ -44,9 +44,8 @@ namespace Sharezbold
     /// <summary>
     /// Delegate for updating main ui when LoadDestinationTreeDelegate is finished
     /// </summary>
-    /// <param name="node"></param>
+    /// <param name="node">the root node</param>
     public delegate void LoadDestinationTreeFinishedDelegate(SpTreeNode node);
-
 
     /// <summary>
     /// The main form of the program
@@ -89,10 +88,9 @@ namespace Sharezbold
         private SpTreeNode destinationTreeRoot;
 
         /// <summary>
-        /// Used for asynchronous loading
+        /// As the name says.. current (selected) configuration element
         /// </summary>
-        private BackgroundWorker worker = new BackgroundWorker();
-
+        private SpListViewItem currentConfigurationElement = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
@@ -103,22 +101,13 @@ namespace Sharezbold
 
             // this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
             this.treeViewContentSelection.CheckBoxes = true;
-
-            // TODO: delete this
-            /*TextReader reader = new StreamReader(@"C:\temp\test.xml");
-            XmlSerializer serializer = new XmlSerializer(typeof(MigrationSettings));
-            MigrationSettings settings = (MigrationSettings)serializer.Deserialize(reader);
-            reader.Close();
-            this.SettingsToUI(settings);*/
-
-            this.listViewMigrationContent.Scrollable=true;
+            this.listViewMigrationContent.Scrollable = true;
             
             ColumnHeader header = new ColumnHeader();
             header.Text = "Element";
             header.Name = "col1";
             header.Width = 400;
             this.listViewMigrationContent.Columns.Add(header);
-
         }
 
         /// <summary>
@@ -152,14 +141,12 @@ namespace Sharezbold
             {
                 this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
                 this.EnableTab(this.tabPageMigrationPreparation, false);
-                /// todo
+                // todo
             }
             else
             {
-                MessageBox.Show("You have to configure all elements that should be migrated before you can start!",
-                    "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("You have to configure all elements that should be migrated before you can start!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-
         }
 
         /// <summary>
@@ -289,7 +276,7 @@ namespace Sharezbold
                 this.EnableTab(this.tabPageConfiguration, false);
 
                 // needed for async loading
-                ApplyConfigurationAndLoadSourceTreeDelegate w = ApplyConfigurationAndLoadSourceTree;
+                ApplyConfigurationAndLoadSourceTreeDelegate w = this.ApplyConfigurationAndLoadSourceTree;
                 w.BeginInvoke(null, null);
             }
             catch (Exception ex)
@@ -344,7 +331,7 @@ namespace Sharezbold
             SpTreeNode node = cm.GenerateMigrationTree();
             
             // need to use invoke to be thread safe
-            this.Invoke(new ApplyConfigurationAndLoadSourceTreeFinishedDelegate(ApplyConfigurationAndLoadSourceTreeFinished), new object[] { node });
+            this.Invoke(new ApplyConfigurationAndLoadSourceTreeFinishedDelegate(this.ApplyConfigurationAndLoadSourceTreeFinished), new object[] { node });
         }
 
         /// <summary>
@@ -368,13 +355,13 @@ namespace Sharezbold
             SpTreeNode node = downloader.GenerateMigrationTree(false);
 
             // is needed for async loading
-            this.Invoke(new LoadDestinationTreeFinishedDelegate(LoadDestinationTreeFinished), new object[] { node });
+            this.Invoke(new LoadDestinationTreeFinishedDelegate(this.LoadDestinationTreeFinished), new object[] { node });
         }
 
         /// <summary>
         /// Is called when LoadDestinationTree finised. Applys root node to treeview and selects next tab
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="node">the node</param>
         private void LoadDestinationTreeFinished(SpTreeNode node)
         {
             this.destinationTreeRoot = node;
@@ -468,7 +455,7 @@ namespace Sharezbold
         /// <param name="e">the EventArgs itself</param>
         private void ButtonConfigureMigration_Click(object sender, EventArgs e)
         {
-            /// Site collections not supported
+            // Site collections not supported
             /*if (this.sourceTreeRoot.Checked)
             {
                 listViewMigrationContent.Items.Add(new SpListViewItem(this.sourceTreeRoot.MigrationObject));
@@ -488,6 +475,7 @@ namespace Sharezbold
                     {
                         listViewMigrationContent.Items.Add(new SpListViewItem(((SpTreeNode)li).MigrationObject));
                     }
+
                     foreach (TreeNode lii in li.Nodes)
                     {
                         if (lii.Checked)
@@ -506,7 +494,7 @@ namespace Sharezbold
                 this.EnableTab(this.tabPageContentSelection, false);
 
                 // LoadDestinationTree is started as thread
-                LoadDestinationTreeDelegate del = LoadDestinationTree;
+                LoadDestinationTreeDelegate del = this.LoadDestinationTree;
                 del.BeginInvoke(null, null);
             }
             catch (Exception ex)
@@ -516,10 +504,10 @@ namespace Sharezbold
         }
 
         /// <summary>
-        /// 
+        /// Enables or disables a tab page
         /// </summary>
-        /// <param name="page"></param>
-        /// <param name="enable"></param>
+        /// <param name="page">the tab pabe</param>
+        /// <param name="enable">enable or disable</param>
         private void EnableTab(TabPage page, bool enable)
         {
             foreach (Control ctl in page.Controls)
@@ -581,37 +569,120 @@ namespace Sharezbold
             finished = migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
             // Task<bool> result = migrationWorker.StartMigrationAsync(this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
 
-          //  finished = await result;
+            // finished = await result;
         }
 
-        private void buttonStartMigration_Click_1(object sender, EventArgs e)
+        /// <summary>
+        /// Mark possible migrate to elements
+        /// </summary>
+        /// <param name="node">node to start</param>
+        /// <param name="type">type of the nodes to mark</param>
+        private void MarkPossibleMigrateToElements(SpTreeNode node, string type)
         {
+            if ((node.MigrationObject.DataObject.GetType() == typeof(Microsoft.SharePoint.Client.Web) && type.Equals("Site")) ||
+                (node.MigrationObject.DataObject.GetType() == typeof(Microsoft.SharePoint.Client.List) && type.Equals("List")))
+            {
+                node.BackColor = Color.LightBlue;
+            }
+            else
+            {
+                node.BackColor = Color.Transparent;
+            }
 
+            foreach (SpTreeNode n in node.Nodes)
+            {
+                this.MarkPossibleMigrateToElements(n, type);
+            }
+        }
+
+        /// <summary>
+        /// Mark the corresponding migrate to element if set
+        /// </summary>
+        /// <param name="node">node to start from</param>
+        /// <param name="corr">corresponding object</param>
+        private void MarkCorrespondingMigrateToElement(SpTreeNode node, object corr)
+        {
+            if (node.MigrationObject.DataObject == corr)
+            {
+                node.BackColor = Color.Blue;
+            }
+
+            foreach (SpTreeNode n in node.Nodes)
+            {
+                this.MarkCorrespondingMigrateToElement(n, corr);
+            }
         }
 
         /// <summary>
         /// Method is invoked, when the selected Element is changed
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">the sender</param>
+        /// <param name="e">the event</param>
         private void ListViewMigrationContent_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // reset color
+            foreach (ListViewItem lvi in listViewMigrationContent.Items)
+            {
+                lvi.BackColor = Color.Transparent;
+            }
+
             if (listViewMigrationContent.SelectedItems.Count > 0)
             {
-                MigrationObject mo = ((SpListViewItem)listViewMigrationContent.SelectedItems[0]).MigrationObject;
+                // set labels and mark elements
+                this.currentConfigurationElement = (SpListViewItem)listViewMigrationContent.SelectedItems[0];
+                this.currentConfigurationElement.BackColor = Color.LightBlue;
+                MigrationObject mo = this.currentConfigurationElement.MigrationObject;
+
                 if (mo.DataObject.GetType() == typeof(Web))
                 {
-                    labelElementType.Text = "Web/Site";
+                    this.labelElementType.Text = "Site";
+                    this.labelLegalType.Text = "Site Collection";
+                    this.destinationTreeRoot.BackColor = Color.LightBlue;                 
                 }
                 else if (mo.DataObject.GetType() == typeof(List))
                 {
-                    labelElementType.Text = "List";
+                    this.labelElementType.Text = "List";
+                    this.labelLegalType.Text = "Site";
+                    this.MarkPossibleMigrateToElements(this.destinationTreeRoot, "Site");
                 }
                 else
                 {
-                    labelElementType.Text = "List Item";
+                    this.labelElementType.Text = "List Item";
+                    this.labelLegalType.Text = "List";
+                    this.MarkPossibleMigrateToElements(this.destinationTreeRoot, "List");
+                }
+
+                this.labelElementName.Text = mo.Identifier;
+
+                // mark corresponding element if set
+                if (mo.ReadyForMigration)
+                {
+                    this.MarkCorrespondingMigrateToElement(this.destinationTreeRoot, mo.DestinationObject);
                 }
             }
+        }
+
+        /// <summary>
+        /// Update the elements to migrate, if possible
+        /// </summary>
+        /// <param name="sender">the sender</param>
+        /// <param name="e">the event</param>
+        private void TreeViewMigrateTo_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            SpTreeNode selectedNode = (SpTreeNode)treeViewMigrateTo.SelectedNode;
+
+            if ((selectedNode.MigrationObject.DataObject.GetType() == typeof(Web) && this.labelLegalType.Text == "Site") ||
+                (selectedNode.MigrationObject.DataObject.GetType() == typeof(List) && this.labelLegalType.Text == "List"))
+            {
+                this.currentConfigurationElement.MigrationObject.DestinationObject = selectedNode.MigrationObject.DataObject;
+            }
+            else
+            {
+                this.currentConfigurationElement.MigrationObject.DestinationObject = null;
+            }
+
+            this.currentConfigurationElement.UpdateReadyForMigration();
+            this.listViewMigrationContent.Update();
         }
     }
 }

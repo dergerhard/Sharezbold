@@ -35,6 +35,10 @@ namespace Sharezbold.ElementsMigration
             this.targetClientContext = targetClientContext;
         }
 
+        protected AbstractMigrator()
+        {
+        }
+
         /// <summary>
         /// Migrates the datas.
         /// </summary>

@@ -63,7 +63,7 @@ namespace Sharezbold
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "PleaseWaitForm";
             this.ShowInTaskbar = false;
-            this.Text = "PleaseWaitForm";
+            this.Text = "Please wait ...";
             this.TopMost = true;
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

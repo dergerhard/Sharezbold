@@ -19,10 +19,9 @@ namespace Sharezbold.ContentMigration
     public class SpTreeNode : TreeNode
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SpTreeNode"/> class. Offers a way to store treenode and corresponding object together.
+        /// Initializes a new instance of the <see cref="SpTreeNode"/> class. Offers a way to store tree node and corresponding object together.
         /// </summary>
-        /// <param name="identifier">text to be displayed in the tree view</param>
-        /// <param name="dataObject">data object of the node</param>
+        /// <param name="migrationObject">the migration object </param>
         public SpTreeNode(MigrationObject migrationObject) : base(migrationObject.ToString())
         {
             this.MigrationObject = migrationObject;

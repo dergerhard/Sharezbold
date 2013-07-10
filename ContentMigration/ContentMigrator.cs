@@ -13,20 +13,23 @@ namespace Sharezbold.ContentMigration
     using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
 
+    /// <summary>
+    /// Class for migrating content
+    /// </summary>
     public class ContentMigrator
     {
         /// <summary>
-        /// Responsible for downloading data from Sharepoint
+        /// Responsible for downloading data from share point
         /// </summary>
         private ContentDownloader downloader;
 
         /// <summary>
-        /// Responsible for uploading data to Sharepoint
+        /// Responsible for uploading data to share point
         /// </summary>
         private ContentUploader uploader;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserManagementMigration"/> class.
+        /// Initializes a new instance of the <see cref="ContentMigrator"/> class.
         /// </summary>
         /// <param name="sourceSharePoint">The ClientContext of the source SharePoint.</param>
         /// <param name="targetSharePoint">The ClientContext of the target SharePoint.</param>
@@ -35,7 +38,5 @@ namespace Sharezbold.ContentMigration
             this.downloader = new ContentDownloader(sourceSharePoint);
             this.uploader = new ContentUploader(targetSharePoint);
         }
-
-
     }
 }
