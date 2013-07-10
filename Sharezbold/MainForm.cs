@@ -26,6 +26,29 @@ namespace Sharezbold
     using Sharezbold.Settings;
 
     /// <summary>
+    /// Delegate for loading the source tree
+    /// </summary>
+    public delegate void ApplyConfigurationAndLoadSourceTreeDelegate();
+    
+    /// <summary>
+    /// Delegate for updating main ui when ApplyConfigurationAndLoadSourceTreeDelegate is finished
+    /// </summary>
+    /// <param name="node">the resulting source node</param>
+    public delegate void ApplyConfigurationAndLoadSourceTreeFinishedDelegate(SpTreeNode node);
+
+    /// <summary>
+    /// Delegate for loading destination tree
+    /// </summary>
+    public delegate void LoadDestinationTreeDelegate();
+    
+    /// <summary>
+    /// Delegate for updating main ui when LoadDestinationTreeDelegate is finished
+    /// </summary>
+    /// <param name="node"></param>
+    public delegate void LoadDestinationTreeFinishedDelegate(SpTreeNode node);
+
+
+    /// <summary>
     /// The main form of the program
     /// </summary>
     public partial class MainForm : System.Windows.Forms.Form
@@ -59,6 +82,17 @@ namespace Sharezbold
         /// Root node of the source migration tree
         /// </summary>
         private SpTreeNode sourceTreeRoot;
+
+        /// <summary>
+        /// Root node of the destination migration tree
+        /// </summary>
+        private SpTreeNode destinationTreeRoot;
+
+        /// <summary>
+        /// Used for asynchronous loading
+        /// </summary>
+        private BackgroundWorker worker = new BackgroundWorker();
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
@@ -246,40 +280,17 @@ namespace Sharezbold
         {
             try
             {
-                //// check if all values are set:
+                // check if all values are set:
                 this.ValidateInputFields();
 
-                treeViewContentSelection.Nodes.Clear();
+                this.treeViewContentSelection.Nodes.Clear();
                 this.UIToSettings();
                 this.waitForm.Show();
                 this.EnableTab(this.tabPageConfiguration, false);
 
-                //// this is your presumably long-running method
-                Action exec = this.ApplyConfigurationAndLoadTree;
-                BackgroundWorker b = new BackgroundWorker();
-
-                //// set the worker to try to login
-                b.DoWork += (object sender1, DoWorkEventArgs e1) =>
-                {
-                    exec.Invoke();
-                };
-
-                //// set the worker to close your progress form when it's completed
-                b.RunWorkerCompleted += (object sender2, RunWorkerCompletedEventArgs e2) =>
-                {
-                    this.waitForm.Hide();
-                    if (e2.Error != null)
-                    {
-                        MessageBox.Show(e2.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        this.tabControMain.SelectedTab = this.tabPageContentSelection;
-                    }
-                };
-
-                //// start the worker
-                b.RunWorkerAsync();
+                // needed for async loading
+                ApplyConfigurationAndLoadSourceTreeDelegate w = ApplyConfigurationAndLoadSourceTree;
+                w.BeginInvoke(null, null);
             }
             catch (Exception ex)
             {
@@ -307,7 +318,7 @@ namespace Sharezbold
         /// <summary>
         /// Tries to connect to the server and loads the migration tree
         /// </summary>
-        private void ApplyConfigurationAndLoadTree()
+        private void ApplyConfigurationAndLoadSourceTree()
         {
             try
             {
@@ -319,7 +330,58 @@ namespace Sharezbold
                 throw new LoginFailedException("Could not connect to source SharePoint. Please check your login Data");
             }
 
-            this.LoadMigrateFromTree();
+            try
+            {
+                this.ConnectToDestination();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                throw new LoginFailedException("Could not connect to destination SharePoint. Please check your login Data");
+            }
+
+            ContentDownloader cm = new ContentDownloader(this.source);
+            SpTreeNode node = cm.GenerateMigrationTree();
+            
+            // need to use invoke to be thread safe
+            this.Invoke(new ApplyConfigurationAndLoadSourceTreeFinishedDelegate(ApplyConfigurationAndLoadSourceTreeFinished), new object[] { node });
+        }
+
+        /// <summary>
+        /// This method is needed for threading and called when ApplyConfigurationAndLoadSourceTreeFinished is finished
+        /// </summary>
+        /// <param name="node">is the loaded root node - will be applied to treeviewContentSelection</param>
+        private void ApplyConfigurationAndLoadSourceTreeFinished(SpTreeNode node)
+        {
+            this.sourceTreeRoot = node;
+            this.treeViewContentSelection.Nodes.Add(this.sourceTreeRoot);
+            this.waitForm.Hide();
+            this.tabControMain.SelectedTab = this.tabPageContentSelection;
+        }
+
+        /// <summary>
+        /// loads the tree where you can migrate to
+        /// </summary>
+        private void LoadDestinationTree()
+        {
+            ContentDownloader downloader = new ContentDownloader(this.destination);
+            SpTreeNode node = downloader.GenerateMigrationTree(false);
+
+            // is needed for async loading
+            this.Invoke(new LoadDestinationTreeFinishedDelegate(LoadDestinationTreeFinished), new object[] { node });
+        }
+
+        /// <summary>
+        /// Is called when LoadDestinationTree finised. Applys root node to treeview and selects next tab
+        /// </summary>
+        /// <param name="node"></param>
+        private void LoadDestinationTreeFinished(SpTreeNode node)
+        {
+            this.destinationTreeRoot = node;
+            this.treeViewMigrateTo.Nodes.Add(this.destinationTreeRoot);
+            this.treeViewMigrateTo.ExpandAll();
+            this.waitForm.Hide();
+            this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
         }
 
         /// <summary>
@@ -340,21 +402,12 @@ namespace Sharezbold
         /// </summary>
         private void ConnectToDestination()
         {
-            this.destination = new ClientContext(this.settings.FromHost);
+            this.UIToSettings();
+            this.destination = new ClientContext(this.settings.ToHost);
             var cc = new CredentialCache();
             cc.Add(new Uri(this.destination.Url), "NTLM", new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain));
-            this.source.Credentials = cc;
-            this.source.ExecuteQuery();
-        }
-
-        /// <summary>
-        /// Loads the migration Tree
-        /// </summary>
-        private void LoadMigrateFromTree()
-        {
-            ContentMigrator cm = new ContentMigrator(this.source, this.destination);
-            this.sourceTreeRoot = cm.GenerateMigrationTree();
-            this.treeViewContentSelection.Nodes.Add(this.sourceTreeRoot);
+            this.destination.Credentials = cc;
+            this.destination.ExecuteQuery();
         }
 
         /// <summary>
@@ -421,6 +474,7 @@ namespace Sharezbold
                 listViewMigrationContent.Items.Add(new SpListViewItem(this.sourceTreeRoot.MigrationObject));
             }*/
 
+            // Generate the ListView with the source elements to configure
             foreach (TreeNode web in this.sourceTreeRoot.Nodes)
             {
                 if (web.Checked)
@@ -444,12 +498,21 @@ namespace Sharezbold
                 }
             }
 
-            this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
-            this.EnableTab(this.tabPageContentSelection, false);
+            try
+            {
+                // load "migrate to" elements
+                this.treeViewMigrateTo.Nodes.Clear();
+                this.waitForm.Show();
+                this.EnableTab(this.tabPageContentSelection, false);
 
-
-            ////listViewMigrationContent.Items.AddRange(list);
-            ////a.GetType() == typeof(Dog)
+                // LoadDestinationTree is started as thread
+                LoadDestinationTreeDelegate del = LoadDestinationTree;
+                del.BeginInvoke(null, null);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>
@@ -533,7 +596,22 @@ namespace Sharezbold
         /// <param name="e"></param>
         private void ListViewMigrationContent_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if (listViewMigrationContent.SelectedItems.Count > 0)
+            {
+                MigrationObject mo = ((SpListViewItem)listViewMigrationContent.SelectedItems[0]).MigrationObject;
+                if (mo.DataObject.GetType() == typeof(Web))
+                {
+                    labelElementType.Text = "Web/Site";
+                }
+                else if (mo.DataObject.GetType() == typeof(List))
+                {
+                    labelElementType.Text = "List";
+                }
+                else
+                {
+                    labelElementType.Text = "List Item";
+                }
+            }
         }
     }
 }

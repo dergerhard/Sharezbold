@@ -36,14 +36,6 @@ namespace Sharezbold.ContentMigration
             this.uploader = new ContentUploader(targetSharePoint);
         }
 
-        /// <summary>
-        /// Generates a tree object for content selection
-        /// </summary>
-        /// <returns>Sharepoint tree node</returns>
-        public SpTreeNode GenerateMigrationTree()
-        {
-            return downloader.GenerateMigrationTree();
-        }
 
     }
 }
