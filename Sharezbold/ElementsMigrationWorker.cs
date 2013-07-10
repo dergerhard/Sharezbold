@@ -10,6 +10,7 @@ namespace Sharezbold
     using System;
     using System.Net;
     using System.Threading.Tasks;
+    using System.Windows.Forms;
     using ElementsMigration;
     using Microsoft.SharePoint.Client;
 
@@ -31,14 +32,20 @@ namespace Sharezbold
         private ClientContext targetClientContext;
 
         /// <summary>
+        /// The ListBox for log-output.
+        /// </summary>
+        private ListBox listBoxLog;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ElementsMigrationWorker"/> class.
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
-        internal ElementsMigrationWorker(ClientContext sourceClientContext, ClientContext targetClientContext)
+        internal ElementsMigrationWorker(ClientContext sourceClientContext, ClientContext targetClientContext, ListBox listBox)
         {
             this.sourceClientContext = sourceClientContext;
             this.targetClientContext = targetClientContext;
+            this.listBoxLog = listBox;
         }
 
         /// <summary>
@@ -50,7 +57,7 @@ namespace Sharezbold
         /// <param name="migrateSiteColumns">true if migrate SiteColumns</param>
         /// <param name="migratePermission">true if migrate PermissionLevel</param>
         /// <param name="migrateWorkflows">true if migrate Workflows</param>
-        internal void StartMigration(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
+        internal bool StartMigration(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
         {
             IElementsMigrator migrator = new Sharepoint2010Migrator(this.sourceClientContext, this.targetClientContext);
 
@@ -62,6 +69,8 @@ namespace Sharezbold
                 }
                 catch (ElementsMigrationException e)
                 {
+                    listBoxLog.Text = listBoxLog.Text + "\n" + "ERROR during migrating Content-Types:";
+                    listBoxLog.Text += e.Message + "\n";
                     Console.WriteLine("ERROR during migrating Content-Types");
                     Console.WriteLine(e);
                 }
@@ -131,6 +140,8 @@ namespace Sharezbold
                     Console.WriteLine(e);
                 }
             }
+
+            return true;
         }
     }
 }

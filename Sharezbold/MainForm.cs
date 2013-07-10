@@ -435,7 +435,7 @@ namespace Sharezbold
         /// </summary>
         /// <param name="sender">sender of the event</param>
         /// <param name="e">EventArgs itself</param>
-        private void ButtonElementsMigrationClicked(object sender, EventArgs e)
+        private async void ButtonElementsMigrationClicked(object sender, EventArgs e)
         {
             try
             {
@@ -454,8 +454,11 @@ namespace Sharezbold
                 this.ConnectToDestination();
             }
 
-            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination);
-            migrationWorker.StartMigration(this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
+            bool finished;
+            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination, this.listBoxMigrationLog);
+            this.tabPageMigrationProgress.Show();
+
+            finished = migrationWorker.StartMigration(this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
         }
     }
 }
