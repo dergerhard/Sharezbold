@@ -24,6 +24,101 @@ namespace Sharezbold.ContentMigration
             this.context = context;
         }
 
+
+        public List<SpListViewItem> GetAllLists()
+        {
+            return null;
+        }
+
+        public List<SpListViewItem> GetAllListItems()
+        {
+            return null;
+        }
+
+
+
+        private SpTreeNode generateMigrationTreeGetWeb(Web web, string title)
+        {
+            SpTreeNode root = new SpTreeNode(new MigrationObject(title, web));
+
+            var listColl = new List<Microsoft.SharePoint.Client.List>();
+            Web currentWeb = web;
+
+            /// load 
+            var query = from list in currentWeb.Lists
+                        where list.BaseType == BaseType.DocumentLibrary || list.BaseType == BaseType.GenericList
+                        //orderby list.BaseType
+                        select list;
+            var AllLists = currentWeb.Lists;
+            var listCollection = context.LoadQuery(query.Include(myList => myList.Title,
+                               myList => myList.Id,
+                               myList => myList.BaseType,
+                               myList => myList.RootFolder.ServerRelativeUrl,
+                               myList => myList.ParentWebUrl,
+                               myList => myList.Hidden,
+                               myList => myList.IsApplicationList));
+            context.ExecuteQuery();
+
+            listColl.AddRange(from list in listCollection
+                              where !list.Hidden
+                              select list);
+
+
+            foreach (List li in listColl)
+            {
+                var spList = new SpTreeNode(new MigrationObject(li.Title, li));
+                if (li.BaseType == BaseType.DocumentLibrary)
+                {
+                    spList.ImageIndex = 3;
+                    spList.SelectedImageIndex = 3;
+                }
+                else
+                {
+                    spList.ImageIndex = 2;
+                    spList.SelectedImageIndex = 2;
+                }
+
+                CamlQuery cq = new CamlQuery();
+                cq.ViewXml = "<Query><OrderBy><FieldRef Name='Id' /></OrderBy></Query>";
+
+                ListItemCollection listItemColl = li.GetItems(cq);
+                context.Load(listItemColl, items => items.Include(
+                    item => item.Id,
+                    item => item.DisplayName));
+
+                //context.Load(listItemColl);
+                context.ExecuteQuery();
+
+                foreach (ListItem lii in listItemColl)
+                {
+                    context.Load(lii);
+                    context.ExecuteQuery();
+
+                    var spListItem = new SpTreeNode(new MigrationObject(lii.DisplayName + "", lii));
+                    /*
+                    var fieldValues = lii.FieldValues;
+
+                    foreach (KeyValuePair<string, object> entry in fieldValues)
+                    {
+                        if (!entry.Key.Contains("_"))
+                        {
+                            spListItem.Nodes.Add(new SpTreeNode(new MigrationObject(entry.Key + ": " + entry.Value, entry)));
+                        }
+                    }
+                    */
+                    spList.Nodes.Add(spListItem);
+
+                }
+                root.Nodes.Add(spList);
+            }
+            return root;
+
+        }
+
+        /// <summary>
+        /// Generates a root tree node of the selected site collection and populates it with its child elements
+        /// </summary>
+        /// <returns>The root tree node</returns>
         public SpTreeNode GenerateMigrationTree()
         {
             /*
@@ -37,12 +132,13 @@ namespace Sharezbold.ContentMigration
              * 	Field			|	SPField			+
              */
 
-            /// according to various sites, "site collections" (Site objects) cannot be loaded with client object model
+            /// First the site collection is being loaded.
+            /// Infor: According to various sites, a list of all "site collections" cannot be loaded with the client object model
+            /// somehow the client object model treats the site collection as a web
             Web web = context.Web;
             context.Load(web);
-            
             context.ExecuteQuery();
-            
+
             string url="";
 
             /// URL is not supported in SP2010
@@ -61,84 +157,27 @@ namespace Sharezbold.ContentMigration
 
             try
             {
-                var listColl = new List<Microsoft.SharePoint.Client.List>();
-                Web currentWeb = web;
+                //add the site collection itself
+                root.Nodes.Add(this.generateMigrationTreeGetWeb(web, web.Title));
 
-                /// load 
-                var query = from list in currentWeb.Lists
-                            where list.BaseType == BaseType.DocumentLibrary || list.BaseType == BaseType.GenericList
-                            //orderby list.BaseType
-                            select list;
-                var AllLists = currentWeb.Lists;
-                var listCollection = context.LoadQuery(query.Include(myList => myList.Title,
-                                   myList => myList.Id,
-                                   myList => myList.BaseType,
-                                   myList => myList.RootFolder.ServerRelativeUrl,
-                                   myList => myList.ParentWebUrl,
-                                   myList => myList.Hidden,
-                                   myList => myList.IsApplicationList));
+                //retreive all webs in the site collection
+                var query1 = from webs in web.Webs
+                             select webs;
+
+                var webColl = context.LoadQuery(query1.Include(webs => webs.Title));
                 context.ExecuteQuery();
 
-                listColl.AddRange(from list in listCollection
-                                  where !list.Hidden
-                                  select list);
-
-
-                foreach (List li in listColl)
+                //add the webs to the root node
+                foreach (Web w in webColl)
                 {
-                    var spList = new SpTreeNode(new MigrationObject(li.Title, li));
-                    if (li.BaseType == BaseType.DocumentLibrary)
-                    {
-                        spList.ImageIndex = 3;
-                        spList.SelectedImageIndex = 3;
-                    }
-                    else
-                    {
-                        spList.ImageIndex = 2;
-                        spList.SelectedImageIndex = 2;
-                    }
-                    
-                    CamlQuery cq = new CamlQuery();
-                    cq.ViewXml = "<Query><OrderBy><FieldRef Name='Id' /></OrderBy></Query>";
-
-                    ListItemCollection listItemColl = li.GetItems(cq);
-                    context.Load(listItemColl, items => items.Include(
-                        item => item.Id,
-                        item => item.DisplayName));
-
-                    //context.Load(listItemColl);
-                    context.ExecuteQuery();
-
-                    foreach (ListItem lii in listItemColl)
-                    {
-                        
-                        context.Load(lii);
-                        context.ExecuteQuery();
-
-                        var spListItem = new SpTreeNode(new MigrationObject(lii.DisplayName + "", lii));
-                        var fieldValues = lii.FieldValues;
-
-                        foreach (KeyValuePair<string, object> entry in fieldValues)
-                        {
-                            if (!entry.Key.Contains("_"))
-                            {
-                                spListItem.Nodes.Add(new SpTreeNode(new MigrationObject(entry.Key + ": " + entry.Value, entry)));
-                            }
-                        }
-
-                        spList.Nodes.Add(spListItem);
-
-                    }
-                    root.Nodes.Add(spList);
+                    root.Nodes.Add(this.generateMigrationTreeGetWeb(w, w.Title));
                 }
-
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("Error: " + ex.ToString());
                 throw new LoadingElementsException("Error while loading the source elements. Original message: " + ex.Message);
             }
-
 
             return root;
         }

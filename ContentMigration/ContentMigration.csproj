@@ -53,6 +53,7 @@
     <Compile Include="ContentUploader.cs" />
     <Compile Include="LoadingElementsException.cs" />
     <Compile Include="MigrationObject.cs" />
+    <Compile Include="SpListViewItem.cs" />
     <Compile Include="SpTreeNode.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

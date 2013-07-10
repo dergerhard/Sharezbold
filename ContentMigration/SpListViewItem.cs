@@ -4,16 +4,16 @@
 // </copyright>
 // <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
 //-----------------------------------------------------------------------
-namespace Sharezbold
+namespace Sharezbold.ContentMigration
 {
-    using Microsoft.SharePoint.Client;
-    using Sharezbold.ContentMigration;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using Microsoft.SharePoint.Client;
+    using Sharezbold.ContentMigration;
 
     /// <summary>
     /// Represents a ListViewItem with a migration object
