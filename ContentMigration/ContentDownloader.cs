@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Sharezbold.ContentMigration
 {
-    internal class ContentDownloader
+    public class ContentDownloader
     {
         /// <summary>
         /// Source context of Sharepoint server
@@ -24,19 +24,12 @@ namespace Sharezbold.ContentMigration
             this.context = context;
         }
 
-
-        public List<SpListViewItem> GetAllLists()
-        {
-            return null;
-        }
-
-        public List<SpListViewItem> GetAllListItems()
-        {
-            return null;
-        }
-
-
-
+        /// <summary>
+        /// Generates the web sub-tree
+        /// </summary>
+        /// <param name="web">web to start from</param>
+        /// <param name="title">title to set to the node</param>
+        /// <returns>a TreeNode for the TreeView</returns>
         private SpTreeNode generateMigrationTreeGetWeb(Web web, string title)
         {
             SpTreeNode root = new SpTreeNode(new MigrationObject(title, web));

@@ -71,6 +71,10 @@ namespace Sharezbold
             this.imageListTreeView = new System.Windows.Forms.ImageList(this.components);
             this.tabPageMigrationPreparation = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.treeViewMigrateTo = new System.Windows.Forms.TreeView();
+            this.labelElementType = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.buttonStartMigration = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.listViewMigrationContent = new System.Windows.Forms.ListView();
@@ -88,10 +92,6 @@ namespace Sharezbold
             this.checkBoxMigrateSiteColumns = new System.Windows.Forms.CheckBox();
             this.checkBoxMigrateWorkflow = new System.Windows.Forms.CheckBox();
             this.checkBoxMigratePermissionlevels = new System.Windows.Forms.CheckBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.labelElementType = new System.Windows.Forms.Label();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.listViewMigrateTo = new System.Windows.Forms.ListView();
             this.menuStrip1.SuspendLayout();
             this.tabControMain.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
@@ -102,11 +102,11 @@ namespace Sharezbold
             this.groupBox4.SuspendLayout();
             this.tabPageMigrationPreparation.SuspendLayout();
             this.groupBox6.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.tabPageMigrationProgress.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.tabPageMigrationElements.SuspendLayout();
-            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -469,6 +469,46 @@ namespace Sharezbold
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Migration Preparation";
             // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.treeViewMigrateTo);
+            this.groupBox8.Controls.Add(this.labelElementType);
+            this.groupBox8.Controls.Add(this.label9);
+            this.groupBox8.Location = new System.Drawing.Point(299, 19);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(271, 334);
+            this.groupBox8.TabIndex = 5;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Migrate elements to...";
+            // 
+            // treeViewMigrateTo
+            // 
+            this.treeViewMigrateTo.ImageIndex = 0;
+            this.treeViewMigrateTo.ImageList = this.imageListTreeView;
+            this.treeViewMigrateTo.Location = new System.Drawing.Point(15, 88);
+            this.treeViewMigrateTo.Name = "treeViewMigrateTo";
+            this.treeViewMigrateTo.SelectedImageIndex = 0;
+            this.treeViewMigrateTo.Size = new System.Drawing.Size(232, 230);
+            this.treeViewMigrateTo.TabIndex = 5;
+            // 
+            // labelElementType
+            // 
+            this.labelElementType.AutoSize = true;
+            this.labelElementType.Location = new System.Drawing.Point(120, 30);
+            this.labelElementType.Name = "labelElementType";
+            this.labelElementType.Size = new System.Drawing.Size(91, 13);
+            this.labelElementType.TabIndex = 4;
+            this.labelElementType.Text = "labelElementType";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(12, 30);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(75, 13);
+            this.label9.TabIndex = 3;
+            this.label9.Text = "Element Type:";
+            // 
             // buttonStartMigration
             // 
             this.buttonStartMigration.Location = new System.Drawing.Point(901, 340);
@@ -647,46 +687,6 @@ namespace Sharezbold
             this.checkBoxMigratePermissionlevels.Text = "Migrate PermissionLevels";
             this.checkBoxMigratePermissionlevels.UseVisualStyleBackColor = true;
             // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(12, 30);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 13);
-            this.label9.TabIndex = 3;
-            this.label9.Text = "Element Type:";
-            // 
-            // labelElementType
-            // 
-            this.labelElementType.AutoSize = true;
-            this.labelElementType.Location = new System.Drawing.Point(120, 30);
-            this.labelElementType.Name = "labelElementType";
-            this.labelElementType.Size = new System.Drawing.Size(91, 13);
-            this.labelElementType.TabIndex = 4;
-            this.labelElementType.Text = "labelElementType";
-            // 
-            // groupBox8
-            // 
-            this.groupBox8.Controls.Add(this.listViewMigrateTo);
-            this.groupBox8.Controls.Add(this.labelElementType);
-            this.groupBox8.Controls.Add(this.label9);
-            this.groupBox8.Location = new System.Drawing.Point(299, 19);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(271, 334);
-            this.groupBox8.TabIndex = 5;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Migrate elements to...";
-            // 
-            // listViewMigrateTo
-            // 
-            this.listViewMigrateTo.Location = new System.Drawing.Point(15, 76);
-            this.listViewMigrateTo.MultiSelect = false;
-            this.listViewMigrateTo.Name = "listViewMigrateTo";
-            this.listViewMigrateTo.Size = new System.Drawing.Size(231, 242);
-            this.listViewMigrateTo.TabIndex = 3;
-            this.listViewMigrateTo.UseCompatibleStateImageBehavior = false;
-            this.listViewMigrateTo.View = System.Windows.Forms.View.Details;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -710,13 +710,13 @@ namespace Sharezbold
             this.groupBox4.ResumeLayout(false);
             this.tabPageMigrationPreparation.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.tabPageMigrationProgress.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.tabPageMigrationElements.ResumeLayout(false);
             this.tabPageMigrationElements.PerformLayout();
-            this.groupBox8.ResumeLayout(false);
-            this.groupBox8.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -780,8 +780,8 @@ namespace Sharezbold
         private System.Windows.Forms.CheckBox checkBoxMigratePermissionlevels;
         private System.Windows.Forms.CheckBox checkBoxMigrateContentType;
         private System.Windows.Forms.GroupBox groupBox8;
-        private System.Windows.Forms.ListView listViewMigrateTo;
         private System.Windows.Forms.Label labelElementType;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TreeView treeViewMigrateTo;
     }
 }
