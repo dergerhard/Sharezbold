@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeMigration", "..\TypeMig
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SharezboldInstaller", "..\SharezboldInstaller\SharezboldInstaller.wixproj", "{22E94BC9-A122-4FFE-A77A-35F70A6DE936}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileUpAndDownload", "..\FileUpAndDownload\FileUpAndDownload.csproj", "{27A175E5-7EDA-4359-BB4A-F093DFECCC90}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileMigration", "..\FileUpAndDownload\FileMigration.csproj", "{27A175E5-7EDA-4359-BB4A-F093DFECCC90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
