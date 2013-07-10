@@ -567,7 +567,7 @@ namespace Sharezbold
             this.checkBoxMigrateContentType.TabIndex = 7;
             this.checkBoxMigrateContentType.Text = "Migrate Content-Type";
             this.checkBoxMigrateContentType.UseVisualStyleBackColor = true;
-            this.checkBoxMigrateContentType.CheckedChanged += new System.EventHandler(this.checkBoxMigrateContentType_CheckedChanged);
+            this.checkBoxMigrateContentType.CheckedChanged += new System.EventHandler(this.CheckBoxMigrateContentTypeCheckedChanged);
             // 
             // buttonElementsMigration
             // 
@@ -577,7 +577,7 @@ namespace Sharezbold
             this.buttonElementsMigration.TabIndex = 6;
             this.buttonElementsMigration.Text = "Start Migration Elements";
             this.buttonElementsMigration.UseVisualStyleBackColor = true;
-            this.buttonElementsMigration.Click += new System.EventHandler(this.buttonElementsMigration_Click);
+            this.buttonElementsMigration.Click += new System.EventHandler(this.ButtonElementsMigrationClicked);
             // 
             // labelMigrationElementsHeader
             // 

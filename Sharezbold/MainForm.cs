@@ -95,13 +95,11 @@ namespace Sharezbold
         /// <param name="e">event of the sender</param>
         private void ButtonStartMigration_Click(object sender, EventArgs e)
         {
-            //this.tabControl1.SelectedTab = this.tabPageMigrationProgress;
-            treeViewContentSelection.ExpandAll();
-            treeViewContentSelectionDisabled = true;
+            ////this.tabControl1.SelectedTab = this.tabPageMigrationProgress;
+            this.treeViewContentSelection.ExpandAll();
+            this.treeViewContentSelectionDisabled = true;
 
-            treeViewContentSelection.SelectedNode = treeViewContentSelection.Nodes[0];
-
-
+            this.treeViewContentSelection.SelectedNode = this.treeViewContentSelection.Nodes[0];
         }
 
         /// <summary>
@@ -129,15 +127,15 @@ namespace Sharezbold
         private MigrationSettings UIToSettings()
         {
             this.settings = new MigrationSettings();
-            this.settings.FromDomain = textBoxFromDomain.Text;
-            this.settings.FromHost = textBoxFromHost.Text;
-            this.settings.FromUserName = textBoxFromUserName.Text;
-            this.settings.FromPassword = textBoxFromPassword.Text;
+            this.settings.FromDomain = this.textBoxFromDomain.Text;
+            this.settings.FromHost = this.textBoxFromHost.Text;
+            this.settings.FromUserName = this.textBoxFromUserName.Text;
+            this.settings.FromPassword = this.textBoxFromPassword.Text;
 
-            this.settings.ToDomain = textBoxToDomain.Text;
-            this.settings.ToHost = textBoxToHost.Text;
-            this.settings.ToUserName = textBoxToUserName.Text;
-            this.settings.ToPassword = textBoxToPassword.Text;
+            this.settings.ToDomain = this.textBoxToDomain.Text;
+            this.settings.ToHost = this.textBoxToHost.Text;
+            this.settings.ToUserName = this.textBoxToUserName.Text;
+            this.settings.ToPassword = this.textBoxToPassword.Text;
             return this.settings;
         }
 
@@ -222,24 +220,24 @@ namespace Sharezbold
         {
             try
             {
-                // check if all values are set:
+                //// check if all values are set:
                 this.ValidateInputFields();
 
                 treeViewContentSelection.Nodes.Clear();
                 this.UIToSettings();
                 this.waitForm.Show();
 
-                // this is your presumably long-running method
+                //// this is your presumably long-running method
                 Action exec = this.ApplyConfigurationAndLoadTree;
                 BackgroundWorker b = new BackgroundWorker();
 
-                // set the worker to try to login
+                //// set the worker to try to login
                 b.DoWork += (object sender1, DoWorkEventArgs e1) =>
                 {
                     exec.Invoke();
                 };
 
-                // set the worker to close your progress form when it's completed
+                //// set the worker to close your progress form when it's completed
                 b.RunWorkerCompleted += (object sender2, RunWorkerCompletedEventArgs e2) =>
                 {
                     this.waitForm.Hide();
@@ -253,7 +251,7 @@ namespace Sharezbold
                     }
                 };
 
-                // start the worker
+                //// start the worker
                 b.RunWorkerAsync();
             }
             catch (Exception ex)
@@ -328,8 +326,8 @@ namespace Sharezbold
         private void LoadMigrateFromTree()
         {
             ContentMigrator cm = new ContentMigrator(this.source, this.destination);
-            sourceTreeRoot = cm.GenerateMigrationTree();
-            this.treeViewContentSelection.Nodes.Add(sourceTreeRoot);
+            this.sourceTreeRoot = cm.GenerateMigrationTree();
+            this.treeViewContentSelection.Nodes.Add(this.sourceTreeRoot);
         }
 
         /// <summary>
@@ -358,7 +356,7 @@ namespace Sharezbold
         /// <param name="e">event arguments</param>
         private void TreeViewContentSelection_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            // The code only executes if the user caused the checked state to change.
+            //// The code only executes if the user caused the checked state to change.
             if (e.Action != TreeViewAction.Unknown)
             {
                 ((SpTreeNode)e.Node).MigrationObject.Skip = !e.Node.Checked;
@@ -376,28 +374,32 @@ namespace Sharezbold
         /// <param name="e">the event arguments</param>
         private void TreeViewContentSelection_DisableOrEnableEvent(object sender, TreeViewCancelEventArgs e)
         {
-            // disable for migration configuration
-            if (treeViewContentSelectionDisabled)
+            //// disable for migration configuration
+            if (this.treeViewContentSelectionDisabled)
+            {
                 e.Cancel = true;
+            }
         }
 
         /// <summary>
         /// Loads the items to configure to the listViewMigrationContent
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">the sender of the event</param>
+        /// <param name="e">the EventArgs itself</param>
         private void ButtonConfigureMigration_Click(object sender, EventArgs e)
         {
-            if (sourceTreeRoot.Checked)
+            if (this.sourceTreeRoot.Checked)
             {
-                listViewMigrationContent.Items.Add(new SpListViewItem(sourceTreeRoot.MigrationObject));
+                listViewMigrationContent.Items.Add(new SpListViewItem(this.sourceTreeRoot.MigrationObject));
             }
-            foreach (TreeNode web in sourceTreeRoot.Nodes)
+
+            foreach (TreeNode web in this.sourceTreeRoot.Nodes)
             {
                 if (web.Checked)
                 {
                     listViewMigrationContent.Items.Add(new SpListViewItem(((SpTreeNode)web).MigrationObject));
                 }
+
                 foreach (TreeNode li in web.Nodes)
                 {
                     if (li.Checked)
@@ -407,8 +409,8 @@ namespace Sharezbold
                 }
             }
 
-            //listViewMigrationContent.Items.AddRange(list);
-            //a.GetType() == typeof(Dog)
+            ////listViewMigrationContent.Items.AddRange(list);
+            ////a.GetType() == typeof(Dog)
         }
 
         /// <summary>
@@ -416,15 +418,15 @@ namespace Sharezbold
         /// </summary>
         /// <param name="sender">sender of the event</param>
         /// <param name="e">the EventArgs itself</param>
-        private void checkBoxMigrateContentType_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxMigrateContentTypeCheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxMigrateContentType.Checked)
+            if (this.checkBoxMigrateContentType.Checked)
             {
-                checkBoxMigrateGroup.Checked = true;
-                checkBoxMigratePermissionlevels.Checked = true;
-                checkBoxMigrateSiteColumns.Checked = true;
-                checkBoxMigrateUser.Checked = true;
-                checkBoxMigrateWorkflow.Checked = true;
+                this.checkBoxMigrateGroup.Checked = true;
+                this.checkBoxMigratePermissionlevels.Checked = true;
+                this.checkBoxMigrateSiteColumns.Checked = true;
+                this.checkBoxMigrateUser.Checked = true;
+                this.checkBoxMigrateWorkflow.Checked = true;
             }
         }
 
@@ -433,7 +435,7 @@ namespace Sharezbold
         /// </summary>
         /// <param name="sender">sender of the event</param>
         /// <param name="e">EventArgs itself</param>
-        private void buttonElementsMigration_Click(object sender, EventArgs e)
+        private void ButtonElementsMigrationClicked(object sender, EventArgs e)
         {
             try
             {
@@ -447,13 +449,13 @@ namespace Sharezbold
                 return;
             }
 
-            if (destination == null)
+            if (this.destination == null)
             {
                 this.ConnectToDestination();
             }
 
-            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(source, destination);
-            migrationWorker.StartMigration(checkBoxMigratePermissionlevels.Checked, checkBoxMigrateUser.Checked, checkBoxMigrateGroup.Checked, checkBoxMigrateSiteColumns.Checked, checkBoxMigratePermissionlevels.Checked, checkBoxMigrateWorkflow.Checked);
+            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination);
+            migrationWorker.StartMigration(this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
         }
     }
 }

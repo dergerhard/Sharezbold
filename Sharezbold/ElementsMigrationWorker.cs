@@ -1,36 +1,58 @@
-﻿
+//-----------------------------------------------------------------------
+// <copyright file="ElementsMigrationWorker.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 
 namespace Sharezbold
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Net;
-    using Sharezbold.ElementsMigration;
+    using System.Threading.Tasks;
+    using ElementsMigration;
     using Microsoft.SharePoint.Client;
 
-
+    /// <summary>
+    /// This class is the interface to the DLL "TypeMigration" and migrates the elements TypeContent, User, Group, Permission, Workflow and SiteColumns. 
+    /// </summary>
     internal class ElementsMigrationWorker
     {
         //// TODO enum kind of sharepoint
 
+        /// <summary>
+        /// The ClientContext of the source SharePoint.
+        /// </summary>
         private ClientContext sourceClientContext;
+
+        /// <summary>
+        /// The ClientContext of the target SharePoint.
+        /// </summary>
         private ClientContext targetClientContext;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ElementsMigrationWorker"/> class.
         /// </summary>
+        /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
+        /// <param name="targetClientContext">ClientContext of target SharePoint</param>
         internal ElementsMigrationWorker(ClientContext sourceClientContext, ClientContext targetClientContext)
         {
             this.sourceClientContext = sourceClientContext;
             this.targetClientContext = targetClientContext;
         }
 
+        /// <summary>
+        /// Start the migration.
+        /// </summary>
+        /// <param name="migrateContentTypes">true if migrate ContentTypes</param>
+        /// <param name="migrateUser">true if migrate User</param>
+        /// <param name="migrateGroup">true if migrate Group</param>
+        /// <param name="migrateSiteColumns">true if migrate SiteColumns</param>
+        /// <param name="migratePermission">true if migrate PermissionLevel</param>
+        /// <param name="migrateWorkflows">true if migrate Workflows</param>
         internal void StartMigration(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
         {
-            IElementsMigrator migrator = new Sharepoint2010Migrator(sourceClientContext, targetClientContext);
+            IElementsMigrator migrator = new Sharepoint2010Migrator(this.sourceClientContext, this.targetClientContext);
 
             if (migrateContentTypes)
             {
