@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TypeMigration.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TypeMigration_WebReference_Permissions" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://10.10.102.47/_vti_bin/Permissions.asmx</Value>
+    </Setting>
+    <Setting Name="TypeMigration_WebReference1_UserGroup" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://10.10.102.47/_vti_bin/UserGroup.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

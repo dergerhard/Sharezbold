@@ -57,7 +57,8 @@ namespace Sharezbold
         /// <param name="migrateSiteColumns">true if migrate SiteColumns</param>
         /// <param name="migratePermission">true if migrate PermissionLevel</param>
         /// <param name="migrateWorkflows">true if migrate Workflows</param>
-        internal bool StartMigration(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
+        internal bool StartMigrationAsync(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
+        //internal Task<bool> StartMigrationAsync(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
         {
             IElementsMigrator migrator = new Sharepoint2010Migrator(this.sourceClientContext, this.targetClientContext);
 
@@ -69,10 +70,11 @@ namespace Sharezbold
                 }
                 catch (ElementsMigrationException e)
                 {
-                    listBoxLog.Text = listBoxLog.Text + "\n" + "ERROR during migrating Content-Types:";
-                    listBoxLog.Text += e.Message + "\n";
+                    this.listBoxLog.Text = listBoxLog.Text + "\n" + "ERROR during migrating Content-Types:";
+                    this.listBoxLog.Text += e.Message + "\n";
                     Console.WriteLine("ERROR during migrating Content-Types");
                     Console.WriteLine(e);
+                    this.listBoxLog.Refresh();
                 }
             }
 

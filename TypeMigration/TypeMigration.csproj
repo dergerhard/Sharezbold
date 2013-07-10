@@ -44,6 +44,8 @@
     <Reference Include="Microsoft.SharePoint.Client.WorkflowServices, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,6 +56,12 @@
     <Compile Include="ContentTypesMigrator.cs" />
     <Compile Include="IElementsMigrator.cs" />
     <Compile Include="AbstractMigrator.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="SharePoint2007Migrator.cs" />
     <Compile Include="Sharepoint2010Migrator.cs" />
     <Compile Include="Sharepoint2010UserMigrator.cs" />
     <Compile Include="MigrationType.cs" />
@@ -65,7 +73,70 @@
     <Compile Include="UserGroupMigrator.cs" />
     <Compile Include="ElementsMigrationException.cs" />
     <Compile Include="Sharepoint2013UserMigrator.cs" />
+    <Compile Include="Web References\GetGroupSharePoint2007\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\GetPermissionSharePoint2007\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
     <Compile Include="WorkflowMigrator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://10.10.102.47/_vti_bin/Permissions.asmx%3fop=GetPermissionCollection">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\GetPermissionSharePoint2007\</RelPath>
+      <UpdateFromURL>http://10.10.102.47/_vti_bin/Permissions.asmx%3fop=GetPermissionCollection</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>TypeMigration_WebReference_Permissions</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://10.10.102.47/_vti_bin/UserGroup.asmx%3fop=GetGroupCollection">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\GetGroupSharePoint2007\</RelPath>
+      <UpdateFromURL>http://10.10.102.47/_vti_bin/UserGroup.asmx%3fop=GetGroupCollection</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>TypeMigration_WebReference1_UserGroup</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\GetGroupSharePoint2007\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\GetGroupSharePoint2007\UserGroup.wsdl" />
+    <None Include="Web References\GetPermissionSharePoint2007\Permissions.wsdl" />
+    <None Include="Web References\GetPermissionSharePoint2007\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\GetPermissionSharePoint2007\Permissions.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\GetGroupSharePoint2007\UserGroup.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

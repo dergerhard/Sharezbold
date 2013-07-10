@@ -8,7 +8,11 @@ namespace Sharezbold.FileUpAndDownload
     using System.Text;
     using System.Threading.Tasks;
 
-    public class Class1
+    public class FileMigration
     {
+        public void MigrateFile()
+        {
+
+        }
     }
 }

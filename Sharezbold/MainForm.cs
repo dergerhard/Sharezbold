@@ -342,7 +342,7 @@ namespace Sharezbold
         {
             this.destination = new ClientContext(this.settings.FromHost);
             var cc = new CredentialCache();
-            cc.Add(new Uri(this.source.Url), "NTLM", new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain));
+            cc.Add(new Uri(this.destination.Url), "NTLM", new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain));
             this.source.Credentials = cc;
             this.source.ExecuteQuery();
         }
@@ -507,10 +507,18 @@ namespace Sharezbold
             }
 
             bool finished;
-            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination, this.listBoxMigrationLog);
+            ClientContext sourceClientContext = new ClientContext(this.settings.FromHost);
+            sourceClientContext.Credentials = new NetworkCredential(this.settings.FromUserName, this.settings.FromPassword, this.settings.FromPassword);
+            ClientContext targetClientContext = new ClientContext(this.settings.ToHost);
+            sourceClientContext.Credentials = new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain);
+            Console.WriteLine("connect to server '{0}'; username = '{1}'; password = '{2}'; domain = '{3}'", this.settings.ToHost, this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain);
+            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, targetClientContext, this.listBoxMigrationLog);
             this.tabPageMigrationProgress.Show();
 
-            finished = migrationWorker.StartMigration(this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
+            finished = migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
+            // Task<bool> result = migrationWorker.StartMigrationAsync(this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
+
+          //  finished = await result;
         }
 
         private void buttonStartMigration_Click_1(object sender, EventArgs e)
