@@ -190,8 +190,8 @@ namespace Sharezbold
             this.tabControMain.Controls.Add(this.tabPageConfiguration);
             this.tabControMain.Controls.Add(this.tabPageContentSelection);
             this.tabControMain.Controls.Add(this.tabPageMigrationPreparation);
-            this.tabControMain.Controls.Add(this.tabPageMigrationProgress);
             this.tabControMain.Controls.Add(this.tabPageMigrationElements);
+            this.tabControMain.Controls.Add(this.tabPageMigrationProgress);
             this.tabControMain.Location = new System.Drawing.Point(0, 27);
             this.tabControMain.Name = "tabControMain";
             this.tabControMain.SelectedIndex = 0;
