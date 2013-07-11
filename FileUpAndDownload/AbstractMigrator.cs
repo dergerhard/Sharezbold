@@ -20,16 +20,6 @@ namespace Sharezbold.FileMigration
     public abstract class AbstractMigrator
     {
         /// <summary>
-        /// ClientContext of the source SharePoint.
-        /// </summary>
-        protected ClientContext sourceClientContext;
-
-        /// <summary>
-        /// ClientContext of the target SharePoint.
-        /// </summary>
-        protected ClientContext targetClientContext;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="AbstractMigrator"/> class.
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
@@ -40,6 +30,15 @@ namespace Sharezbold.FileMigration
             this.targetClientContext = targetClientContext;
         }
 
+        /// <summary>
+        /// ClientContext of the source SharePoint.
+        /// </summary>
+        internal ClientContext sourceClientContext { get; private set; }
+
+        /// <summary>
+        /// ClientContext of the target SharePoint.
+        /// </summary>
+        internal ClientContext targetClientContext { get; private set; }
 
         /// <summary>
         /// Migrate the file from the source-SharePoint to the target-SharePoint.
