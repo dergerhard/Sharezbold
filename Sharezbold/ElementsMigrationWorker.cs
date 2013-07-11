@@ -108,7 +108,7 @@ namespace Sharezbold
         {
             try
             {
-                this.listBoxLog.Items.Add("START MIGRATION OF " + migrationType + "\n\r");
+                this.listBoxLog.Items.Add("=============== START MIGRATION OF " + migrationType + " =================== \n\r");
                 this.listBoxLog.Update();
                 LinkedList<string> log = method();
 
@@ -128,6 +128,8 @@ namespace Sharezbold
                 Console.WriteLine(e);
                 this.listBoxLog.Update();
             }
+
+            this.listBoxLog.Items.Add("=============== FINISHED MIGRATION OF " + migrationType + " =================== \n\r");
         }
 
         private delegate LinkedList<string> DoMigration();
