@@ -51,6 +51,8 @@ namespace Sharezbold.ElementsMigration
         private void ImportNewContentTypes()
         {
             Console.WriteLine("import new ContentTypes...");
+            Log.AddLast("import new ContentTypes...");
+
             ContentTypeCollection contentTypeCollectionSourceServer = this.GetAllContentTypes(sourceClientContext);
             ContentTypeCollection contentTypeCollectionTargetServer = this.GetAllContentTypes(targetClientContext);
 
@@ -61,12 +63,14 @@ namespace Sharezbold.ElementsMigration
                 if (!namesOfContentTypesOnTargetServer.Contains(contentType.Name))
                 {
                     Console.WriteLine("import contentType = {0}", contentType.Name);
+                    Log.AddLast("import ContentType = '" + contentType.Name + "'");
 
                     this.CreateContentType(contentTypeCollectionSourceServer, contentTypeCollectionTargetServer, contentType);
                 }
                 else
                 {
                     Console.WriteLine("don't have to migrate '{0}'", contentType.Name);
+                    Log.AddLast("Don't have to migrate '" + contentType.Name + "'");
                 }
             }
 
@@ -77,6 +81,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during importing new ContentTypes.", e);
+                Log.AddLast("Exception during importing new ContentTypes. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during importing new ContentTypes.", e);
             }
         }
@@ -91,7 +96,7 @@ namespace Sharezbold.ElementsMigration
         private Microsoft.SharePoint.Client.ContentType AddParent(ContentTypeCollection sourceContentTypeCollection, ContentTypeCollection targetContentTypeCollection, Microsoft.SharePoint.Client.ContentType parentContentType)
         {
             Console.WriteLine("add parent ContentType...");
-
+            Log.AddLast("adding parent ContentType...");
             if (parentContentType == null)
             {
                 return null;
@@ -104,6 +109,7 @@ namespace Sharezbold.ElementsMigration
             catch (ElementsMigrationException e)
             {
                 Console.WriteLine("have to create parent content type");
+                Log.AddLast("have to create parent ContentType");
             }
 
             this.CreateContentType(sourceContentTypeCollection, targetContentTypeCollection, parentContentType);
@@ -147,6 +153,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during fetching the ContentTypes.", e);
+                Log.AddLast("Exception during fetching the ContentTypes. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during fetching the ContentTypes.", e);
             }
 

@@ -42,7 +42,7 @@ namespace Sharezbold.ElementsMigration
         /// Migrates the ContentTypes.
         /// </summary>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        public void MigrateContentTypes()
+        public LinkedList<string> MigrateContentTypes()
         {
             AbstractMigrator contentTypeMigrator = null;
 
@@ -56,13 +56,14 @@ namespace Sharezbold.ElementsMigration
             }
 
             contentTypeMigrator.Migrate();
+            return contentTypeMigrator.Log;
         }
 
         /// <summary>
         /// Migrates the User.
         /// </summary>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        public void MigrateUser()
+        public LinkedList<string> MigrateUser()
         {
             AbstractMigrator userMigrator = null;
 
@@ -76,13 +77,14 @@ namespace Sharezbold.ElementsMigration
             }
 
             userMigrator.Migrate();
+            return userMigrator.Log;
         }
 
         /// <summary>
         /// Migrates the Groups.
         /// </summary>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        public void MigrateGroup()
+        public LinkedList<string> MigrateGroup()
         {
             AbstractMigrator groupMigrator = null;
 
@@ -96,13 +98,14 @@ namespace Sharezbold.ElementsMigration
             }
 
             groupMigrator.Migrate();
+            return groupMigrator.Log;
         }
 
         /// <summary>
         /// Migrates the PermissionLevels (Roles).
         /// </summary>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        public void MigratePermissionlevels()
+        public LinkedList<string> MigratePermissionlevels()
         {
             AbstractMigrator roleMigrator = null;
 
@@ -116,13 +119,14 @@ namespace Sharezbold.ElementsMigration
             }
 
             roleMigrator.Migrate();
+            return roleMigrator.Log;
         }
 
         /// <summary>
         /// Migrates the SiteColumns.
         /// </summary>
         /// <exception cref="NotImplementedException">Not implemented till now.</exception>
-        public void MigrateSiteColumns()
+        public LinkedList<string> MigrateSiteColumns()
         {
             AbstractMigrator siteColumsMigrator = null;
 
@@ -136,13 +140,14 @@ namespace Sharezbold.ElementsMigration
             }
 
             siteColumsMigrator.Migrate();
+            return siteColumsMigrator.Log;
         }
 
         /// <summary>
         /// Migrates the Workflow.
         /// </summary>
         /// <exception cref="NotImplementedException">Not implemented till now.</exception>
-        public void MigrateWorkflow()
+        public LinkedList<string> MigrateWorkflow()
         {
             throw new NotImplementedException();
         }

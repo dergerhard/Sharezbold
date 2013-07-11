@@ -8,6 +8,7 @@
 namespace Sharezbold
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
     using System.Windows.Forms;
@@ -109,7 +110,14 @@ namespace Sharezbold
             {
                 this.listBoxLog.Items.Add("START MIGRATION OF " + migrationType + "\n\r");
                 this.listBoxLog.Update();
-                method();
+                LinkedList<string> log = method();
+
+                foreach (var logEntry in log)
+                {
+                    this.listBoxLog.Items.Add(logEntry);
+                }
+                
+                this.listBoxLog.Update();
             }
             catch (ElementsMigrationException e)
             {
@@ -118,10 +126,10 @@ namespace Sharezbold
                 this.listBoxLog.Update();
                 Console.WriteLine("ERROR during migrating {0}", migrationType);
                 Console.WriteLine(e);
-                this.listBoxLog.Refresh();
+                this.listBoxLog.Update();
             }
         }
 
-        private delegate void DoMigration();
+        private delegate LinkedList<string> DoMigration();
     }
 }

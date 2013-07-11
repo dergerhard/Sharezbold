@@ -7,6 +7,7 @@
 
 namespace Sharezbold.ElementsMigration
 {
+    using System.Collections.Generic;
     using Microsoft.SharePoint.Client;
 
     /// <summary>
@@ -33,6 +34,8 @@ namespace Sharezbold.ElementsMigration
         {
             this.sourceClientContext = sourceClientContext;
             this.targetClientContext = targetClientContext;
+
+            this.Log = new LinkedList<string>();
         }
 
         protected AbstractMigrator()
@@ -43,5 +46,10 @@ namespace Sharezbold.ElementsMigration
         /// Migrates the datas.
         /// </summary>
         public abstract void Migrate();
+
+        /// <summary>
+        /// Holds the log of the migration.
+        /// </summary>
+        internal LinkedList<string> Log { get; private set; }
     }
 }
