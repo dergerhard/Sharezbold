@@ -18,7 +18,7 @@ namespace Sharezbold.FileMigration
         /// Initializes a new instance of the <see cref="FileMigrationException"/> class.
         /// </summary>
         /// <param name="message">Message of exception</param>
-        /// <param name="e">cause-exception</param>
+        /// <param name="e">the cause-exception</param>
         public FileMigrationException(string message, Exception e) : base(message, e)
         {
         }
