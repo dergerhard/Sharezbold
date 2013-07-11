@@ -73,7 +73,11 @@ namespace Sharezbold
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.treeViewMigrateTo = new System.Windows.Forms.TreeView();
+            this.labelLegalType = new System.Windows.Forms.Label();
+            this.labelElementName = new System.Windows.Forms.Label();
             this.labelElementType = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.buttonStartMigration = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
@@ -92,10 +96,6 @@ namespace Sharezbold
             this.checkBoxMigrateSiteColumns = new System.Windows.Forms.CheckBox();
             this.checkBoxMigrateWorkflow = new System.Windows.Forms.CheckBox();
             this.checkBoxMigratePermissionlevels = new System.Windows.Forms.CheckBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.labelElementName = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.labelLegalType = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabControMain.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
@@ -130,27 +130,27 @@ namespace Sharezbold
             this.loadMigrationProfileToolStripMenuItem1,
             this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // saveMigrationProfileToolStripMenuItem1
             // 
             this.saveMigrationProfileToolStripMenuItem1.Name = "saveMigrationProfileToolStripMenuItem1";
-            this.saveMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
+            this.saveMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(204, 22);
             this.saveMigrationProfileToolStripMenuItem1.Text = "Save Migration Profile ...";
             this.saveMigrationProfileToolStripMenuItem1.Click += new System.EventHandler(this.SaveMigrationProfileToolStripMenuItem_Click);
             // 
             // loadMigrationProfileToolStripMenuItem1
             // 
             this.loadMigrationProfileToolStripMenuItem1.Name = "loadMigrationProfileToolStripMenuItem1";
-            this.loadMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
+            this.loadMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(204, 22);
             this.loadMigrationProfileToolStripMenuItem1.Text = "Load Migration Profile ...";
             this.loadMigrationProfileToolStripMenuItem1.Click += new System.EventHandler(this.LoadMigrationProfileToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -167,21 +167,21 @@ namespace Sharezbold
             // loadMigrationProfileToolStripMenuItem
             // 
             this.loadMigrationProfileToolStripMenuItem.Name = "loadMigrationProfileToolStripMenuItem";
-            this.loadMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.loadMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.loadMigrationProfileToolStripMenuItem.Text = "Load Migration profile";
             this.loadMigrationProfileToolStripMenuItem.Click += new System.EventHandler(this.LoadMigrationProfileToolStripMenuItem_Click);
             // 
             // saveMigrationProfileToolStripMenuItem
             // 
             this.saveMigrationProfileToolStripMenuItem.Name = "saveMigrationProfileToolStripMenuItem";
-            this.saveMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.saveMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.saveMigrationProfileToolStripMenuItem.Text = "Save Migration profile";
             this.saveMigrationProfileToolStripMenuItem.Click += new System.EventHandler(this.SaveMigrationProfileToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.exitToolStripMenuItem.Text = "Beenden";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -500,6 +500,24 @@ namespace Sharezbold
             this.treeViewMigrateTo.TabIndex = 5;
             this.treeViewMigrateTo.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeViewMigrateTo_AfterSelect);
             // 
+            // labelLegalType
+            // 
+            this.labelLegalType.AutoSize = true;
+            this.labelLegalType.Location = new System.Drawing.Point(156, 77);
+            this.labelLegalType.Name = "labelLegalType";
+            this.labelLegalType.Size = new System.Drawing.Size(79, 13);
+            this.labelLegalType.TabIndex = 4;
+            this.labelLegalType.Text = "labelLegalType";
+            // 
+            // labelElementName
+            // 
+            this.labelElementName.AutoSize = true;
+            this.labelElementName.Location = new System.Drawing.Point(156, 53);
+            this.labelElementName.Name = "labelElementName";
+            this.labelElementName.Size = new System.Drawing.Size(95, 13);
+            this.labelElementName.TabIndex = 4;
+            this.labelElementName.Text = "labelElementName";
+            // 
             // labelElementType
             // 
             this.labelElementType.AutoSize = true;
@@ -508,6 +526,24 @@ namespace Sharezbold
             this.labelElementType.Size = new System.Drawing.Size(91, 13);
             this.labelElementType.TabIndex = 4;
             this.labelElementType.Text = "labelElementType";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(12, 77);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(119, 13);
+            this.label11.TabIndex = 3;
+            this.label11.Text = "Legal Destination Type:";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(12, 53);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(116, 13);
+            this.label10.TabIndex = 3;
+            this.label10.Text = "Source Element Name:";
             // 
             // label9
             // 
@@ -695,42 +731,6 @@ namespace Sharezbold
             this.checkBoxMigratePermissionlevels.TabIndex = 0;
             this.checkBoxMigratePermissionlevels.Text = "Migrate PermissionLevels";
             this.checkBoxMigratePermissionlevels.UseVisualStyleBackColor = true;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(12, 53);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(116, 13);
-            this.label10.TabIndex = 3;
-            this.label10.Text = "Source Element Name:";
-            // 
-            // labelElementName
-            // 
-            this.labelElementName.AutoSize = true;
-            this.labelElementName.Location = new System.Drawing.Point(156, 53);
-            this.labelElementName.Name = "labelElementName";
-            this.labelElementName.Size = new System.Drawing.Size(95, 13);
-            this.labelElementName.TabIndex = 4;
-            this.labelElementName.Text = "labelElementName";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(12, 77);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(119, 13);
-            this.label11.TabIndex = 3;
-            this.label11.Text = "Legal Destination Type:";
-            // 
-            // labelLegalType
-            // 
-            this.labelLegalType.AutoSize = true;
-            this.labelLegalType.Location = new System.Drawing.Point(156, 77);
-            this.labelLegalType.Name = "labelLegalType";
-            this.labelLegalType.Size = new System.Drawing.Size(79, 13);
-            this.labelLegalType.TabIndex = 4;
-            this.labelLegalType.Text = "labelLegalType";
             // 
             // MainForm
             // 

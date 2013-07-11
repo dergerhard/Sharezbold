@@ -553,9 +553,13 @@ namespace Sharezbold
                 return;
             }
 
-            if (this.destination == null)
+            if (this.source == null || this.destination == null)
             {
-                this.ConnectToDestination();
+                this.tabPageConfiguration.Show();
+                this.tabControMain.SelectedTab = tabPageConfiguration;
+                MessageBox.Show("Please connect to the servers first!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return;
             }
 
             this.tabPageMigrationProgress.Show();
