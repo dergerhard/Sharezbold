@@ -45,8 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileMigration.cs" />
+    <Compile Include="AbstractMigrator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SharePoint2010And2013FileMigrator.cs" />
+    <Compile Include="SharePoint2010FileMigrator.cs" />
+    <Compile Include="SharePoint2013FileMigrator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
