@@ -29,10 +29,6 @@ namespace Sharezbold.ElementsMigration
         internal UserGroupMigrator(ClientContext sourceClientContext, ClientContext targetClientContext)
             : base(sourceClientContext, targetClientContext)
         {
-            /*
-            this.sourceClientContext = sourceClientContext;
-            this.targetClientContext = targetClientContext;
-            */
             this.groupsToAdapt = new HashSet<string>();
         }
 
