@@ -28,8 +28,28 @@ namespace Sharezbold.FileMigration
 
         internal void MigrateFile(string documentListName, string documentName)
         {
-            Stream fileStream = this.DownloadDocument(documentName);
-            this.UploadDocument(documentListName, null, documentName, ConvertStreamToByteArray(fileStream));
+            Stream fileStream = null;
+            try
+            {
+                fileStream = this.DownloadDocument(documentName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error during download file from source-SharePoint. Error:");
+                Console.WriteLine(e);
+                throw new FileMigrationException("could not download file from source SharePoint.", e);
+            }
+
+            try
+            {
+                this.UploadDocument(documentListName, null, documentName, ConvertStreamToByteArray(fileStream));
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error during download file to target-SharePoint. Error:");
+                Console.WriteLine(e);
+                throw new FileMigrationException("could not upload file to target SharePoint.", e);
+            }
         }
 
         private Stream DownloadDocument(string documentName)
