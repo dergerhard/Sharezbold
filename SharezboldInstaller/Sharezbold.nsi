@@ -5,12 +5,11 @@
 ############################################################################################
 
 !define APP_NAME "Sharezbold"
-!define COMP_NAME "FHWN"
-!define WEB_SITE "http://www.fhwn.ac.at"
+!define COMP_NAME "FH Wiener Neustadt"
 !define VERSION "00.00.00.01"
 !define COPYRIGHT "Liebmann Holzgethan 2013"
-!define DESCRIPTION "SharePoint-Migration"
-!define INSTALLER_NAME "C:\Users\Thomas\Downloads\Nsisqssg\Output\Sharezbold\setup.exe"
+!define DESCRIPTION "Application"
+!define INSTALLER_NAME ".\bin\setup.exe"
 !define MAIN_APP_EXE "Sharezbold.exe"
 !define INSTALL_TYPE "SetShellVarContext all"
 !define REG_ROOT "HKLM"
@@ -44,11 +43,17 @@ InstallDir "$PROGRAMFILES\Sharezbold"
 !define MUI_ABORTWARNING
 !define MUI_UNABORTWARNING
 
+!define MUI_LANGDLL_REGISTRY_ROOT "${REG_ROOT}"
+!define MUI_LANGDLL_REGISTRY_KEY "${UNINSTALL_PATH}"
+!define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
+
 !insertmacro MUI_PAGE_WELCOME
 
 !ifdef LICENSE_TXT
 !insertmacro MUI_PAGE_LICENSE "${LICENSE_TXT}"
 !endif
+
+!insertmacro MUI_PAGE_DIRECTORY
 
 !ifdef REG_START_MENU
 !define MUI_STARTMENUPAGE_NODISABLE
@@ -70,7 +75,16 @@ InstallDir "$PROGRAMFILES\Sharezbold"
 
 !insertmacro MUI_UNPAGE_FINISH
 
+!insertmacro MUI_LANGUAGE "German"
 !insertmacro MUI_LANGUAGE "English"
+
+!insertmacro MUI_RESERVEFILE_LANGDLL
+
+######################################################################
+
+Function .onInit
+!insertmacro MUI_LANGDLL_DISPLAY
+FunctionEnd
 
 ######################################################################
 
@@ -78,18 +92,16 @@ Section -MainProgram
 ${INSTALL_TYPE}
 SetOverwrite ifnewer
 SetOutPath "$INSTDIR"
-File "C:\Program Files\Sharezbold\ContentMigration.dll"
-File "C:\Program Files\Sharezbold\ContentMigration.pdb"
-File "C:\Program Files\Sharezbold\Microsoft.SharePoint.Client.dll"
-File "C:\Program Files\Sharezbold\Microsoft.SharePoint.Client.Runtime.dll"
-File "C:\Program Files\Sharezbold\Sharezbold.exe"
-File "C:\Program Files\Sharezbold\Sharezbold.exe.config"
-File "C:\Program Files\Sharezbold\Sharezbold.pdb"
-File "C:\Program Files\Sharezbold\Sharezbold.vshost.exe"
-File "C:\Program Files\Sharezbold\Sharezbold.vshost.exe.config"
-File "C:\Program Files\Sharezbold\Sharezbold.vshost.exe.manifest"
-File "C:\Program Files\Sharezbold\TypeMigration.exe"
-File "C:\Program Files\Sharezbold\TypeMigration.pdb"
+File "..\Sharezbold\bin\Debug\ContentMigration.dll"
+File "..\Sharezbold\bin\Debug\Microsoft.SharePoint.Client.dll"
+File "..\Sharezbold\bin\Debug\Microsoft.SharePoint.Client.Runtime.dll"
+File "..\Sharezbold\bin\Debug\Sharezbold.exe"
+File "..\Sharezbold\bin\Debug\Sharezbold.exe.config"
+File "..\Sharezbold\bin\Debug\Sharezbold.pdb"
+File "..\Sharezbold\bin\Debug\Sharezbold.vshost.exe"
+File "..\Sharezbold\bin\Debug\Sharezbold.vshost.exe.config"
+File "..\Sharezbold\bin\Debug\Sharezbold.vshost.exe.manifest"
+File "..\Sharezbold\bin\Debug\TypeMigration.dll"
 SectionEnd
 
 ######################################################################
@@ -139,7 +151,6 @@ SectionEnd
 Section Uninstall
 ${INSTALL_TYPE}
 Delete "$INSTDIR\ContentMigration.dll"
-Delete "$INSTDIR\ContentMigration.pdb"
 Delete "$INSTDIR\Microsoft.SharePoint.Client.dll"
 Delete "$INSTDIR\Microsoft.SharePoint.Client.Runtime.dll"
 Delete "$INSTDIR\Sharezbold.exe"
@@ -148,8 +159,7 @@ Delete "$INSTDIR\Sharezbold.pdb"
 Delete "$INSTDIR\Sharezbold.vshost.exe"
 Delete "$INSTDIR\Sharezbold.vshost.exe.config"
 Delete "$INSTDIR\Sharezbold.vshost.exe.manifest"
-Delete "$INSTDIR\TypeMigration.exe"
-Delete "$INSTDIR\TypeMigration.pdb"
+Delete "$INSTDIR\TypeMigration.dll"
 Delete "$INSTDIR\uninstall.exe"
 !ifdef WEB_SITE
 Delete "$INSTDIR\${APP_NAME} website.url"
@@ -179,6 +189,12 @@ RmDir "$SMPROGRAMS\Sharezbold"
 DeleteRegKey ${REG_ROOT} "${REG_APP_PATH}"
 DeleteRegKey ${REG_ROOT} "${UNINSTALL_PATH}"
 SectionEnd
+
+######################################################################
+
+Function un.onInit
+!insertmacro MUI_UNGETLANGUAGE
+FunctionEnd
 
 ######################################################################
 
