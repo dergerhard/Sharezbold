@@ -1,4 +1,9 @@
-﻿
+﻿//-----------------------------------------------------------------------
+// <copyright file="RoleExtensions.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 
 namespace Sharezbold.ElementsMigration.Extension
 {
@@ -6,9 +11,11 @@ namespace Sharezbold.ElementsMigration.Extension
     using System.Collections.Generic;
     using Microsoft.SharePoint.Client;
 
+    /// <summary>
+    /// Holds the extensions for the Roles.
+    /// </summary>
     internal static class RoleExtensions
     {
-
         /// <summary>
         /// Returns all names of given RoleDefinitions as HashSet.
         /// </summary>

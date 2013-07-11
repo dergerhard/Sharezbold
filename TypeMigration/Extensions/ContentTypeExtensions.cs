@@ -12,7 +12,7 @@ namespace Sharezbold.ElementsMigration.Extension
     using Microsoft.SharePoint.Client;
 
     /// <summary>
-    /// Holds the Extionsions of this project.
+    /// Holds the extensions for the ContentTypes.
     /// </summary>
     internal static class ContentTypeExtensions
     {
