@@ -43,7 +43,8 @@ namespace Sharezbold.ElementsMigration
         /// <exception cref="ElementsMigrationException">If the migration fails</exception>
         private void ImportNewUsers()
         {
-            Console.WriteLine("import new ContentTypes...");
+            Console.WriteLine("import new Users...");
+            Log.AddLast("import new Users...");
             UserCollection sourceUserCollection = this.GetAllUser(sourceClientContext);
             UserCollection targetUserCollection = this.GetAllUser(targetClientContext);
 
@@ -54,6 +55,7 @@ namespace Sharezbold.ElementsMigration
                 if (!targetUserNames.Contains(user.LoginName))
                 {
                     Console.WriteLine("Import user '{0}'", user.LoginName);
+                    Log.AddLast("import User '" + user.LoginName + "'");
                     UserCreationInformation creationObject = new UserCreationInformation();
                     creationObject.Email = user.Email;
                     creationObject.LoginName = user.LoginName;
@@ -64,6 +66,7 @@ namespace Sharezbold.ElementsMigration
                 else
                 {
                     Console.WriteLine("user '{0}' is already on target server. nothing to import.", user.LoginName);
+                    Log.AddLast("don't have to import user '" + user.LoginName + "'");
                 }
             }
 
@@ -74,6 +77,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during importing the SiteUsers.", e);
+                Log.AddLast("Exception during importing the Users. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during importing the SiteUsers.", e);
             }
         } 
@@ -97,6 +101,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during fetching the SiteUsers.", e);
+                Log.AddLast("Exception during fetching the SiteUsers. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during fetching the SiteUsers.", e);
             }
 

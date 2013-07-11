@@ -44,6 +44,7 @@ namespace Sharezbold.ElementsMigration
         private void ImportNewRoleDefinitions()
         {
             Console.WriteLine("import new RoleDefinitions...");
+            Log.AddLast("import new RoleDefinitions...");
             RoleDefinitionCollection sourceRoleDefinitionCollection = this.GetAllRollDefinitions(sourceClientContext);
             RoleDefinitionCollection targetRoleDefinitionCollection = this.GetAllRollDefinitions(targetClientContext);
 
@@ -54,6 +55,7 @@ namespace Sharezbold.ElementsMigration
                 if (!targetRoleDefinitionNames.Contains(roleDefinition.Name))
                 {
                     Console.WriteLine("import roleDefinition '{0}'", roleDefinition.Name);
+                    Log.AddLast("import RoleDefinition '" + roleDefinition.Name + "'");
 
                     RoleDefinitionCreationInformation creationObject = new RoleDefinitionCreationInformation();
                     creationObject.BasePermissions = roleDefinition.BasePermissions;
@@ -66,6 +68,7 @@ namespace Sharezbold.ElementsMigration
                 else
                 {
                     Console.WriteLine("don't have to import '{0}'", roleDefinition.Name);
+                    Log.AddLast("don't have to import '" + roleDefinition.Name + "'");
                 }
             }
 
@@ -76,6 +79,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during importing new RoleDefinition.", e);
+                Log.AddLast("Exception during importing new RoleDefinition. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during importing new RoleDefinition.", e);
             }
         }
@@ -99,6 +103,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during fetching the RoleDefinitons.", e);
+                Log.AddLast("Exception during fetching the RoleDefinitons. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during fetching the RoleDefinitons.", e);
             }
 
