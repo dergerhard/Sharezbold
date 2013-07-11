@@ -24,6 +24,12 @@ namespace Sharezbold.FileMigration
             this.migrator = new SharePoint2010And2013FileMigrator(sourceClientContext, targetClientContext);
         }
 
+        /// <summary>
+        /// Migrate the file from the source-SharePoint to the target-SharePoint.
+        /// </summary>
+        /// <param name="documentListName">name of documentlist</param>
+        /// <param name="documentName">name of document</param>
+        /// <exception cref="FileMigrationException">if the migration of the file fails.</exception>
         public override void MigrateFile(string documentListName, string documentName)
         {
             this.migrator.MigrateFile(documentListName, documentName);
