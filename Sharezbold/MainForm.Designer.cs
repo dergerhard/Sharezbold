@@ -83,10 +83,6 @@ namespace Sharezbold
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.listViewMigrationContent = new System.Windows.Forms.ListView();
             this.imageListMigrationContent = new System.Windows.Forms.ImageList(this.components);
-            this.tabPageMigrationProgress = new System.Windows.Forms.TabPage();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.tabPageMigrationElements = new System.Windows.Forms.TabPage();
             this.checkBoxMigrateContentType = new System.Windows.Forms.CheckBox();
             this.buttonElementsMigration = new System.Windows.Forms.Button();
@@ -96,6 +92,10 @@ namespace Sharezbold
             this.checkBoxMigrateSiteColumns = new System.Windows.Forms.CheckBox();
             this.checkBoxMigrateWorkflow = new System.Windows.Forms.CheckBox();
             this.checkBoxMigratePermissionlevels = new System.Windows.Forms.CheckBox();
+            this.tabPageMigrationProgress = new System.Windows.Forms.TabPage();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tabControMain.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
@@ -108,9 +108,9 @@ namespace Sharezbold
             this.groupBox6.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
+            this.tabPageMigrationElements.SuspendLayout();
             this.tabPageMigrationProgress.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.tabPageMigrationElements.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -188,9 +188,9 @@ namespace Sharezbold
             // tabControMain
             // 
             this.tabControMain.Controls.Add(this.tabPageConfiguration);
+            this.tabControMain.Controls.Add(this.tabPageMigrationElements);
             this.tabControMain.Controls.Add(this.tabPageContentSelection);
             this.tabControMain.Controls.Add(this.tabPageMigrationPreparation);
-            this.tabControMain.Controls.Add(this.tabPageMigrationElements);
             this.tabControMain.Controls.Add(this.tabPageMigrationProgress);
             this.tabControMain.Location = new System.Drawing.Point(0, 27);
             this.tabControMain.Name = "tabControMain";
@@ -593,45 +593,6 @@ namespace Sharezbold
             this.imageListMigrationContent.Images.SetKeyName(0, "error.png");
             this.imageListMigrationContent.Images.SetKeyName(1, "ok.png");
             // 
-            // tabPageMigrationProgress
-            // 
-            this.tabPageMigrationProgress.Controls.Add(this.groupBox5);
-            this.tabPageMigrationProgress.Location = new System.Drawing.Point(4, 22);
-            this.tabPageMigrationProgress.Name = "tabPageMigrationProgress";
-            this.tabPageMigrationProgress.Size = new System.Drawing.Size(1023, 380);
-            this.tabPageMigrationProgress.TabIndex = 2;
-            this.tabPageMigrationProgress.Text = "Migration Progress";
-            this.tabPageMigrationProgress.UseVisualStyleBackColor = true;
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.listBoxMigrationLog);
-            this.groupBox5.Controls.Add(this.button1);
-            this.groupBox5.Location = new System.Drawing.Point(0, 0);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1020, 375);
-            this.groupBox5.TabIndex = 3;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Migration Progress";
-            // 
-            // listBoxMigrationLog
-            // 
-            this.listBoxMigrationLog.FormattingEnabled = true;
-            this.listBoxMigrationLog.Location = new System.Drawing.Point(8, 19);
-            this.listBoxMigrationLog.Name = "listBoxMigrationLog";
-            this.listBoxMigrationLog.Size = new System.Drawing.Size(1006, 316);
-            this.listBoxMigrationLog.TabIndex = 0;
-            // 
-            // button1
-            // 
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(914, 346);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Finish & Exit";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // tabPageMigrationElements
             // 
             this.tabPageMigrationElements.Controls.Add(this.checkBoxMigrateContentType);
@@ -732,6 +693,45 @@ namespace Sharezbold
             this.checkBoxMigratePermissionlevels.Text = "Migrate PermissionLevels";
             this.checkBoxMigratePermissionlevels.UseVisualStyleBackColor = true;
             // 
+            // tabPageMigrationProgress
+            // 
+            this.tabPageMigrationProgress.Controls.Add(this.groupBox5);
+            this.tabPageMigrationProgress.Location = new System.Drawing.Point(4, 22);
+            this.tabPageMigrationProgress.Name = "tabPageMigrationProgress";
+            this.tabPageMigrationProgress.Size = new System.Drawing.Size(1023, 380);
+            this.tabPageMigrationProgress.TabIndex = 2;
+            this.tabPageMigrationProgress.Text = "Migration Progress";
+            this.tabPageMigrationProgress.UseVisualStyleBackColor = true;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.listBoxMigrationLog);
+            this.groupBox5.Controls.Add(this.button1);
+            this.groupBox5.Location = new System.Drawing.Point(0, 0);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(1020, 375);
+            this.groupBox5.TabIndex = 3;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Migration Progress";
+            // 
+            // listBoxMigrationLog
+            // 
+            this.listBoxMigrationLog.FormattingEnabled = true;
+            this.listBoxMigrationLog.Location = new System.Drawing.Point(8, 19);
+            this.listBoxMigrationLog.Name = "listBoxMigrationLog";
+            this.listBoxMigrationLog.Size = new System.Drawing.Size(1006, 316);
+            this.listBoxMigrationLog.TabIndex = 0;
+            // 
+            // button1
+            // 
+            this.button1.Enabled = false;
+            this.button1.Location = new System.Drawing.Point(914, 346);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(100, 23);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "Finish & Exit";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -758,10 +758,10 @@ namespace Sharezbold
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.groupBox7.ResumeLayout(false);
-            this.tabPageMigrationProgress.ResumeLayout(false);
-            this.groupBox5.ResumeLayout(false);
             this.tabPageMigrationElements.ResumeLayout(false);
             this.tabPageMigrationElements.PerformLayout();
+            this.tabPageMigrationProgress.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
