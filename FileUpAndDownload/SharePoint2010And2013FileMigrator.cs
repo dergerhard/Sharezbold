@@ -9,9 +9,6 @@ namespace Sharezbold.FileMigration
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.IO;
     using Microsoft.SharePoint.Client;
 
@@ -144,7 +141,6 @@ namespace Sharezbold.FileMigration
             ListItemCollection listItems = GetListItemCollectionFromSharePoint(documentListName, "FileLeafRef",
                 documentName, "Text", 1);
 
-
             return (listItems != null && listItems.Count == 1) ? listItems[0] : null;
         }
 
@@ -162,8 +158,7 @@ namespace Sharezbold.FileMigration
             ListItemCollection listItems = null;
             List documentsList = sourceClientContext.Web.Lists.GetByTitle(documentListName);
 
-
-            CamlQuery camlQuery = new CamlQuery(); ;
+            CamlQuery camlQuery = new CamlQuery();
 
             camlQuery.ViewXml =
             @"<View>
