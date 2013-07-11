@@ -22,25 +22,14 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
-        internal WorkflowMigrator(ClientContext sourceClientContext, ClientContext targetClientContext) : base(sourceClientContext, targetClientContext)
+        internal WorkflowMigrator(ClientContext sourceClientContext, ClientContext targetClientContext)
+            : base(sourceClientContext, targetClientContext)
         {
         }
 
         public override void Migrate()
         {
-            throw new NotImplementedException();
-        }
-
-        private void ImkportNewWorkflowTemplate()
-        {
-            Console.WriteLine("Import new WorkflowAssociations");
-            WorkflowTemplateCollection sourceWorkflowTemplates = this.GetAllWorkflowTemplateCollection(sourceClientContext);
-            WorkflowTemplateCollection targetWorkflowTemplates = this.GetAllWorkflowTemplateCollection(targetClientContext);
-
-            foreach (var sourceWorkflowTemplate in sourceWorkflowTemplates)
-            {
-                
-            }
+            this.ImportNewWorkflow();
         }
 
         private void ImportNewWorkflow()
@@ -49,15 +38,52 @@ namespace Sharezbold.ElementsMigration
             WorkflowAssociationCollection sourceWorkflowAssociations = this.GetAllWorkflowAssociationCollection(this.sourceClientContext);
             WorkflowAssociationCollection targetWorkflowAssociations = this.GetAllWorkflowAssociationCollection(this.targetClientContext);
 
+            if (sourceWorkflowAssociations.Count == 0)
+            {
+                Log.AddLast("no workflows to migrate...");
+                return;
+            }
+
+            HashSet<string> targetWorkflowNames = this.ReadNames(targetWorkflowAssociations);
+
             foreach (var sourceWorkflowAssociation in sourceWorkflowAssociations)
             {
-                WorkflowAssociationCreationInformation creationObject = new WorkflowAssociationCreationInformation();
-                // creationObject.ContentTypeAssociationHistoryListName;
-                // creationObject.HistoryList = sourceWorkflowAssociation.HistoryListTitle;
-                creationObject.Name = sourceWorkflowAssociation.Name;
-                
-                // creationObject.TaskList = sourceWorkflowAssociation.Ta
-                   // c
+                if (!targetWorkflowNames.Contains(sourceWorkflowAssociation.Name))
+                {
+                    Console.WriteLine("import new workflow '{0}'", sourceWorkflowAssociation.Name);
+                    Log.AddLast("import new workflow '" + sourceWorkflowAssociation.Name + "'");
+
+                    WorkflowAssociationCreationInformation creationObject = new WorkflowAssociationCreationInformation();
+                    creationObject.Name = sourceWorkflowAssociation.Name;
+                    creationObject.HistoryList = this.GetHistoryList(sourceClientContext);
+                    creationObject.TaskList = this.GetTaskList(sourceClientContext);
+                    creationObject.Template = this.GetTemplate();
+
+                    WorkflowAssociation targetWorkflowAssociation = targetWorkflowAssociations.Add(creationObject);
+
+                    targetWorkflowAssociation.AllowManual = sourceWorkflowAssociation.AllowManual;
+                    targetWorkflowAssociation.AutoStartChange = sourceWorkflowAssociation.AutoStartChange;
+                    targetWorkflowAssociation.AutoStartCreate = sourceWorkflowAssociation.AutoStartCreate;
+                    targetWorkflowAssociation.Enabled = sourceWorkflowAssociation.Enabled;
+                    targetWorkflowAssociation.AssociationData = sourceWorkflowAssociation.AssociationData;
+
+                }
+                else
+                {
+                    Console.WriteLine("don't have to migrate workflow '{0}'", sourceWorkflowAssociation.Name);
+                    Log.AddLast("don't have to migrate workflow '" + sourceWorkflowAssociation.Name + "'");
+                }
+            }
+
+            try
+            {
+                this.targetClientContext.ExecuteQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception during importing new Workflows.", e);
+                Log.AddLast("Exception during importing new Workflows. Error = " + e.Message);
+                throw new ElementsMigrationException("Exception during importing new Workflows.", e);
             }
         }
 
@@ -80,23 +106,110 @@ namespace Sharezbold.ElementsMigration
             return collection;
         }
 
-        private WorkflowTemplateCollection GetAllWorkflowTemplateCollection(ClientContext clientContext)
+        private List GetHistoryList(ClientContext clientContext)
         {
             Web web = clientContext.Web;
-            WorkflowTemplateCollection collection = web.WorkflowTemplates;
+            List historyList = web.Lists.GetByTitle("Workflow History");
 
             try
             {
-                clientContext.Load(collection);
+                clientContext.Load(historyList);
                 clientContext.ExecuteQuery();
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception during fetching the WorkflowTemplates.", e);
-                throw new ElementsMigrationException("Exception during fetching the WorkflowTemplates.", e);
+                Console.WriteLine("Exception during fetching the history of the Workflow.", e);
+                Log.AddLast("Exception during fetching the history of the Workflow. Error = " + e.Message);
+                Log.AddLast("using null history-list now...");
+
+                return null;
             }
 
-            return collection;
+            return historyList;
+        }
+
+        private List GetTaskList(ClientContext clientContext)
+        {
+            Web web = clientContext.Web;
+            List taskList = web.Lists.GetByTitle("Tasks");
+
+            try
+            {
+                clientContext.Load(taskList);
+                clientContext.ExecuteQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception during fetching the tasks of the Workflow.", e);
+                Log.AddLast("Exception during fetching the tasks of the Workflow. Error = " + e.Message);
+                Log.AddLast("using null task-list now...");
+
+                return null;
+            }
+
+            return taskList;
+        }
+
+        private WorkflowTemplate GetTemplate()
+        {
+            WorkflowTemplateCollection sourceWorkflowTemplateCollection = sourceClientContext.Web.WorkflowTemplates;
+            WorkflowTemplateCollection targetWorkflowTemplateCollection = targetClientContext.Web.WorkflowTemplates;
+
+            try
+            {
+                sourceClientContext.ExecuteQuery();
+                targetClientContext.ExecuteQuery();
+
+                if (targetWorkflowTemplateCollection == null || targetWorkflowTemplateCollection.Count == 0)
+                {
+                    Log.AddLast("No templates for Workflow found!");
+                    throw new ElementsMigrationException("No templates for Workflow found!");
+                }
+
+                if (sourceWorkflowTemplateCollection == null || sourceWorkflowTemplateCollection.Count == 0)
+                {
+                    //// nothing to search return target->first
+                    return targetWorkflowTemplateCollection.First();
+                }
+
+                foreach (var targetWorkflowTemplate in targetWorkflowTemplateCollection)
+                {
+                    foreach (var sourceWorkflowTemplate in sourceWorkflowTemplateCollection)
+                    {
+                        if (targetWorkflowTemplate.Name == sourceWorkflowTemplate.Name)
+                        {
+                            return targetWorkflowTemplate;
+                        }
+                    }
+                }
+
+                Log.AddLast("No templates for Workflow found!");
+                throw new ElementsMigrationException("No templates for Workflow found!");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception during fetching the template of the Workflow.", e);
+                Log.AddLast("Exception during fetching the template of the Workflow. Error = " + e.Message);
+
+                throw new ElementsMigrationException("Exception during fetching the WorkflowTemplates.", e);
+            }
+        }
+
+        /// <summary>
+        /// Returns all names of given Workflow as HashSet.
+        /// </summary>
+        /// <param name="roleDefinitions">Workflow to read th names</param>
+        /// <returns>names of Workflows</returns>
+        private HashSet<string> ReadNames(WorkflowAssociationCollection workflows)
+        {
+            HashSet<string> names = new HashSet<string>();
+
+            foreach (var workflow in workflows)
+            {
+                names.Add(workflow.Name);
+            }
+
+            return names;
         }
     }
 }

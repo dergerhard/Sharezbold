@@ -35,7 +35,7 @@ namespace Sharezbold.ElementsMigration
             this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_PERMISSION, new RoleMigrator(sourceClientContext, targetClientContext)));
             this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_USER, new Sharepoint2010UserMigrator(sourceClientContext, targetClientContext)));
             this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_SITE_COLUMNS, new SiteColumsMigrator(sourceClientContext, targetClientContext)));
-            //// migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_WORKFLOW, new ContentTypesMigrator(clientContextSource, clientContextTarget)));
+            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_WORKFLOW, new WorkflowMigrator(sourceClientContext, targetClientContext)));
         }
 
         /// <summary>
@@ -149,7 +149,19 @@ namespace Sharezbold.ElementsMigration
         /// <exception cref="NotImplementedException">Not implemented till now.</exception>
         public LinkedList<string> MigrateWorkflow()
         {
-            throw new NotImplementedException();
+            AbstractMigrator workflowMigrator = null;
+
+            foreach (var migrator in this.migrators)
+            {
+                if (migrator.Key == MigrationType.SHAREPOINT2010_2013_WORKFLOW)
+                {
+                    workflowMigrator = migrator.Value;
+                    break;
+                }
+            }
+
+            workflowMigrator.Migrate();
+            return workflowMigrator.Log;
         }
     }
 }
