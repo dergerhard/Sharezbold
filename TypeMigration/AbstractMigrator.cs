@@ -15,15 +15,7 @@ namespace Sharezbold.ElementsMigration
     /// </summary>
     abstract class AbstractMigrator
     {
-        /// <summary>
-        /// ClientContext of source SharePoint.
-        /// </summary>
-        protected ClientContext sourceClientContext;
-
-        /// <summary>
-        /// ClientContext of target SharePoint.
-        /// </summary>
-        protected ClientContext targetClientContext;
+        
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AbstractMigrator"/> class.
@@ -38,6 +30,16 @@ namespace Sharezbold.ElementsMigration
             this.Log = new LinkedList<string>();
         }
 
+        /// <summary>
+        /// ClientContext of source SharePoint.
+        /// </summary>
+        internal ClientContext sourceClientContext { get; private set; }
+
+        /// <summary>
+        /// ClientContext of target SharePoint.
+        /// </summary>
+        internal ClientContext targetClientContext { get; private set; }
+
         protected AbstractMigrator()
         {
         }
@@ -45,6 +47,7 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the datas.
         /// </summary>
+        /// <exception cref="ElementsMigrationException">if migration fails</exception>
         public abstract void Migrate();
 
         /// <summary>

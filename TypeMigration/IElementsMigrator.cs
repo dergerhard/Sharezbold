@@ -17,36 +17,42 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the ContentTypes.
         /// </summary>
+        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         LinkedList<string> MigrateContentTypes();
 
         /// <summary>
         /// Migrates the SiteColumns.
         /// </summary>
+        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         LinkedList<string> MigrateSiteColumns();
 
         /// <summary>
         /// Migrates the User.
         /// </summary>
+        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         LinkedList<string> MigrateUser();
 
         /// <summary>
         /// Migrates the Group.
         /// </summary>
+        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         LinkedList<string> MigrateGroup();
 
         /// <summary>
         /// Migrates the PermissionLevels (Role).
         /// </summary>
+        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         LinkedList<string> MigratePermissionlevels();
 
         /// <summary>
         /// Migrates the Workflow.
         /// </summary>
+        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         LinkedList<string> MigrateWorkflow();
     }

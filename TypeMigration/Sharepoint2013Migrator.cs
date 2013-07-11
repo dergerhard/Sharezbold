@@ -41,6 +41,7 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the ContentTypes.
         /// </summary>
+        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public LinkedList<string> MigrateContentTypes()
         {
@@ -62,6 +63,7 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the User.
         /// </summary>
+        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public LinkedList<string> MigrateUser()
         {
@@ -83,6 +85,7 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the Groups.
         /// </summary>
+        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public LinkedList<string> MigrateGroup()
         {
@@ -104,6 +107,7 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the PermissionLevels (Roles).
         /// </summary>
+        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public LinkedList<string> MigratePermissionlevels()
         {
@@ -125,7 +129,8 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the SiteColumns.
         /// </summary>
-        /// <exception cref="NotImplementedException">Not implemented till now.</exception>
+        /// <returns>Log as LinkedList</returns>
+        /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public LinkedList<string> MigrateSiteColumns()
         {
             AbstractMigrator siteColumsMigrator = null;
@@ -146,7 +151,8 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the Workflow.
         /// </summary>
-        /// <exception cref="NotImplementedException">Not implemented till now.</exception>
+        /// <returns>Log as LinkedList</returns>
+        /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public LinkedList<string> MigrateWorkflow()
         {
             AbstractMigrator workflowMigrator = null;

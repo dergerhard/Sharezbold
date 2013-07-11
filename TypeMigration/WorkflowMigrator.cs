@@ -15,6 +15,9 @@ namespace Sharezbold.ElementsMigration
     using Microsoft.SharePoint.Client;
     using Microsoft.SharePoint.Client.Workflow;
 
+    /// <summary>
+    /// Migrates the workflows from SharePoint 2010 and 2013 to SharePoint 2013.
+    /// </summary>
     internal class WorkflowMigrator : AbstractMigrator
     {
         /// <summary>
@@ -27,11 +30,19 @@ namespace Sharezbold.ElementsMigration
         {
         }
 
+        /// <summary>
+        /// Migrates the datas.
+        /// </summary>
+        /// <exception cref="ElementsMigrationException">if migration fails</exception>
         public override void Migrate()
         {
             this.ImportNewWorkflow();
         }
 
+        /// <summary>
+        /// Imports new workflows to the target SharePoint.
+        /// </summary>
+        /// <exception cref="ElementsMigrationException">if migration fails</exception>
         private void ImportNewWorkflow()
         {
             Console.WriteLine("Import new WorkflowAssociations");
@@ -55,8 +66,8 @@ namespace Sharezbold.ElementsMigration
 
                     WorkflowAssociationCreationInformation creationObject = new WorkflowAssociationCreationInformation();
                     creationObject.Name = sourceWorkflowAssociation.Name;
-                    creationObject.HistoryList = this.GetHistoryList(sourceClientContext);
-                    creationObject.TaskList = this.GetTaskList(sourceClientContext);
+                    creationObject.HistoryList = this.GetHistoryList(this.sourceClientContext);
+                    creationObject.TaskList = this.GetTaskList(this.sourceClientContext);
                     creationObject.Template = this.GetTemplate();
 
                     WorkflowAssociation targetWorkflowAssociation = targetWorkflowAssociations.Add(creationObject);
@@ -66,7 +77,6 @@ namespace Sharezbold.ElementsMigration
                     targetWorkflowAssociation.AutoStartCreate = sourceWorkflowAssociation.AutoStartCreate;
                     targetWorkflowAssociation.Enabled = sourceWorkflowAssociation.Enabled;
                     targetWorkflowAssociation.AssociationData = sourceWorkflowAssociation.AssociationData;
-
                 }
                 else
                 {
@@ -87,6 +97,12 @@ namespace Sharezbold.ElementsMigration
             }
         }
 
+        /// <summary>
+        /// Returns all WorkflowAssociationCollection of the given SharePoint.
+        /// </summary>
+        /// <param name="clientContext">ClientContext of SharePoint</param>
+        /// <returns>WorkflowAssociationCollection of given SharePoint</returns>
+        /// <exception cref="ElementsMigrationException">if fetching WorkflowAssociationCollection fails</exception>
         private WorkflowAssociationCollection GetAllWorkflowAssociationCollection(ClientContext clientContext)
         {
             Web web = clientContext.Web;
@@ -106,6 +122,11 @@ namespace Sharezbold.ElementsMigration
             return collection;
         }
 
+        /// <summary>
+        /// Returns the Historylist of the given SharePoint.
+        /// </summary>
+        /// <param name="clientContext">ClientContext of the SharePoint</param>
+        /// <returns>historylist of clientContext or null if there is none</returns>
         private List GetHistoryList(ClientContext clientContext)
         {
             Web web = clientContext.Web;
@@ -128,6 +149,11 @@ namespace Sharezbold.ElementsMigration
             return historyList;
         }
 
+        /// <summary>
+        /// Gets the tasklist of the workflows.
+        /// </summary>
+        /// <param name="clientContext">ClientContext of SharePoint</param>
+        /// <returns>tasklist or null if there is none.</returns>
         private List GetTaskList(ClientContext clientContext)
         {
             Web web = clientContext.Web;
@@ -150,6 +176,11 @@ namespace Sharezbold.ElementsMigration
             return taskList;
         }
 
+        /// <summary>
+        /// Gets the WorkflowTemplate
+        /// </summary>
+        /// <returns>the workflowTemplate</returns>
+        /// <exception cref="ElementsMigrationException">if there is no workflowTemplate</exception>
         private WorkflowTemplate GetTemplate()
         {
             WorkflowTemplateCollection sourceWorkflowTemplateCollection = sourceClientContext.Web.WorkflowTemplates;
@@ -198,7 +229,7 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Returns all names of given Workflow as HashSet.
         /// </summary>
-        /// <param name="roleDefinitions">Workflow to read th names</param>
+        /// <param name="workflows">Workflow to read th names</param>
         /// <returns>names of Workflows</returns>
         private HashSet<string> ReadNames(WorkflowAssociationCollection workflows)
         {
