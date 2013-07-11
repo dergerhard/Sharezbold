@@ -35,18 +35,26 @@ namespace Sharezbold
         /// <summary>
         /// The ListBox for log-output.
         /// </summary>
-        private ListBox listBoxLog;
+        // private ListBox listBoxLog;
+
+        private MainForm mainForm;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ElementsMigrationWorker"/> class.
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
-        internal ElementsMigrationWorker(ClientContext sourceClientContext, ClientContext targetClientContext, ListBox listBox)
+        internal ElementsMigrationWorker(ClientContext sourceClientContext, ClientContext targetClientContext, MainForm mainForm)
         {
             this.sourceClientContext = sourceClientContext;
             this.targetClientContext = targetClientContext;
-            this.listBoxLog = listBox;
+            //this.listBoxLog = listBox;
+            this.mainForm = mainForm;
+        }
+
+        internal Task<bool> StartMigrationAsync(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
+        {
+            return Task.Run<bool>(() => StartMigration(migrateContentTypes, migrateUser, migrateGroup, migrateSiteColumns, migratePermission, migrateWorkflows));
         }
 
         /// <summary>
@@ -58,7 +66,7 @@ namespace Sharezbold
         /// <param name="migrateSiteColumns">true if migrate SiteColumns</param>
         /// <param name="migratePermission">true if migrate PermissionLevel</param>
         /// <param name="migrateWorkflows">true if migrate Workflows</param>
-        internal bool StartMigrationAsync(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
+        internal bool StartMigration(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
         //internal Task<bool> StartMigrationAsync(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
         {
             IElementsMigrator migrator = new Sharepoint2010Migrator(this.sourceClientContext, this.targetClientContext);
@@ -108,28 +116,23 @@ namespace Sharezbold
         {
             try
             {
-                this.listBoxLog.Items.Add("=============== START MIGRATION OF " + migrationType + " =================== \n\r");
-                this.listBoxLog.Update();
+                this.mainForm.UpdateProgressLog("=============== START MIGRATION OF " + migrationType + " =================== \n\r");
                 LinkedList<string> log = method();
 
                 foreach (var logEntry in log)
                 {
-                    this.listBoxLog.Items.Add(logEntry);
+                    this.mainForm.UpdateProgressLog(logEntry);
                 }
-                
-                this.listBoxLog.Update();
             }
             catch (ElementsMigrationException e)
             {
-                this.listBoxLog.Items.Add("ERROR during migrating " + migrationType + "\n\r");
-                this.listBoxLog.Items.Add(e.Message + "\n\r");
-                this.listBoxLog.Update();
+                this.mainForm.UpdateProgressLog("ERROR during migrating " + migrationType + "\n\r");
+                this.mainForm.UpdateProgressLog(e.Message + "\n\r");
                 Console.WriteLine("ERROR during migrating {0}", migrationType);
                 Console.WriteLine(e);
-                this.listBoxLog.Update();
             }
 
-            this.listBoxLog.Items.Add("=============== FINISHED MIGRATION OF " + migrationType + " =================== \n\r");
+            this.mainForm.UpdateProgressLog("=============== FINISHED MIGRATION OF " + migrationType + " =================== \n\r");
         }
 
         private delegate LinkedList<string> DoMigration();

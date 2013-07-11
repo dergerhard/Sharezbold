@@ -29,7 +29,7 @@ namespace Sharezbold
     /// Delegate for loading the source tree
     /// </summary>
     public delegate void ApplyConfigurationAndLoadSourceTreeDelegate();
-    
+
     /// <summary>
     /// Delegate for updating main ui when ApplyConfigurationAndLoadSourceTreeDelegate is finished
     /// </summary>
@@ -40,7 +40,7 @@ namespace Sharezbold
     /// Delegate for loading destination tree
     /// </summary>
     public delegate void LoadDestinationTreeDelegate();
-    
+
     /// <summary>
     /// Delegate for updating main ui when LoadDestinationTreeDelegate is finished
     /// </summary>
@@ -102,7 +102,7 @@ namespace Sharezbold
             // this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
             this.treeViewContentSelection.CheckBoxes = true;
             this.listViewMigrationContent.Scrollable = true;
-            
+
             ColumnHeader header = new ColumnHeader();
             header.Text = "Element";
             header.Name = "col1";
@@ -329,7 +329,7 @@ namespace Sharezbold
 
             ContentDownloader cm = new ContentDownloader(this.source);
             SpTreeNode node = cm.GenerateMigrationTree();
-            
+
             // need to use invoke to be thread safe
             this.Invoke(new ApplyConfigurationAndLoadSourceTreeFinishedDelegate(this.ApplyConfigurationAndLoadSourceTreeFinished), new object[] { node });
         }
@@ -558,8 +558,12 @@ namespace Sharezbold
             }
 
             bool finished;
-            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination, this.listBoxMigrationLog);
-            finished = migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
+            this.tabPageMigrationProgress.Show();
+            this.tabPageMigrationProgress.Update();
+
+            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination, this);
+            finished = await migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
+            //finished = migrationWorker.StartMigration(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
             // Task<bool> result = migrationWorker.StartMigrationAsync(this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
 
             // finished = await result;
@@ -630,7 +634,7 @@ namespace Sharezbold
                 {
                     this.labelElementType.Text = "Site";
                     this.labelLegalType.Text = "Site Collection";
-                    this.destinationTreeRoot.BackColor = Color.LightBlue;                 
+                    this.destinationTreeRoot.BackColor = Color.LightBlue;
                 }
                 else if (mo.DataObject.GetType() == typeof(List))
                 {
@@ -676,6 +680,19 @@ namespace Sharezbold
 
             this.currentConfigurationElement.UpdateReadyForMigration();
             this.listViewMigrationContent.Update();
+        }
+
+        internal void UpdateProgressLog(string logItem)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<string>(this.UpdateProgressLog), logItem);
+            }
+            else
+            {
+                this.listBoxMigrationLog.Items.Add(logItem);
+                this.listBoxMigrationLog.Update();
+            }
         }
     }
 }
