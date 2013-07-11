@@ -20,6 +20,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -54,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentTypesMigrator.cs" />
+    <Compile Include="Extensions\ContentTypeExtensions.cs" />
     <Compile Include="IElementsMigrator.cs" />
     <Compile Include="AbstractMigrator.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

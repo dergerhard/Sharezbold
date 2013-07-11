@@ -13,6 +13,7 @@ namespace Sharezbold.ElementsMigration
     using System.Text;
     using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
+    using Extension;
 
     /// <summary>
     /// This class migrates the ContentType from the source SharePoint to the target SharePoint.
@@ -56,7 +57,7 @@ namespace Sharezbold.ElementsMigration
             ContentTypeCollection contentTypeCollectionSourceServer = this.GetAllContentTypes(sourceClientContext);
             ContentTypeCollection contentTypeCollectionTargetServer = this.GetAllContentTypes(targetClientContext);
 
-            HashSet<string> namesOfContentTypesOnTargetServer = this.ReadAllNames(contentTypeCollectionTargetServer);
+            HashSet<string> namesOfContentTypesOnTargetServer = contentTypeCollectionTargetServer.GetNames(); ;
 
             foreach (var contentType in contentTypeCollectionSourceServer)
             {
@@ -158,23 +159,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             return contentTypeCollection;
-        }
-
-        /// <summary>
-        /// Read all names of ContentType.
-        /// </summary>
-        /// <param name="contentTypeCollection">Collection to get the ContentType</param>
-        /// <returns>returns all names</returns>
-        private HashSet<string> ReadAllNames(ContentTypeCollection contentTypeCollection)
-        {
-            HashSet<string> names = new HashSet<string>();
-
-            foreach (var contentType in contentTypeCollection)
-            {
-                names.Add(contentType.Name);
-            }
-
-            return names;
         }
 
         /// <summary>
