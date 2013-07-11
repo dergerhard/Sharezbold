@@ -33,10 +33,8 @@ namespace Sharezbold
         private ClientContext targetClientContext;
 
         /// <summary>
-        /// The ListBox for log-output.
+        /// Reference to the MainForm (UI).
         /// </summary>
-        // private ListBox listBoxLog;
-
         private MainForm mainForm;
 
         /// <summary>
@@ -48,7 +46,6 @@ namespace Sharezbold
         {
             this.sourceClientContext = sourceClientContext;
             this.targetClientContext = targetClientContext;
-            //this.listBoxLog = listBox;
             this.mainForm = mainForm;
         }
 

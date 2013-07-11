@@ -563,10 +563,6 @@ namespace Sharezbold
 
             ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination, this);
             finished = await migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
-            //finished = migrationWorker.StartMigration(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
-            // Task<bool> result = migrationWorker.StartMigrationAsync(this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
-
-            // finished = await result;
         }
 
         /// <summary>
