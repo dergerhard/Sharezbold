@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace TypeMigration.GetGroupSharePoint2007 {
+namespace Sharezbold.ElementsMigration.GetGroupSharePoint2007 {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -119,7 +119,7 @@ namespace TypeMigration.GetGroupSharePoint2007 {
         
         /// <remarks/>
         public UserGroup() {
-            this.Url = global::TypeMigration.Properties.Settings.Default.TypeMigration_WebReference1_UserGroup;
+            this.Url = global::Sharezbold.ElementsMigration.Properties.Settings.Default.TypeMigration_WebReference1_UserGroup;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

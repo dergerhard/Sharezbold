@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace TypeMigration.GetPermissionSharePoint2007 {
+namespace Sharezbold.ElementsMigration.GetPermissionSharePoint2007 {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -45,7 +45,7 @@ namespace TypeMigration.GetPermissionSharePoint2007 {
         
         /// <remarks/>
         public Permissions() {
-            this.Url = global::TypeMigration.Properties.Settings.Default.TypeMigration_WebReference_Permissions;
+            this.Url = global::Sharezbold.ElementsMigration.Properties.Settings.Default.TypeMigration_WebReference_Permissions;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
