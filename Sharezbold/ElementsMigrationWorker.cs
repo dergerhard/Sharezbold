@@ -42,6 +42,7 @@ namespace Sharezbold
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
+        /// <param name="mainForm">instance of the main-form</param>
         internal ElementsMigrationWorker(ClientContext sourceClientContext, ClientContext targetClientContext, MainForm mainForm)
         {
             this.sourceClientContext = sourceClientContext;
@@ -49,9 +50,26 @@ namespace Sharezbold
             this.mainForm = mainForm;
         }
 
+        /// <summary>
+        /// Delegates the migration-operation.
+        /// </summary>
+        /// <returns>log-output as LinkedList</returns>
+        /// <exception cref="ElementsMigrationException">if migration fails</exception>
+        private delegate LinkedList<string> MigrationDelegation();
+
+        /// <summary>
+        /// Migrates the elements in a thread.
+        /// </summary>
+        /// <param name="migrateContentTypes">true if migrate ContentTypes</param>
+        /// <param name="migrateUser">true if migrate User</param>
+        /// <param name="migrateGroup">true if migrate Group</param>
+        /// <param name="migrateSiteColumns">true if migrate SiteColumns</param>
+        /// <param name="migratePermission">true if migrate PermissionLevel</param>
+        /// <param name="migrateWorkflows">true if migrate Workflows</param>
+        /// <returns>true when migration finished</returns>
         internal Task<bool> StartMigrationAsync(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
         {
-            return Task.Run<bool>(() => StartMigration(migrateContentTypes, migrateUser, migrateGroup, migrateSiteColumns, migratePermission, migrateWorkflows));
+            return Task.Run<bool>(() => this.StartMigration(migrateContentTypes, migrateUser, migrateGroup, migrateSiteColumns, migratePermission, migrateWorkflows));
         }
 
         /// <summary>
@@ -63,53 +81,57 @@ namespace Sharezbold
         /// <param name="migrateSiteColumns">true if migrate SiteColumns</param>
         /// <param name="migratePermission">true if migrate PermissionLevel</param>
         /// <param name="migrateWorkflows">true if migrate Workflows</param>
+        /// <returns>true when migration finished</returns>
         internal bool StartMigration(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
-        //internal Task<bool> StartMigrationAsync(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
         {
             IElementsMigrator migrator = new Sharepoint2010Migrator(this.sourceClientContext, this.targetClientContext);
-            DoMigration migrate = null;
+            MigrationDelegation migrate = null;
 
             if (migrateContentTypes)
             {
                 migrate = migrator.MigrateContentTypes;
-                Migrate(migrate, "Content-Types");
+                this.Migrate(migrate, "Content-Types");
             }
 
             if (migrateUser)
             {
                 migrate = migrator.MigrateUser;
-                Migrate(migrate, "User");
+                this.Migrate(migrate, "User");
             }
 
             if (migrateGroup)
             {
                 migrate = migrator.MigrateGroup;
-                Migrate(migrate, "Group");
+                this.Migrate(migrate, "Group");
             }
 
             if (migratePermission)
             {
                 migrate = migrator.MigratePermissionlevels;
-                Migrate(migrate, "Permissionlevel");
+                this.Migrate(migrate, "Permissionlevel");
             }
 
             if (migrateSiteColumns)
             {
                 migrate = migrator.MigrateSiteColumns;
-                Migrate(migrate, "SiteColumns");
-
+                this.Migrate(migrate, "SiteColumns");
             }
 
             if (migrateWorkflows)
             {
                 migrate = migrator.MigrateWorkflow;
-                Migrate(migrate, "Workflow");
+                this.Migrate(migrate, "Workflow");
             }
 
             return true;
         }
 
-        private void Migrate(DoMigration method, string migrationType)
+        /// <summary>
+        /// Executes the delegation object to migrate the type.
+        /// </summary>
+        /// <param name="method">delegation method to execute</param>
+        /// <param name="migrationType">type of migration for the log-output</param>
+        private void Migrate(MigrationDelegation method, string migrationType)
         {
             try
             {
@@ -131,7 +153,5 @@ namespace Sharezbold
 
             this.mainForm.UpdateProgressLog("=============== FINISHED MIGRATION OF " + migrationType + " =================== \n\r");
         }
-
-        private delegate LinkedList<string> DoMigration();
     }
 }
