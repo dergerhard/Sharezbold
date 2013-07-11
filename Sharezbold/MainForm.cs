@@ -547,6 +547,7 @@ namespace Sharezbold
             catch (ArgumentNullException ex)
             {
                 this.tabPageConfiguration.Show();
+                this.tabControMain.SelectedTab = tabPageConfiguration;
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return;
@@ -557,12 +558,16 @@ namespace Sharezbold
                 this.ConnectToDestination();
             }
 
-            bool finished;
             this.tabPageMigrationProgress.Show();
-            this.tabPageMigrationProgress.Update();
+            this.tabControMain.SelectedTab = tabPageMigrationProgress;
 
             ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination, this);
-            finished = await migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
+            bool finished = await migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
+
+            if (finished)
+            {
+                this.UpdateProgressLog("*************** ELEMENTS MIGRATION FINISHED *******************");
+            }
         }
 
         /// <summary>
