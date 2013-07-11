@@ -558,14 +558,7 @@ namespace Sharezbold
             }
 
             bool finished;
-            ClientContext sourceClientContext = new ClientContext(this.settings.FromHost);
-            sourceClientContext.Credentials = new NetworkCredential(this.settings.FromUserName, this.settings.FromPassword, this.settings.FromPassword);
-            ClientContext targetClientContext = new ClientContext(this.settings.ToHost);
-            sourceClientContext.Credentials = new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain);
-            Console.WriteLine("connect to server '{0}'; username = '{1}'; password = '{2}'; domain = '{3}'", this.settings.ToHost, this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain);
-            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, targetClientContext, this.listBoxMigrationLog);
-            this.tabPageMigrationProgress.Show();
-
+            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination, this.listBoxMigrationLog);
             finished = migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
             // Task<bool> result = migrationWorker.StartMigrationAsync(this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
 

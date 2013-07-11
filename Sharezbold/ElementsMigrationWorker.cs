@@ -61,89 +61,67 @@ namespace Sharezbold
         //internal Task<bool> StartMigrationAsync(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
         {
             IElementsMigrator migrator = new Sharepoint2010Migrator(this.sourceClientContext, this.targetClientContext);
+            DoMigration migrate = null;
 
             if (migrateContentTypes)
             {
-                try
-                {
-                    migrator.MigrateContentTypes();
-                }
-                catch (ElementsMigrationException e)
-                {
-                    this.listBoxLog.Text = this.listBoxLog.Text + "\n" + "ERROR during migrating Content-Types:";
-                    this.listBoxLog.Text += e.Message + "\n";
-                    Console.WriteLine("ERROR during migrating Content-Types");
-                    Console.WriteLine(e);
-                    this.listBoxLog.Refresh();
-                }
+                migrate = migrator.MigrateContentTypes;
+                Migrate(migrate, "Content-Types");
             }
 
             if (migrateUser)
             {
-                try
-                {
-                    migrator.MigrateUser();
-                }
-                catch (ElementsMigrationException e)
-                {
-                    Console.WriteLine("ERROR during migrating User");
-                    Console.WriteLine(e);
-                }
+                migrate = migrator.MigrateUser;
+                Migrate(migrate, "User");
             }
 
             if (migrateGroup)
             {
-                try
-                {
-                    migrator.MigrateGroup();
-                }
-                catch (ElementsMigrationException e)
-                {
-                    Console.WriteLine("ERROR during migrating Group");
-                    Console.WriteLine(e);
-                }
+                migrate = migrator.MigrateGroup;
+                Migrate(migrate, "Group");
             }
 
             if (migratePermission)
             {
-                try
-                {
-                    migrator.MigratePermissionlevels();
-                }
-                catch (ElementsMigrationException e)
-                {
-                    Console.WriteLine("ERROR during migrating Permissionlevels");
-                    Console.WriteLine(e);
-                }
+                migrate = migrator.MigratePermissionlevels;
+                Migrate(migrate, "Permissionlevel");
             }
 
             if (migrateSiteColumns)
             {
-                try
-                {
-                    migrator.MigrateSiteColumns();
-                }
-                catch (ElementsMigrationException e)
-                {
-                    Console.WriteLine("ERROR during migrating SiteColumns:");
-                    Console.WriteLine(e);
-                }
+                migrate = migrator.MigrateSiteColumns;
+                Migrate(migrate, "SiteColumns");
+
             }
 
             if (migrateWorkflows)
             {
-                try
-                {
-                    migrator.MigrateWorkflow();
-                }
-                catch (ElementsMigrationException e)
-                {
-                    Console.WriteLine("ERROR during migrating Workflow");
-                    Console.WriteLine(e);
-                }
+                migrate = migrator.MigrateWorkflow;
+                Migrate(migrate, "Workflow");
             }
 
             return true;
         }
+
+        private void Migrate(DoMigration method, string migrationType)
+        {
+            try
+            {
+                this.listBoxLog.Items.Add("START MIGRATION OF " + migrationType + "\n\r");
+                this.listBoxLog.Update();
+                method();
+            }
+            catch (ElementsMigrationException e)
+            {
+                this.listBoxLog.Items.Add("ERROR during migrating " + migrationType + "\n\r");
+                this.listBoxLog.Items.Add(e.Message + "\n\r");
+                this.listBoxLog.Update();
+                Console.WriteLine("ERROR during migrating {0}", migrationType);
+                Console.WriteLine(e);
+                this.listBoxLog.Refresh();
+            }
+        }
+
+        private delegate void DoMigration();
     }
 }
