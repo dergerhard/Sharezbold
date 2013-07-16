@@ -13,6 +13,7 @@ namespace Sharezbold.ElementsMigration
     using System.Text;
     using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
+    using Extension;
 
     /// <summary>
     /// Migrates the SiteUser from the source SharePoint to the target SharePoint.
@@ -49,25 +50,27 @@ namespace Sharezbold.ElementsMigration
             UserCollection sourceUserCollection = this.GetAllUser(sourceClientContext);
             UserCollection targetUserCollection = this.GetAllUser(targetClientContext);
 
-            HashSet<string> targetUserNames = this.GetLoginNames(targetUserCollection);
+            HashSet<string> targetUserNames = targetUserCollection.GetAllLoginNames();
 
-            foreach (var user in sourceUserCollection)
+            foreach (var sourceUser in sourceUserCollection)
             {
-                if (!targetUserNames.Contains(user.LoginName))
+                if (!targetUserNames.Contains(sourceUser.LoginName))
                 {
-                    Console.WriteLine("Import user '{0}'", user.LoginName);
-                    Log.AddLast("import user '" + user.LoginName + "'");
+                    Console.WriteLine("Import user '{0}'", sourceUser.LoginName);
+                    Log.AddLast("import user '" + sourceUser.LoginName + "'");
                     UserCreationInformation creationObject = new UserCreationInformation();
-                    creationObject.Email = user.Email;
-                    creationObject.LoginName = user.LoginName;
-                    creationObject.Title = user.Title;
+                    creationObject.Email = sourceUser.Email;
+                    creationObject.LoginName = sourceUser.LoginName;
+                    creationObject.Title = sourceUser.Title;
 
-                    targetUserCollection.Add(creationObject);
+                    User targetUser = targetUserCollection.Add(creationObject);
+                    targetUser.IsSiteAdmin = sourceUser.IsSiteAdmin;
+                    targetUser.Tag = sourceUser.Tag;
                 }
                 else
                 {
-                    Console.WriteLine("user '{0}' is already on target server. nothing to import.", user.LoginName);
-                    Log.AddLast("don't have to import user '" + user.LoginName + "'");
+                    Console.WriteLine("user '{0}' is already on target server. nothing to import.", sourceUser.LoginName);
+                    Log.AddLast("don't have to import user '" + sourceUser.LoginName + "'");
                 }
             }
 
@@ -142,23 +145,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             return userCollection;
-        }
-
-        /// <summary>
-        /// Returns the loginNames of the given UserCollection.
-        /// </summary>
-        /// <param name="userCollection">UserCollection with LoginNames</param>
-        /// <returns>the loginNames</returns>
-        private HashSet<string> GetLoginNames(UserCollection userCollection)
-        {
-            HashSet<string> loginNames = new HashSet<string>();
-
-            foreach (var user in userCollection)
-            {
-                loginNames.Add(user.LoginName);
-            }
-
-            return loginNames;
         }
     }
 }
