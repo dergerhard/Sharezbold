@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="RoleExtensions.cs" company="FH Wiener Neustadt">
+// <copyright file="FieldExtensions.cs" company="FH Wiener Neustadt">
 //     Copyright (c) FH Wiener Neustadt. All rights reserved.
 // </copyright>
 // <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
@@ -12,22 +12,22 @@ namespace Sharezbold.ElementsMigration.Extension
     using Microsoft.SharePoint.Client;
 
     /// <summary>
-    /// Holds the extensions for the Roles.
+    /// Holds the extensions for the Fields.
     /// </summary>
-    internal static class RoleExtensions
+    internal static class FieldExtensions
     {
         /// <summary>
-        /// Returns all names of given RoleDefinitions as HashSet.
+        /// Returns all titles of given Fields as HashSet.
         /// </summary>
-        /// <param name="roleDefinitions">RoleDefinitions to read the names</param>
-        /// <returns>names of RoleDefinitions</returns>
-        internal static HashSet<string> ReadNames(this RoleDefinitionCollection roleDefinitions)
+        /// <param name="roleDefinitions">Fields to read the titles</param>
+        /// <returns>titles of Field</returns>
+        internal static HashSet<string> GetAllTitles(this FieldCollection fields)
         {
             HashSet<string> names = new HashSet<string>();
 
-            foreach (var roleDefinition in roleDefinitions)
+            foreach (var field in fields)
             {
-                names.Add(roleDefinition.Name);
+                names.Add(field.Title);
             }
 
             return names;

@@ -59,6 +59,7 @@
     <Compile Include="Extensions\ContentTypeExtensions.cs" />
     <Compile Include="Extensions\GroupExtensions.cs" />
     <Compile Include="Extensions\RoleExtensions.cs" />
+    <Compile Include="Extensions\FieldExtensions.cs" />
     <Compile Include="Extensions\UserExtensions.cs" />
     <Compile Include="Extensions\WorkflowExtensions.cs" />
     <Compile Include="IElementsMigrator.cs" />
