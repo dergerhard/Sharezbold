@@ -9,9 +9,6 @@ namespace Sharezbold.ElementsMigration
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
     using Extension;
 
@@ -51,25 +48,26 @@ namespace Sharezbold.ElementsMigration
 
             HashSet<string> targetRoleDefinitionNames = targetRoleDefinitionCollection.ReadNames();
 
-            foreach (var roleDefinition in sourceRoleDefinitionCollection)
+            foreach (var sourceRoleDefinition in sourceRoleDefinitionCollection)
             {
-                if (!targetRoleDefinitionNames.Contains(roleDefinition.Name))
+                if (!targetRoleDefinitionNames.Contains(sourceRoleDefinition.Name))
                 {
-                    Console.WriteLine("import roleDefinition '{0}'", roleDefinition.Name);
-                    Log.AddLast("import RoleDefinition '" + roleDefinition.Name + "'");
+                    Console.WriteLine("import roleDefinition '{0}'", sourceRoleDefinition.Name);
+                    Log.AddLast("import RoleDefinition '" + sourceRoleDefinition.Name + "'");
 
                     RoleDefinitionCreationInformation creationObject = new RoleDefinitionCreationInformation();
-                    creationObject.BasePermissions = roleDefinition.BasePermissions;
-                    creationObject.Description = roleDefinition.Description;
-                    creationObject.Name = roleDefinition.Name;
-                    creationObject.Order = roleDefinition.Order;
+                    creationObject.BasePermissions = sourceRoleDefinition.BasePermissions;
+                    creationObject.Description = sourceRoleDefinition.Description;
+                    creationObject.Name = sourceRoleDefinition.Name;
+                    creationObject.Order = sourceRoleDefinition.Order;
 
-                    targetRoleDefinitionCollection.Add(creationObject);
+                    RoleDefinition targetRoleDefinition = targetRoleDefinitionCollection.Add(creationObject);
+                    targetRoleDefinition.Tag = sourceRoleDefinition.Tag;
                 }
                 else
                 {
-                    Console.WriteLine("don't have to import '{0}'", roleDefinition.Name);
-                    Log.AddLast("don't have to import '" + roleDefinition.Name + "'");
+                    Console.WriteLine("don't have to import '{0}'", sourceRoleDefinition.Name);
+                    Log.AddLast("don't have to import '" + sourceRoleDefinition.Name + "'");
                 }
             }
 
