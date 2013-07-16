@@ -9,9 +9,6 @@ namespace Sharezbold.ElementsMigration
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
     using Extension;
 
@@ -132,7 +129,19 @@ namespace Sharezbold.ElementsMigration
             creationObject.Name = sourceContentType.Name;
             creationObject.ParentContentType = this.AddParent(sourceContentTypeCollection, targetContentTypeCollection, sourceContentType.Parent);
 
-            targetContentTypeCollection.Add(creationObject);
+            ContentType targetContentType = targetContentTypeCollection.Add(creationObject);
+
+            targetContentType.DisplayFormTemplateName = sourceContentType.DisplayFormTemplateName;
+            targetContentType.DisplayFormUrl = sourceContentType.DisplayFormUrl;
+            targetContentType.DocumentTemplate = sourceContentType.DocumentTemplate;
+            targetContentType.EditFormTemplateName = sourceContentType.EditFormTemplateName;
+            targetContentType.EditFormUrl = sourceContentType.EditFormUrl;
+            targetContentType.Hidden = sourceContentType.Hidden;
+            targetContentType.NewFormTemplateName = sourceContentType.NewFormTemplateName;
+            targetContentType.NewFormUrl = sourceContentType.NewFormUrl;
+            targetContentType.ReadOnly = sourceContentType.ReadOnly;
+            targetContentType.Sealed = sourceContentType.Sealed;
+            targetContentType.Tag = sourceContentType.Tag;
         }
 
         /// <summary>
