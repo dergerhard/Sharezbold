@@ -10,10 +10,9 @@ namespace Sharezbold.ElementsMigration
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
     using Microsoft.SharePoint.Client.Workflow;
+    using Extension;
 
     /// <summary>
     /// Migrates the workflows from SharePoint 2010 and 2013 to SharePoint 2013.
@@ -55,7 +54,7 @@ namespace Sharezbold.ElementsMigration
                 return;
             }
 
-            HashSet<string> targetWorkflowNames = this.ReadNames(targetWorkflowAssociations);
+            HashSet<string> targetWorkflowNames = targetWorkflowAssociations.GetAllNames();
 
             foreach (var sourceWorkflowAssociation in sourceWorkflowAssociations)
             {
@@ -224,23 +223,6 @@ namespace Sharezbold.ElementsMigration
 
                 throw new ElementsMigrationException("Exception during fetching the WorkflowTemplates.", e);
             }
-        }
-
-        /// <summary>
-        /// Returns all names of given Workflow as HashSet.
-        /// </summary>
-        /// <param name="workflows">Workflow to read th names</param>
-        /// <returns>names of Workflows</returns>
-        private HashSet<string> ReadNames(WorkflowAssociationCollection workflows)
-        {
-            HashSet<string> names = new HashSet<string>();
-
-            foreach (var workflow in workflows)
-            {
-                names.Add(workflow.Name);
-            }
-
-            return names;
         }
     }
 }
