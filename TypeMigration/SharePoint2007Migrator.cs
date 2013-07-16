@@ -10,7 +10,7 @@ namespace Sharezbold.ElementsMigration
 
     internal class SharePoint2007Migrator : AbstractMigrator
     {
-        TypeMigration.GetGroupSharePoint2007.GetUserCollectionCompletedEventArgs users = new TypeMigration.GetGroupSharePoint2007.GetUserCollectionCompletedEventArgs(null, new Exception(), false, null);
+       // TypeMigration.GetGroupSharePoint2007.GetUserCollectionCompletedEventArgs users = new TypeMigration.GetGroupSharePoint2007.GetUserCollectionCompletedEventArgs(null, new Exception(), false, null);
 
         public SharePoint2007Migrator()
         {

@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="ContentTypesMigrator.cs" />
     <Compile Include="Extensions\ContentTypeExtensions.cs" />
+    <Compile Include="Extensions\GroupExtensions.cs" />
     <Compile Include="Extensions\RoleExtensions.cs" />
     <Compile Include="IElementsMigrator.cs" />
     <Compile Include="AbstractMigrator.cs" />
