@@ -7,7 +7,7 @@
     <ProjectGuid>{5765B89B-3DD6-4E68-B030-36A3412EA68A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TypeMigration</RootNamespace>
+    <RootNamespace>Sharezbold.ElementsMigration</RootNamespace>
     <AssemblyName>TypeMigration</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -20,6 +20,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -54,6 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentTypesMigrator.cs" />
+    <Compile Include="Extensions\ContentTypeExtensions.cs" />
+    <Compile Include="Extensions\GroupExtensions.cs" />
+    <Compile Include="Extensions\RoleExtensions.cs" />
+    <Compile Include="Extensions\FieldExtensions.cs" />
+    <Compile Include="Extensions\UserExtensions.cs" />
+    <Compile Include="Extensions\WorkflowExtensions.cs" />
     <Compile Include="IElementsMigrator.cs" />
     <Compile Include="AbstractMigrator.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

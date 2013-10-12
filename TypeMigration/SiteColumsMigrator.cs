@@ -10,9 +10,8 @@ namespace Sharezbold.ElementsMigration
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
+    using Extension;
 
     /// <summary>
     /// This class migrates the fields (SiteColumn).
@@ -48,7 +47,7 @@ namespace Sharezbold.ElementsMigration
             FieldCollection sourceFieldCollection = this.GetAllFields(sourceClientContext);
             FieldCollection targetFieldCollection = this.GetAllFields(targetClientContext);
 
-            HashSet<string> targetFieldTitles = this.GetTitlesOfFields(targetFieldCollection);
+            HashSet<string> targetFieldTitles = targetFieldCollection.GetAllTitles();
 
             foreach (var sourceField in sourceFieldCollection)
             {
@@ -56,7 +55,21 @@ namespace Sharezbold.ElementsMigration
                 {
                     Log.AddLast("import new field = '" + sourceField.Title + "'");
                     string newField = "<Field DisplayName='" + sourceField.Title + "' Type='" + sourceField.TypeAsString + "' />";
-                    targetFieldCollection.AddFieldAsXml(newField, true, AddFieldOptions.DefaultValue);
+                    Field targetField = targetFieldCollection.AddFieldAsXml(newField, true, AddFieldOptions.DefaultValue);
+                    targetField.Description = sourceField.Description;
+                    targetField.Direction = sourceField.Direction;
+                    targetField.EnforceUniqueValues = sourceField.EnforceUniqueValues;
+                    targetField.FieldTypeKind = sourceField.FieldTypeKind;
+                    //// TODO getGroup: targetField.Group = sourceField.Group;
+                    targetField.Hidden = sourceField.Hidden;
+                    targetField.Indexed = sourceField.Indexed;
+                    targetField.ReadOnlyField = sourceField.ReadOnlyField;
+                    targetField.Required = sourceField.Required;
+                    targetField.StaticName = sourceField.StaticName;
+                    targetField.Tag = sourceField.Tag;
+                    targetField.TypeAsString = sourceField.TypeAsString;
+                    targetField.ValidationFormula = sourceField.ValidationFormula;
+                    targetField.ValidationMessage = sourceField.ValidationMessage;
                 }
                 else
                 {
@@ -101,23 +114,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             return fieldCollection;
-        }
-
-        /// <summary>
-        /// Gets the titles of the fields.
-        /// </summary>
-        /// <param name="fields">fields to read the titles</param>
-        /// <returns>titles of the field</returns>
-        private HashSet<string> GetTitlesOfFields(FieldCollection fields)
-        {
-            HashSet<string> titles = new HashSet<string>();
-
-            foreach (var field in fields)
-            {
-                titles.Add(field.Title);
-            }
-
-            return titles;
         }
     }
 }

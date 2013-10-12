@@ -14,17 +14,38 @@ namespace Sharezbold.FileMigration
     using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
 
+    /// <summary>
+    /// Abstract class for migrating files from source SharePoint to target SharePont.
+    /// </summary>
     public abstract class AbstractMigrator
     {
-        protected ClientContext sourceClientContext;
-        protected ClientContext targetClientContext;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AbstractMigrator"/> class.
+        /// </summary>
+        /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
+        /// <param name="targetClientContext">ClientContext of target SharePoint</param>
         public AbstractMigrator(ClientContext sourceClientContext, ClientContext targetClientContext)
         {
             this.sourceClientContext = sourceClientContext;
             this.targetClientContext = targetClientContext;
         }
 
+        /// <summary>
+        /// ClientContext of the source SharePoint.
+        /// </summary>
+        internal ClientContext sourceClientContext { get; private set; }
+
+        /// <summary>
+        /// ClientContext of the target SharePoint.
+        /// </summary>
+        internal ClientContext targetClientContext { get; private set; }
+
+        /// <summary>
+        /// Migrate the file from the source-SharePoint to the target-SharePoint.
+        /// </summary>
+        /// <param name="documentListName">name of documentlist</param>
+        /// <param name="documentName">name of document</param>
+        /// <exception cref="FileMigrationException">if the migration of the file fails.</exception>
         public abstract void MigrateFile(string documentListName, string documentName);
     }
 }

@@ -111,6 +111,23 @@ namespace Sharezbold
         }
 
         /// <summary>
+        /// Updates the progresslog.
+        /// </summary>
+        /// <param name="logItem">item to log</param>
+        internal void UpdateProgressLog(string logItem)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<string>(this.UpdateProgressLog), logItem);
+            }
+            else
+            {
+                this.listBoxMigrationLog.Items.Add(logItem);
+                this.listBoxMigrationLog.Update();
+            }
+        }
+
+        /// <summary>
         /// Exit the application
         /// </summary>
         /// <param name="sender">sender of the action</param>
@@ -551,7 +568,7 @@ namespace Sharezbold
             catch (ArgumentNullException ex)
             {
                 this.tabPageConfiguration.Show();
-                this.tabControMain.SelectedTab = tabPageConfiguration;
+                this.tabControMain.SelectedTab = this.tabPageConfiguration;
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return;
@@ -560,14 +577,14 @@ namespace Sharezbold
             if (this.source == null || this.destination == null)
             {
                 this.tabPageConfiguration.Show();
-                this.tabControMain.SelectedTab = tabPageConfiguration;
+                this.tabControMain.SelectedTab = this.tabPageConfiguration;
                 MessageBox.Show("Please connect to the servers first!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return;
             }
 
             this.tabPageMigrationProgress.Show();
-            this.tabControMain.SelectedTab = tabPageMigrationProgress;
+            this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
 
             ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination, this);
             bool finished = await migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
@@ -689,19 +706,6 @@ namespace Sharezbold
 
             this.currentConfigurationElement.UpdateReadyForMigration();
             this.listViewMigrationContent.Update();
-        }
-
-        internal void UpdateProgressLog(string logItem)
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new Action<string>(this.UpdateProgressLog), logItem);
-            }
-            else
-            {
-                this.listBoxMigrationLog.Items.Add(logItem);
-                this.listBoxMigrationLog.Update();
-            }
         }
     }
 }

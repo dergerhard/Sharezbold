@@ -10,17 +10,13 @@ namespace Sharezbold.ElementsMigration
     using System;
     using System.Collections.Generic;
     using Microsoft.SharePoint.Client;
+    using Extension;
 
     /// <summary>
     /// This class is responsible to migrate the Groups.
     /// </summary>
     internal class UserGroupMigrator : AbstractMigrator
     {
-        /// <summary>
-        /// Groups hold for adaption.
-        /// </summary>
-        private HashSet<string> groupsToAdapt;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="UserGroupMigrator"/> class.
         /// </summary>
@@ -29,7 +25,6 @@ namespace Sharezbold.ElementsMigration
         internal UserGroupMigrator(ClientContext sourceClientContext, ClientContext targetClientContext)
             : base(sourceClientContext, targetClientContext)
         {
-            this.groupsToAdapt = new HashSet<string>();
         }
 
         /// <summary>
@@ -38,7 +33,6 @@ namespace Sharezbold.ElementsMigration
         public override void Migrate()
         {
             this.ImportNewGroups();
-            this.AdaptGroups();
         }
 
         /// <summary>
@@ -51,25 +45,27 @@ namespace Sharezbold.ElementsMigration
             GroupCollection groupCollectionOnSourceServer = this.GetAllGroups(this.sourceClientContext);
             GroupCollection groupCollectoinOnTargetServer = this.GetAllGroups(this.targetClientContext);
 
-            HashSet<string> titlesOfGroupsOnTargetServer = this.ReadAllTitles(groupCollectoinOnTargetServer);
+            HashSet<string> titlesOfGroupsOnTargetServer = groupCollectoinOnTargetServer.GetAllTitles();
 
-            foreach (var group in groupCollectionOnSourceServer)
+            foreach (var sourceGroup in groupCollectionOnSourceServer)
             {
-                if (!titlesOfGroupsOnTargetServer.Contains(group.Title))
+                if (!titlesOfGroupsOnTargetServer.Contains(sourceGroup.Title))
                 {
-                    Console.WriteLine("import group '{0}'", group.Title);
-                    Log.AddLast("import group '" + group.Title + "'");
+                    Console.WriteLine("import group '{0}'", sourceGroup.Title);
+                    Log.AddLast("import group '" + sourceGroup.Title + "'");
                     GroupCreationInformation groupCreationInformation = new GroupCreationInformation();
-                    groupCreationInformation.Description = group.Description;
-                    groupCreationInformation.Title = group.Title;
+                    groupCreationInformation.Description = sourceGroup.Description;
+                    groupCreationInformation.Title = sourceGroup.Title;
 
-                    groupCollectoinOnTargetServer.Add(groupCreationInformation);
-                    this.groupsToAdapt.Add(group.Title);
+                    Group targetGroup = groupCollectoinOnTargetServer.Add(groupCreationInformation);
+                    targetGroup.AllowMembersEditMembership = sourceGroup.AllowMembersEditMembership;
+                    targetGroup.AllowRequestToJoinLeave = sourceGroup.AllowRequestToJoinLeave;
+                    targetGroup.AutoAcceptRequestToJoinLeave = sourceGroup.AutoAcceptRequestToJoinLeave;
                 }
                 else
                 {
-                    Console.WriteLine("don't have to migrate group with title '{0}'", group.Title);
-                    Log.AddLast("don't have to import group '" + group.Title + "'");
+                    Console.WriteLine("don't have to migrate group with title '{0}'", sourceGroup.Title);
+                    Log.AddLast("don't have to import group '" + sourceGroup.Title + "'");
                 }
             }
 
@@ -83,60 +79,6 @@ namespace Sharezbold.ElementsMigration
                 Log.AddLast("Exception during importing new SiteGroups. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during importing new SiteGroups.", e);
             }
-        }
-
-        /// <summary>
-        /// Adapt the new groups.
-        /// </summary>
-        private void AdaptGroups()
-        {
-            Console.WriteLine("adapt new groups...");
-            Log.AddLast("adapt new Groups...");
-            GroupCollection groupCollectionOnSourceServer = this.GetAllGroups(this.sourceClientContext);
-            GroupCollection groupCollectoinOnTargetServer = this.GetAllGroups(this.targetClientContext);
-
-            foreach (var title in this.groupsToAdapt)
-            {
-                Console.WriteLine("have to adapt group '{0}'", title);
-                Log.AddLast("have to adapt group '" + title + "'");
-                Group sourceGroup = this.GetGroupByName(groupCollectionOnSourceServer, title);
-                Group targetGroup = this.GetGroupByName(groupCollectoinOnTargetServer, title);
-
-                targetGroup.AllowMembersEditMembership = sourceGroup.AllowMembersEditMembership;
-                targetGroup.AllowRequestToJoinLeave = sourceGroup.AllowRequestToJoinLeave;
-                targetGroup.AutoAcceptRequestToJoinLeave = sourceGroup.AutoAcceptRequestToJoinLeave;
-            }
-
-            try
-            {
-                this.targetClientContext.ExecuteQuery();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception during adapting SiteGroups.", e);
-                Log.AddLast("Exception during adapting SiteGroups. Error = " + e.Message);
-                throw new ElementsMigrationException("Exception during adatping SiteGroups.", e);
-            }
-        }
-
-        /// <summary>
-        /// Returns the group with the given title (iterative search algorithm). 
-        /// </summary>
-        /// <param name="groupCollection">the groupcollection to search</param>
-        /// <param name="title">title to search</param>
-        /// <returns>found group with given title</returns>
-        /// <exception cref="ElementsMigrationException">if group could not be found</exception>
-        private Group GetGroupByName(GroupCollection groupCollection, string title)
-        {
-            foreach (var group in groupCollection)
-            {
-                if (group.Title == title)
-                {
-                    return group;
-                }
-            }
-
-            throw new ElementsMigrationException("Could not find group for adaption! GroupTitle = " + title);
         }
 
         /// <summary>
@@ -163,23 +105,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             return groupCollection;
-        }
-
-        /// <summary>
-        /// Reads all titles out of given GroupCollection.
-        /// </summary>
-        /// <param name="groupCollection">GroupCollection to get the titles</param>
-        /// <returns>read titles</returns>
-        private HashSet<string> ReadAllTitles(GroupCollection groupCollection)
-        {
-            HashSet<string> titles = new HashSet<string>();
-
-            foreach (var group in groupCollection)
-            {
-                titles.Add(group.Title);
-            }
-
-            return titles;
         }
     }
 }

@@ -9,10 +9,8 @@ namespace Sharezbold.ElementsMigration
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
+    using Extension;
 
     /// <summary>
     /// This class migrates the RoleDefintion from the source SharePoint to the target SharePoint.
@@ -48,27 +46,28 @@ namespace Sharezbold.ElementsMigration
             RoleDefinitionCollection sourceRoleDefinitionCollection = this.GetAllRollDefinitions(sourceClientContext);
             RoleDefinitionCollection targetRoleDefinitionCollection = this.GetAllRollDefinitions(targetClientContext);
 
-            HashSet<string> targetRoleDefinitionNames = this.ReadNames(targetRoleDefinitionCollection);
+            HashSet<string> targetRoleDefinitionNames = targetRoleDefinitionCollection.ReadNames();
 
-            foreach (var roleDefinition in sourceRoleDefinitionCollection)
+            foreach (var sourceRoleDefinition in sourceRoleDefinitionCollection)
             {
-                if (!targetRoleDefinitionNames.Contains(roleDefinition.Name))
+                if (!targetRoleDefinitionNames.Contains(sourceRoleDefinition.Name))
                 {
-                    Console.WriteLine("import roleDefinition '{0}'", roleDefinition.Name);
-                    Log.AddLast("import RoleDefinition '" + roleDefinition.Name + "'");
+                    Console.WriteLine("import roleDefinition '{0}'", sourceRoleDefinition.Name);
+                    Log.AddLast("import RoleDefinition '" + sourceRoleDefinition.Name + "'");
 
                     RoleDefinitionCreationInformation creationObject = new RoleDefinitionCreationInformation();
-                    creationObject.BasePermissions = roleDefinition.BasePermissions;
-                    creationObject.Description = roleDefinition.Description;
-                    creationObject.Name = roleDefinition.Name;
-                    creationObject.Order = roleDefinition.Order;
+                    creationObject.BasePermissions = sourceRoleDefinition.BasePermissions;
+                    creationObject.Description = sourceRoleDefinition.Description;
+                    creationObject.Name = sourceRoleDefinition.Name;
+                    creationObject.Order = sourceRoleDefinition.Order;
 
-                    targetRoleDefinitionCollection.Add(creationObject);
+                    RoleDefinition targetRoleDefinition = targetRoleDefinitionCollection.Add(creationObject);
+                    targetRoleDefinition.Tag = sourceRoleDefinition.Tag;
                 }
                 else
                 {
-                    Console.WriteLine("don't have to import '{0}'", roleDefinition.Name);
-                    Log.AddLast("don't have to import '" + roleDefinition.Name + "'");
+                    Console.WriteLine("don't have to import '{0}'", sourceRoleDefinition.Name);
+                    Log.AddLast("don't have to import '" + sourceRoleDefinition.Name + "'");
                 }
             }
 
@@ -108,23 +107,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             return roleDefinitions;
-        }
-
-        /// <summary>
-        /// Returns all names of given RoleDefinitions as HashSet.
-        /// </summary>
-        /// <param name="roleDefinitions">RoleDefinitions to read th names</param>
-        /// <returns>names of RoleDefinitions</returns>
-        private HashSet<string> ReadNames(RoleDefinitionCollection roleDefinitions)
-        {
-            HashSet<string> names = new HashSet<string>();
-
-            foreach (var roleDefinition in roleDefinitions)
-            {
-                names.Add(roleDefinition.Name);
-            }
-
-            return names;
         }
     }
 }

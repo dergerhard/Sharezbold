@@ -9,10 +9,8 @@ namespace Sharezbold.ElementsMigration
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
+    using Extension;
 
     /// <summary>
     /// This class migrates the ContentType from the source SharePoint to the target SharePoint.
@@ -56,7 +54,7 @@ namespace Sharezbold.ElementsMigration
             ContentTypeCollection contentTypeCollectionSourceServer = this.GetAllContentTypes(sourceClientContext);
             ContentTypeCollection contentTypeCollectionTargetServer = this.GetAllContentTypes(targetClientContext);
 
-            HashSet<string> namesOfContentTypesOnTargetServer = this.ReadAllNames(contentTypeCollectionTargetServer);
+            HashSet<string> namesOfContentTypesOnTargetServer = contentTypeCollectionTargetServer.GetNames(); ;
 
             foreach (var contentType in contentTypeCollectionSourceServer)
             {
@@ -131,7 +129,19 @@ namespace Sharezbold.ElementsMigration
             creationObject.Name = sourceContentType.Name;
             creationObject.ParentContentType = this.AddParent(sourceContentTypeCollection, targetContentTypeCollection, sourceContentType.Parent);
 
-            targetContentTypeCollection.Add(creationObject);
+            ContentType targetContentType = targetContentTypeCollection.Add(creationObject);
+
+            targetContentType.DisplayFormTemplateName = sourceContentType.DisplayFormTemplateName;
+            targetContentType.DisplayFormUrl = sourceContentType.DisplayFormUrl;
+            targetContentType.DocumentTemplate = sourceContentType.DocumentTemplate;
+            targetContentType.EditFormTemplateName = sourceContentType.EditFormTemplateName;
+            targetContentType.EditFormUrl = sourceContentType.EditFormUrl;
+            targetContentType.Hidden = sourceContentType.Hidden;
+            targetContentType.NewFormTemplateName = sourceContentType.NewFormTemplateName;
+            targetContentType.NewFormUrl = sourceContentType.NewFormUrl;
+            targetContentType.ReadOnly = sourceContentType.ReadOnly;
+            targetContentType.Sealed = sourceContentType.Sealed;
+            targetContentType.Tag = sourceContentType.Tag;
         }
 
         /// <summary>
@@ -158,23 +168,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             return contentTypeCollection;
-        }
-
-        /// <summary>
-        /// Read all names of ContentType.
-        /// </summary>
-        /// <param name="contentTypeCollection">Collection to get the ContentType</param>
-        /// <returns>returns all names</returns>
-        private HashSet<string> ReadAllNames(ContentTypeCollection contentTypeCollection)
-        {
-            HashSet<string> names = new HashSet<string>();
-
-            foreach (var contentType in contentTypeCollection)
-            {
-                names.Add(contentType.Name);
-            }
-
-            return names;
         }
 
         /// <summary>
