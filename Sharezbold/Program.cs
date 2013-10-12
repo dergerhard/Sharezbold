@@ -8,7 +8,9 @@ namespace Sharezbold
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     
@@ -33,7 +35,7 @@ namespace Sharezbold
             {
                 Console.WriteLine(e);
                 MessageBox.Show("Unexpected Error: " + e.Message, "FATAL ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }	
         }
     }
 }

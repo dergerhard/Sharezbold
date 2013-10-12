@@ -175,3 +175,15 @@ Site Collection:
              * 	ListItem		|  sharepointListItem		+
              * 	Field			|  SPField			+
              */
+
+
+Ich:
+Gui fertigmachen, migration content fertigmachen
+
+Thomas:
+file-migration
+
+Gemeinsam:
+ - Doc (Manual)
+ - C# Doc
+ - Powerpoint

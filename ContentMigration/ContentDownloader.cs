@@ -57,7 +57,9 @@ namespace Sharezbold.ContentMigration
                                myList => myList.RootFolder.ServerRelativeUrl,
                                myList => myList.ParentWebUrl,
                                myList => myList.Hidden,
-                               myList => myList.IsApplicationList));
+                               myList => myList.IsApplicationList,
+                               myList => myList.Fields,
+                               myList => myList.BaseTemplate));
             this.context.ExecuteQuery();
 
             listColl.AddRange(from list in listCollection
@@ -77,6 +79,15 @@ namespace Sharezbold.ContentMigration
                     sharepointList.ImageIndex = 2;
                     sharepointList.SelectedImageIndex = 2;
                 }
+
+                
+                        foreach (Field entry in li.Fields)
+                        {
+                            Debug.WriteLine("defaultValue:      " + entry.DefaultValue);
+                            Debug.WriteLine("description:       " + entry.Description);
+                            Debug.WriteLine(entry.Direction);
+
+                        }
 
                 if (includeListItems)
                 {
@@ -101,14 +112,16 @@ namespace Sharezbold.ContentMigration
                         /*
                         var fieldValues = lii.FieldValues;
 
+                        Debug.WriteLine("HERE COME THE FIELDS OF {0}", lii.DisplayName);
                         foreach (KeyValuePair<string, object> entry in fieldValues)
                         {
                             if (!entry.Key.Contains("_"))
                             {
-                                sharepointListItem.Nodes.Add(new SpTreeNode(new MigrationObject(entry.Key + ": " + entry.Value, entry)));
+                                Debug.WriteLine("{0}:       {1}", entry.Key, entry.Value);
+                                //sharepointListItem.Nodes.Add(new SpTreeNode(new MigrationObject(entry.Key + ": " + entry.Value, entry)));
                             }
-                        }
-                        */
+                        }*/
+                        
                         sharepointList.Nodes.Add(sharepointListItem);
                     }
                 }

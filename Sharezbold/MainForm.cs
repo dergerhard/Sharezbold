@@ -461,6 +461,10 @@ namespace Sharezbold
                 listViewMigrationContent.Items.Add(new SpListViewItem(this.sourceTreeRoot.MigrationObject));
             }*/
 
+            ContentUploader uploader = new ContentUploader(destination);
+            uploader.MigrateListAndItsItems((List)(((SpTreeNode)treeViewContentSelection.SelectedNode).MigrationObject.DataObject), destination.Web);
+
+            /*
             // Generate the ListView with the source elements to configure
             foreach (TreeNode web in this.sourceTreeRoot.Nodes)
             {
@@ -500,7 +504,7 @@ namespace Sharezbold
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }*/
         }
 
         /// <summary>
