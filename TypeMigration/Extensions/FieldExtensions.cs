@@ -19,7 +19,7 @@ namespace Sharezbold.ElementsMigration.Extension
         /// <summary>
         /// Returns all titles of given Fields as HashSet.
         /// </summary>
-        /// <param name="roleDefinitions">Fields to read the titles</param>
+        /// <param name="fields">collection of the fields</param>
         /// <returns>titles of Field</returns>
         internal static HashSet<string> GetAllTitles(this FieldCollection fields)
         {

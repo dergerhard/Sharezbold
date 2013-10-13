@@ -9,8 +9,8 @@ namespace Sharezbold.ElementsMigration
 {
     using System;
     using System.Collections.Generic;
-    using Microsoft.SharePoint.Client;
     using Extension;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// This class migrates the RoleDefintion from the source SharePoint to the target SharePoint.
@@ -43,8 +43,8 @@ namespace Sharezbold.ElementsMigration
         {
             Console.WriteLine("import new RoleDefinitions...");
             Log.AddLast("import new RoleDefinitions...");
-            RoleDefinitionCollection sourceRoleDefinitionCollection = this.GetAllRollDefinitions(sourceClientContext);
-            RoleDefinitionCollection targetRoleDefinitionCollection = this.GetAllRollDefinitions(targetClientContext);
+            RoleDefinitionCollection sourceRoleDefinitionCollection = this.GetAllRollDefinitions(SourceClientContext);
+            RoleDefinitionCollection targetRoleDefinitionCollection = this.GetAllRollDefinitions(TargetClientContext);
 
             HashSet<string> targetRoleDefinitionNames = targetRoleDefinitionCollection.ReadNames();
 
@@ -73,7 +73,7 @@ namespace Sharezbold.ElementsMigration
 
             try
             {
-                targetClientContext.ExecuteQuery();
+                TargetClientContext.ExecuteQuery();
             }
             catch (Exception e)
             {

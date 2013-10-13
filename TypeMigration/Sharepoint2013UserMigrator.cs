@@ -9,11 +9,8 @@ namespace Sharezbold.ElementsMigration
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Microsoft.SharePoint.Client;
     using Extension;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// Migrates the SiteUser from the source SharePoint to the target SharePoint.
@@ -46,8 +43,8 @@ namespace Sharezbold.ElementsMigration
         {
             Console.WriteLine("import new Users...");
             Log.AddLast("import new Users...");
-            UserCollection sourceUserCollection = this.GetAllUser(sourceClientContext);
-            UserCollection targetUserCollection = this.GetAllUser(targetClientContext);
+            UserCollection sourceUserCollection = this.GetAllUser(SourceClientContext);
+            UserCollection targetUserCollection = this.GetAllUser(TargetClientContext);
 
             HashSet<string> targetUserNames = targetUserCollection.GetAllLoginNames();
 
@@ -76,7 +73,7 @@ namespace Sharezbold.ElementsMigration
 
             try
             {
-                targetClientContext.ExecuteQuery();
+                TargetClientContext.ExecuteQuery();
             }
             catch (Exception e)
             {

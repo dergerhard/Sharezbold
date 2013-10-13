@@ -9,8 +9,8 @@ namespace Sharezbold.ElementsMigration
 {
     using System;
     using System.Collections.Generic;
-    using Microsoft.SharePoint.Client;
     using Extension;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// This class is responsible to migrate the Groups.
@@ -42,8 +42,8 @@ namespace Sharezbold.ElementsMigration
         {
             Console.WriteLine("Import new groups...");
             Log.AddLast("import new Groups...");
-            GroupCollection groupCollectionOnSourceServer = this.GetAllGroups(this.sourceClientContext);
-            GroupCollection groupCollectoinOnTargetServer = this.GetAllGroups(this.targetClientContext);
+            GroupCollection groupCollectionOnSourceServer = this.GetAllGroups(this.SourceClientContext);
+            GroupCollection groupCollectoinOnTargetServer = this.GetAllGroups(this.TargetClientContext);
 
             HashSet<string> titlesOfGroupsOnTargetServer = groupCollectoinOnTargetServer.GetAllTitles();
 
@@ -71,7 +71,7 @@ namespace Sharezbold.ElementsMigration
 
             try
             {
-                this.targetClientContext.ExecuteQuery();
+                this.TargetClientContext.ExecuteQuery();
             }
             catch (Exception e)
             {

@@ -9,8 +9,8 @@ namespace Sharezbold.ElementsMigration
 {
     using System;
     using System.Collections.Generic;
-    using Microsoft.SharePoint.Client;
     using Extension;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// This class migrates the ContentType from the source SharePoint to the target SharePoint.
@@ -51,10 +51,10 @@ namespace Sharezbold.ElementsMigration
             Console.WriteLine("import new ContentTypes...");
             Log.AddLast("import new ContentTypes...");
 
-            ContentTypeCollection contentTypeCollectionSourceServer = this.GetAllContentTypes(sourceClientContext);
-            ContentTypeCollection contentTypeCollectionTargetServer = this.GetAllContentTypes(targetClientContext);
+            ContentTypeCollection contentTypeCollectionSourceServer = this.GetAllContentTypes(SourceClientContext);
+            ContentTypeCollection contentTypeCollectionTargetServer = this.GetAllContentTypes(TargetClientContext);
 
-            HashSet<string> namesOfContentTypesOnTargetServer = contentTypeCollectionTargetServer.GetNames(); ;
+            HashSet<string> namesOfContentTypesOnTargetServer = contentTypeCollectionTargetServer.GetNames();
 
             foreach (var contentType in contentTypeCollectionSourceServer)
             {
@@ -74,7 +74,7 @@ namespace Sharezbold.ElementsMigration
 
             try
             {
-                targetClientContext.ExecuteQuery();
+                TargetClientContext.ExecuteQuery();
             }
             catch (Exception e)
             {
@@ -106,7 +106,7 @@ namespace Sharezbold.ElementsMigration
             }
             catch (ElementsMigrationException e)
             {
-                Console.WriteLine("have to create parent content type");
+                Console.WriteLine("have to create parent content type. " + e.Message);
                 Log.AddLast("have to create parent ContentType");
             }
 
