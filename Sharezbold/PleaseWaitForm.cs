@@ -28,5 +28,36 @@ namespace Sharezbold
         {
             this.InitializeComponent();
         }
+
+        /// <summary>
+        /// SpecialText is an additional loding information label
+        /// </summary>
+        public string SpecialText 
+        { 
+            get 
+            { 
+                return this.labelSpecialText.Text; 
+            } 
+            
+            set 
+            { 
+                this.labelSpecialText.Text = value;  
+            }
+        }
+
+        /// <summary>
+        /// CreatParams is here used to avoid the possibility of closing the window
+        /// </summary>
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                const int CS_NOCLOSE = 0x200;
+
+                CreateParams cp = base.CreateParams;
+                cp.ClassStyle |= CS_NOCLOSE;
+                return cp;
+            }
+        }
     }
 }

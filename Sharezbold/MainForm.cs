@@ -28,24 +28,24 @@ namespace Sharezbold
     /// <summary>
     /// Delegate for loading the source tree
     /// </summary>
-    public delegate void ApplyConfigurationAndLoadSourceTreeDelegate();
+    //public delegate void ApplyConfigurationAndLoadSourceTreeDelegate();
 
     /// <summary>
     /// Delegate for updating main ui when ApplyConfigurationAndLoadSourceTreeDelegate is finished
     /// </summary>
     /// <param name="node">the resulting source node</param>
-    public delegate void ApplyConfigurationAndLoadSourceTreeFinishedDelegate(SpTreeNode node);
+    //public delegate void ApplyConfigurationAndLoadSourceTreeFinishedDelegate(SpTreeNode node);
 
     /// <summary>
     /// Delegate for loading destination tree
     /// </summary>
-    public delegate void LoadDestinationTreeDelegate();
+    //public delegate void LoadDestinationTreeDelegate();
 
     /// <summary>
     /// Delegate for updating main ui when LoadDestinationTreeDelegate is finished
     /// </summary>
     /// <param name="node">the root node</param>
-    public delegate void LoadDestinationTreeFinishedDelegate(SpTreeNode node);
+    //public delegate void LoadDestinationTreeFinishedDelegate(SpTreeNode node);
 
     /// <summary>
     /// The main form of the program
@@ -108,6 +108,12 @@ namespace Sharezbold
             header.Name = "col1";
             header.Width = 400;
             this.listViewMigrationContent.Columns.Add(header);
+
+            // disable all tabs other than the first one
+            this.EnableTab(this.tabPageContentSelection, false);
+            this.EnableTab(this.tabPageMigrationElements, false);
+            this.EnableTab(this.tabPageMigrationPreparation, false);
+            this.EnableTab(this.tabPageMigrationProgress, false);
         }
 
         /// <summary>
@@ -280,7 +286,7 @@ namespace Sharezbold
         /// </summary>
         /// <param name="sender">sender of event</param>
         /// <param name="e">event of sender</param>
-        private void ButtonConfigurationNext_Click(object sender, EventArgs e)
+        private async void ButtonConfigurationNext_Click(object sender, EventArgs e)
         {
             try
             {
@@ -291,14 +297,21 @@ namespace Sharezbold
                 this.UIToSettings();
                 this.waitForm.Show();
                 this.EnableTab(this.tabPageConfiguration, false);
-
-                // needed for async loading
-                ApplyConfigurationAndLoadSourceTreeDelegate w = this.ApplyConfigurationAndLoadSourceTree;
-                w.BeginInvoke(null, null);
+                this.EnableTab(this.tabPageContentSelection, true);
+                
+                // load trees and move on to the next form
+                await this.ApplyConfigurationAndLoadSourceTreeAsync();
+                this.treeViewContentSelection.Nodes.Add(this.sourceTreeRoot);
+                this.waitForm.Hide();
+                this.tabControMain.SelectedTab = this.tabPageContentSelection;
             }
             catch (Exception ex)
             {
+                // on exception - hide wait form, go back to configuration
+                this.waitForm.Hide();
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.EnableTab(this.tabPageConfiguration, true);
+                this.tabControMain.SelectedTab = this.tabPageConfiguration;
             }
         }
 
@@ -319,99 +332,109 @@ namespace Sharezbold
             }
         }
 
+
+
         /// <summary>
         /// Tries to connect to the server and loads the migration tree
         /// </summary>
-        private void ApplyConfigurationAndLoadSourceTree()
+        private async Task<bool> ApplyConfigurationAndLoadSourceTreeAsync()
         {
             try
             {
-                this.ConnectToSource();
+                this.waitForm.SpecialText = "Trying to connect to source";
+                await this.ConnectToSource();
             }
             catch (Exception ex)
             {
+                this.waitForm.SpecialText = "";
                 Debug.WriteLine(ex.ToString());
                 throw new LoginFailedException("Could not connect to source SharePoint. Please check your login Data");
+            }
+            finally
+            {
+                this.waitForm.SpecialText = "";
             }
 
             try
             {
-                this.ConnectToDestination();
+                this.waitForm.SpecialText = "Trying to connect to destination";
+                await this.ConnectToDestination();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
                 throw new LoginFailedException("Could not connect to destination SharePoint. Please check your login Data");
             }
+            finally
+            {
+                this.waitForm.SpecialText = "";
+            }
 
-            ContentDownloader cm = new ContentDownloader(this.source);
-            SpTreeNode node = cm.GenerateMigrationTree();
+            this.waitForm.SpecialText = "Generating migration tree";
+            Task<SpTreeNode> t = Task.Factory.StartNew(() =>
+            {
+                ContentDownloader cm = new ContentDownloader(this.source);
+                return cm.GenerateMigrationTree();
+            });
 
-            // need to use invoke to be thread safe
-            this.Invoke(new ApplyConfigurationAndLoadSourceTreeFinishedDelegate(this.ApplyConfigurationAndLoadSourceTreeFinished), new object[] { node });
-        }
+            this.sourceTreeRoot = await t;
 
-        /// <summary>
-        /// This method is needed for threading and called when ApplyConfigurationAndLoadSourceTreeFinished is finished
-        /// </summary>
-        /// <param name="node">is the loaded root node - will be applied to treeviewContentSelection</param>
-        private void ApplyConfigurationAndLoadSourceTreeFinished(SpTreeNode node)
-        {
-            this.sourceTreeRoot = node;
-            this.treeViewContentSelection.Nodes.Add(this.sourceTreeRoot);
-            this.waitForm.Hide();
-            this.tabControMain.SelectedTab = this.tabPageContentSelection;
+            return true;
         }
 
         /// <summary>
         /// loads the tree where you can migrate to
         /// </summary>
-        private void LoadDestinationTree()
+        private async Task<SpTreeNode> LoadDestinationTree()
         {
-            ContentDownloader downloader = new ContentDownloader(this.destination);
-            SpTreeNode node = downloader.GenerateMigrationTree(false);
+            Task<SpTreeNode> t = Task.Factory.StartNew(() =>
+                {
+                    ContentDownloader downloader = new ContentDownloader(this.destination);
+                    return downloader.GenerateMigrationTree(false);
+                    
+                });
 
-            // is needed for async loading
-            this.Invoke(new LoadDestinationTreeFinishedDelegate(this.LoadDestinationTreeFinished), new object[] { node });
-        }
-
-        /// <summary>
-        /// Is called when LoadDestinationTree finised. Applys root node to treeview and selects next tab
-        /// </summary>
-        /// <param name="node">the node</param>
-        private void LoadDestinationTreeFinished(SpTreeNode node)
-        {
-            this.destinationTreeRoot = node;
-            this.treeViewMigrateTo.Nodes.Add(this.destinationTreeRoot);
-            this.treeViewMigrateTo.ExpandAll();
-            this.waitForm.Hide();
-            this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
+            return await t;
         }
 
         /// <summary>
         /// Connects to the source, provides context
         /// </summary>
-        private void ConnectToSource()
+        private async Task<bool> ConnectToSource()
         {
             this.UIToSettings();
             this.source = new ClientContext(this.settings.FromHost);
             var cc = new CredentialCache();
             cc.Add(new Uri(this.source.Url), "NTLM", new NetworkCredential(this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain));
             this.source.Credentials = cc;
-            this.source.ExecuteQuery();
+            
+            Task<bool> t = Task.Factory.StartNew(() =>
+            {
+                this.source.ExecuteQuery();
+                return true;
+            });
+
+            return await t;
         }
 
         /// <summary>
         /// Connects to the destination, provides context
         /// </summary>
-        private void ConnectToDestination()
+        private async Task<bool> ConnectToDestination()
         {
             this.UIToSettings();
             this.destination = new ClientContext(this.settings.ToHost);
             var cc = new CredentialCache();
             cc.Add(new Uri(this.destination.Url), "NTLM", new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain));
             this.destination.Credentials = cc;
-            this.destination.ExecuteQuery();
+
+            Task<bool> t = Task.Factory.StartNew(() =>
+            {
+                this.destination.ExecuteQuery();
+                return true;
+            });
+
+            return await t;
         }
 
         /// <summary>
@@ -470,18 +493,21 @@ namespace Sharezbold
         /// </summary>
         /// <param name="sender">the sender of the event</param>
         /// <param name="e">the EventArgs itself</param>
-        private void ButtonConfigureMigration_Click(object sender, EventArgs e)
+        private async void ButtonConfigureMigration_Click(object sender, EventArgs e)
         {
+            this.EnableTab(this.tabPageContentSelection, false);
+            this.EnableTab(this.tabPageMigrationPreparation, true);
+
             // Site collections not supported
-            /*if (this.sourceTreeRoot.Checked)
+            if (this.sourceTreeRoot.Checked)
             {
                 listViewMigrationContent.Items.Add(new SpListViewItem(this.sourceTreeRoot.MigrationObject));
-            }*/
+            }
 
-            ContentUploader uploader = new ContentUploader(destination);
-            uploader.MigrateListAndItsItems((List)(((SpTreeNode)treeViewContentSelection.SelectedNode).MigrationObject.DataObject), destination.Web);
+            //ContentUploader uploader = new ContentUploader(destination);
+            //uploader.MigrateListAndItsItems((List)(((SpTreeNode)treeViewContentSelection.SelectedNode).MigrationObject.DataObject), destination.Web);
 
-            /*
+            
             // Generate the ListView with the source elements to configure
             foreach (TreeNode web in this.sourceTreeRoot.Nodes)
             {
@@ -514,14 +540,20 @@ namespace Sharezbold
                 this.waitForm.Show();
                 this.EnableTab(this.tabPageContentSelection, false);
 
-                // LoadDestinationTree is started as thread
-                LoadDestinationTreeDelegate del = this.LoadDestinationTree;
-                del.BeginInvoke(null, null);
+                // async starting of destination tree loading
+                this.waitForm.SpecialText = "Loading destination tree";
+                SpTreeNode node = await this.LoadDestinationTree();
+
+                this.destinationTreeRoot = node;
+                this.treeViewMigrateTo.Nodes.Add(this.destinationTreeRoot);
+                this.treeViewMigrateTo.ExpandAll();
+                this.waitForm.Hide();
+                this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }*/
+            }
         }
 
         /// <summary>

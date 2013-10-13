@@ -13,7 +13,8 @@ namespace Sharezbold
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    
+    using ContentMigration;
+
     /// <summary>
     /// Main Program
     /// </summary>

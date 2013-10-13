@@ -7,7 +7,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using ContentMigration;
 using System.Diagnostics;
 
 namespace Sharezbold.ContentMigration
@@ -16,14 +15,13 @@ namespace Sharezbold.ContentMigration
     {
         public void abc()
         {
-            /*
-            wsLists.Lists lists = new wsLists.Lists();
-            lists.Credentials = new NetworkCredential("Administrator", "P@ssw0rd", "cssdev");
+            //ContentMigration.Lists l = new ContentMigration.Lists();
+            //l.Credentials = new NetworkCredential("Administrator", "P@ssw0rd", "cssdev");
 
             //lists.AddList("ExportBuffer", "export buffer", 101); //document library
              
              
-             
+            /* 
             wsSites.Sites sites = new wsSites.Sites();
             sites.Credentials = new NetworkCredential("Administrator", "P@ssw0rd", "cssdev");
 

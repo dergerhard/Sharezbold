@@ -31,13 +31,14 @@ namespace Sharezbold
         {
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.labelSpecialText = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(36, 65);
+            this.label1.Location = new System.Drawing.Point(36, 55);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(192, 13);
             this.label1.TabIndex = 0;
@@ -46,18 +47,30 @@ namespace Sharezbold
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Sharezbold.Properties.Resources.waiting3;
-            this.pictureBox1.Location = new System.Drawing.Point(101, 12);
+            this.pictureBox1.Location = new System.Drawing.Point(102, 2);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(50, 50);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             // 
+            // labelSpecialText
+            // 
+            this.labelSpecialText.AutoSize = true;
+            this.labelSpecialText.Location = new System.Drawing.Point(-1, 78);
+            this.labelSpecialText.MinimumSize = new System.Drawing.Size(260, 0);
+            this.labelSpecialText.Name = "labelSpecialText";
+            this.labelSpecialText.Size = new System.Drawing.Size(260, 13);
+            this.labelSpecialText.TabIndex = 2;
+            this.labelSpecialText.Text = "labelSpecialText";
+            this.labelSpecialText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // PleaseWaitForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(271, 98);
+            this.Controls.Add(this.labelSpecialText);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -75,5 +88,6 @@ namespace Sharezbold
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label labelSpecialText;
     }
 }

@@ -112,12 +112,11 @@ Server Gerhard:
 CSSDEV\Administrator
 P@ssw0rd
 
-Treffen:
------------
-Montag, 18:30 - so viel wie geht
-Mittwoch, Integration + Präsentationsvorbereitung
 
 
+#### Administrator kann eigene Site-Collections nicht sehen ####
+--> disable loopback in der registry
+http://social.technet.microsoft.com/Forums/sharepoint/en-US/d446b9a3-d18c-42d9-85f7-383d6b67af64/cannot-access-site-collection-from-wss-server?forum=sharepointgenerallegacy
 
 
 
