@@ -10,8 +10,8 @@ namespace Sharezbold.ElementsMigration
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.SharePoint.Client;
     using Extension;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// This class migrates the fields (SiteColumn).
@@ -44,8 +44,8 @@ namespace Sharezbold.ElementsMigration
         {
             Console.WriteLine("import new fields");
             Log.AddLast("import new SiteColumns");
-            FieldCollection sourceFieldCollection = this.GetAllFields(sourceClientContext);
-            FieldCollection targetFieldCollection = this.GetAllFields(targetClientContext);
+            FieldCollection sourceFieldCollection = this.GetAllFields(SourceClientContext);
+            FieldCollection targetFieldCollection = this.GetAllFields(TargetClientContext);
 
             HashSet<string> targetFieldTitles = targetFieldCollection.GetAllTitles();
 
@@ -80,7 +80,7 @@ namespace Sharezbold.ElementsMigration
 
             try
             {
-                targetClientContext.ExecuteQuery();
+                TargetClientContext.ExecuteQuery();
             }
             catch (Exception e)
             {

@@ -13,9 +13,14 @@ namespace Sharezbold.ElementsMigration
     /// <summary>
     /// Abstract class for elements migration.
     /// </summary>
-    abstract class AbstractMigrator
+    public abstract class AbstractMigrator
     {
-        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AbstractMigrator"/> class.
+        /// </summary>
+        protected AbstractMigrator()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AbstractMigrator"/> class.
@@ -24,35 +29,31 @@ namespace Sharezbold.ElementsMigration
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
         protected AbstractMigrator(ClientContext sourceClientContext, ClientContext targetClientContext)
         {
-            this.sourceClientContext = sourceClientContext;
-            this.targetClientContext = targetClientContext;
+            this.SourceClientContext = sourceClientContext;
+            this.TargetClientContext = targetClientContext;
 
             this.Log = new LinkedList<string>();
         }
 
         /// <summary>
-        /// ClientContext of source SharePoint.
+        /// Gets Holds the log of the migration.
         /// </summary>
-        internal ClientContext sourceClientContext { get; private set; }
+        internal LinkedList<string> Log { get; private set; }
 
         /// <summary>
-        /// ClientContext of target SharePoint.
+        /// Gets ClientContext of source SharePoint.
         /// </summary>
-        internal ClientContext targetClientContext { get; private set; }
+        internal ClientContext SourceClientContext { get; private set; }
 
-        protected AbstractMigrator()
-        {
-        }
+        /// <summary>
+        /// Gets ClientContext of target SharePoint.
+        /// </summary>
+        internal ClientContext TargetClientContext { get; private set; }
 
         /// <summary>
         /// Migrates the datas.
         /// </summary>
         /// <exception cref="ElementsMigrationException">if migration fails</exception>
         public abstract void Migrate();
-
-        /// <summary>
-        /// Holds the log of the migration.
-        /// </summary>
-        internal LinkedList<string> Log { get; private set; }
     }
 }

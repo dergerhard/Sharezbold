@@ -11,6 +11,9 @@ namespace Sharezbold.ElementsMigration.Extension
     using System.Collections.Generic;
     using Microsoft.SharePoint.Client;
 
+    /// <summary>
+    /// Holds the extensions for the User.
+    /// </summary>
     internal static class UserExtensions
     {
         /// <summary>

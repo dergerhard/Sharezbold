@@ -10,9 +10,9 @@ namespace Sharezbold.ElementsMigration
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Extension;
     using Microsoft.SharePoint.Client;
     using Microsoft.SharePoint.Client.Workflow;
-    using Extension;
 
     /// <summary>
     /// Migrates the workflows from SharePoint 2010 and 2013 to SharePoint 2013.
@@ -45,8 +45,8 @@ namespace Sharezbold.ElementsMigration
         private void ImportNewWorkflow()
         {
             Console.WriteLine("Import new WorkflowAssociations");
-            WorkflowAssociationCollection sourceWorkflowAssociations = this.GetAllWorkflowAssociationCollection(this.sourceClientContext);
-            WorkflowAssociationCollection targetWorkflowAssociations = this.GetAllWorkflowAssociationCollection(this.targetClientContext);
+            WorkflowAssociationCollection sourceWorkflowAssociations = this.GetAllWorkflowAssociationCollection(this.SourceClientContext);
+            WorkflowAssociationCollection targetWorkflowAssociations = this.GetAllWorkflowAssociationCollection(this.TargetClientContext);
 
             if (sourceWorkflowAssociations.Count == 0)
             {
@@ -65,8 +65,8 @@ namespace Sharezbold.ElementsMigration
 
                     WorkflowAssociationCreationInformation creationObject = new WorkflowAssociationCreationInformation();
                     creationObject.Name = sourceWorkflowAssociation.Name;
-                    creationObject.HistoryList = this.GetHistoryList(this.sourceClientContext);
-                    creationObject.TaskList = this.GetTaskList(this.sourceClientContext);
+                    creationObject.HistoryList = this.GetHistoryList(this.SourceClientContext);
+                    creationObject.TaskList = this.GetTaskList(this.SourceClientContext);
                     creationObject.Template = this.GetTemplate();
 
                     WorkflowAssociation targetWorkflowAssociation = targetWorkflowAssociations.Add(creationObject);
@@ -86,7 +86,7 @@ namespace Sharezbold.ElementsMigration
 
             try
             {
-                this.targetClientContext.ExecuteQuery();
+                this.TargetClientContext.ExecuteQuery();
             }
             catch (Exception e)
             {
@@ -182,13 +182,13 @@ namespace Sharezbold.ElementsMigration
         /// <exception cref="ElementsMigrationException">if there is no workflowTemplate</exception>
         private WorkflowTemplate GetTemplate()
         {
-            WorkflowTemplateCollection sourceWorkflowTemplateCollection = sourceClientContext.Web.WorkflowTemplates;
-            WorkflowTemplateCollection targetWorkflowTemplateCollection = targetClientContext.Web.WorkflowTemplates;
+            WorkflowTemplateCollection sourceWorkflowTemplateCollection = SourceClientContext.Web.WorkflowTemplates;
+            WorkflowTemplateCollection targetWorkflowTemplateCollection = TargetClientContext.Web.WorkflowTemplates;
 
             try
             {
-                sourceClientContext.ExecuteQuery();
-                targetClientContext.ExecuteQuery();
+                SourceClientContext.ExecuteQuery();
+                TargetClientContext.ExecuteQuery();
 
                 if (targetWorkflowTemplateCollection == null || targetWorkflowTemplateCollection.Count == 0)
                 {
