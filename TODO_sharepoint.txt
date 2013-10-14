@@ -1,0 +1,8 @@
+TODOs:
+-) Migration mit Service [Gerhard]
+-) FileMigration [Thomas]
+-) TypeMigration --> Exception Safe [Thomas]
+-) Proxy-Verbindung [?]
+-) Style-Cop [Gerhard, Thomas]
+-) Bei Exception: Aussagekräfte Ausgaben in MsgBox [Gerhard, Thomas]
+-) Präsentation [Gerhard, Thomas]
