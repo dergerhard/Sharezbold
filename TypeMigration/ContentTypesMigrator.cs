@@ -95,7 +95,7 @@ namespace Sharezbold.ElementsMigration
         {
             Console.WriteLine("add parent ContentType...");
             Log.AddLast("adding parent ContentType...");
-            if (parentContentType == null)
+            if (parentContentType == null || parentContentType.Name == null)
             {
                 return null;
             }
@@ -127,7 +127,7 @@ namespace Sharezbold.ElementsMigration
             creationObject.Description = sourceContentType.Description;
             creationObject.Group = sourceContentType.Group;
             creationObject.Name = sourceContentType.Name;
-            creationObject.ParentContentType = this.AddParent(sourceContentTypeCollection, targetContentTypeCollection, sourceContentType.Parent);
+          ////  creationObject.ParentContentType = this.AddParent(sourceContentTypeCollection, targetContentTypeCollection, sourceContentType.Parent);
 
             ContentType targetContentType = targetContentTypeCollection.Add(creationObject);
 
