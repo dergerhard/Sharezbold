@@ -82,7 +82,7 @@ namespace Sharezbold.FileMigration
         /// <param name="documentName">document name to download</param>
         /// <returns>downloaded file as stream</returns>
         /// <exception cref="FileNotFoundException">if the file was not found</exception>
-        private Stream DownloadDocument(string documentListName, string documentName)
+        internal Stream DownloadDocument(string documentListName, string documentName)
         {
             ListItem item = GetDocumentFromSharePoint(documentListName, documentName);
             if (item != null)
