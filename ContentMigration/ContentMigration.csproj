@@ -55,6 +55,7 @@
     <Compile Include="ContentUploader.cs" />
     <Compile Include="LoadingElementsException.cs" />
     <Compile Include="MigrationObject.cs" />
+    <Compile Include="NotSupportedException.cs" />
     <Compile Include="SpListViewItem.cs" />
     <Compile Include="SpTreeNode.cs" />
     <Compile Include="Test.cs" />
@@ -63,6 +64,11 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\AdminWS\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="Web References\ListsWS\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -92,6 +98,11 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\AdminWS\admin.wsdl" />
+    <None Include="Web References\AdminWS\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <None Include="Web References\ListsWS\lists.wsdl" />
     <None Include="Web References\ListsWS\Reference.map">
@@ -141,6 +152,17 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Sharezbold_ContentMigration_WebsWS_Webs</CachedSettingsPropName>
     </WebReferenceUrl>
+    <WebReferenceUrl Include="http://ss13-css-009:8080/_vti_adm/admin.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\AdminWS\</RelPath>
+      <UpdateFromURL>http://ss13-css-009:8080/_vti_adm/admin.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Sharezbold_ContentMigration_AdminWS_Admin</CachedSettingsPropName>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="http://ss13-css-019/MyTestSiteUrl/_vti_bin/sites.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\SitesWS\</RelPath>
@@ -161,6 +183,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\WebsWS\webs.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\AdminWS\admin.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

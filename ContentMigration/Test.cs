@@ -11,15 +11,264 @@ using System.Diagnostics;
 using Sharezbold.ContentMigration.ListsWS;
 using Sharezbold.ContentMigration.SitesWS;
 using System.Xml.Linq;
+using System.IO;
 
 namespace Sharezbold.ContentMigration
 {
     public class Test
     {
-        public void abc()
+        private const string urlLists = @"/_vti_bin/lists.asmx";
+        private const string urlWebs = @"/_vti_bin/webs.asmx";
+        private const string urlSites = @"/_vti_bin/sites.asmx";
+        private const string urlAdmin = @"/_vti_adm/admin.asmx";
+
+        private string srcUrl;
+        private string dstUrl;
+
+        private CredentialCache srcCredentials;
+        private CredentialCache dstCredentials;
+        private CredentialCache dstCredentialsCA;
+
+        private string srcUser;
+        private string srcDomain;
+        private string srcPassword;
+
+        private string dstUser;
+        private string dstDomain;
+        private string dstPassword;
+
+        private SitesWS.Sites srcSites;
+        private SitesWS.Sites dstSites;
+        private WebsWS.Webs srcWebs;
+        private AdminWS.Admin dstAdmin;
+        private ListsWS.Lists srcLists;
+        private ListsWS.Lists dstLists;
+
+        /// <summary>
+        /// sets up the web services
+        /// </summary>
+        public Test()
         {
+            ///////////////////////////////////////////////////////////////////////////
+            //set up url
+            srcUrl = "http://ss13-css-009:31920/"; //team site
+            //srcUrl = "http://ss13-css-009:31920/testsubsite/"; //blog
+            string srcUrlLists = srcUrl + urlLists;
+            string srcUrlWebs = srcUrl + urlWebs;
+            string srcUrlSites = srcUrl + urlSites;
+            
+            dstUrl = "http://ss13-css-007:5485/";
+            string dstUrlLists = dstUrl + urlLists;
+            string dstUrlWebs = dstUrl + urlWebs;
+            string dstUrlSites = dstUrl + urlSites;
+
+            //central admin is needed for admin.asmx
+            string dstUrlCA = "http://ss13-css-007:8080/";
+            string dstUrlCaAdmin = dstUrlCA + urlAdmin;
+
+            //set up credentials
+            srcUser = "Administrator";
+            srcPassword = "P@ssw0rd";
+            srcDomain = "cssdev";
+
+            dstUser = "Administrator";
+            dstPassword = "P@ssw0rd";
+            dstDomain = "cssdev";
+
+            srcCredentials = new CredentialCache();
+            srcCredentials.Add(new Uri(srcUrl), "NTLM", new NetworkCredential(srcUser, srcPassword, srcDomain));
+
+            dstCredentials = new CredentialCache();
+            dstCredentials.Add(new Uri(dstUrl), "NTLM", new NetworkCredential(dstUser, dstPassword, dstDomain));
+
+            dstCredentialsCA = new CredentialCache();
+            dstCredentialsCA.Add(new Uri(dstUrlCA), "NTLM", new NetworkCredential(dstUser, dstPassword, dstDomain));
+
+            srcSites = new SitesWS.Sites();
+            srcSites.Url = srcUrlSites;
+            srcSites.Credentials = srcCredentials;
+
+            srcWebs = new WebsWS.Webs();
+            srcWebs.Url = srcUrlWebs;
+            srcWebs.Credentials = srcCredentials;
+
+            dstSites = new SitesWS.Sites();
+            dstSites.Url = dstUrlSites;
+            dstSites.Credentials = dstCredentials;
+
+            dstAdmin = new AdminWS.Admin();
+            dstAdmin.Url = dstUrlCaAdmin;
+            dstAdmin.Credentials = dstCredentialsCA;
+
+            srcLists = new ListsWS.Lists();
+            srcLists.Url = srcUrlLists;
+            srcLists.Credentials = srcCredentials;
+
+            dstLists = new ListsWS.Lists();
+            dstLists.Url = dstUrlLists;
+            dstLists.Credentials = dstCredentials;
         }
 
+        /// <summary>
+        /// for migration of site collections the central admin-url is needed!
+        /// </summary>
+        public void abc()
+        {
+            /* whole migration
+             * 1. Transfer users and groups
+             * 2. Transfer all metadata as:
+             *      2.1 site columns
+             *      2.2 content types (depend on site columns)
+             *      2.3 site templates
+             *      
+             *  3. Transfer site collection
+             *  4. Transfer sites
+             *  5. Transfer lists and libraries
+             *  6. Transfer list data
+             *  7. Transfer files
+             */
+
+
+            // 3. Transfer site collections
+            //admService.CreateSite("http://Server_Name/sites/SiteCollection_Name",
+            //  "Title", "Description", 1033, "STS#0", 
+            //  "Domain_Name\\User_Alias","User_Display_Name",
+            //  "User_E-mail","","");
+            
+            /*
+             * sites    --> templates for site collection
+             */
+
+
+            //get all webs names
+            XmlNode allSrcWebs = srcWebs.GetAllSubWebCollection();
+            // result<List>: <Web Title="Fucking site collection" Url="http://ss13-css-009:31920" xmlns="http://schemas.microsoft.com/sharepoint/soap/" />
+            Dictionary<string, string> webs = new Dictionary<string,string>();
+            foreach (XmlNode web in allSrcWebs)
+                webs.Add(web.Attributes["Url"].InnerText, web.Attributes["Title"].InnerText);
+
+            //get webs metadata
+            var allSrcWebsXml = new List<XmlNode>();
+            foreach (KeyValuePair<string, string> web in webs)
+            {
+                XmlNode w = srcWebs.GetWeb(web.Key);
+                allSrcWebsXml.Add(w);
+                // result:
+                /*<Web Title="Fucking site collection" 
+                 *      Url="http://ss13-css-009:31920"
+                 *      Description="" 
+                 *      Language="1033" 
+                 *      FarmId="{736cfc86-9f17-4379-a356-223f380d0816}" 
+                 *      Id="{e021b041-451b-4fc8-828b-cb7f6df1ac21}" 
+                 *      ExcludeFromOfflineClient="False" 
+                 *      CellStorageWebServiceEnabled="True" 
+                 *      AlternateUrls="http://ss13-css-009:31920/" 
+                 *      xmlns="http://schemas.microsoft.com/sharepoint/soap/" />
+                 *
+                 * <Web Title="TestSubSite" 
+                 *      Url="http://ss13-css-009:31920/testsubsite" 
+                 *      Description="just a blog" 
+                 *      Language="1033" 
+                 *      FarmId="{736cfc86-9f17-4379-a356-223f380d0816}" 
+                 *      Id="{72bc0e61-0852-4a20-9363-1253dea245ba}" 
+                 *      ExcludeFromOfflineClient="False" 
+                 *      CellStorageWebServiceEnabled="True" 
+                 *      AlternateUrls="http://ss13-css-009:31920/" 
+                 *      xmlns="http://schemas.microsoft.com/sharepoint/soap/" />
+                 */
+
+                //Console.WriteLine(w.OuterXml + "\r\n####################");
+            }
+            
+            //XmlNode siteCollection = allSrcWebs.ChildNodes[0];
+
+            try
+            {
+                string url = allSrcWebsXml.ElementAt(0).Attributes["Url"].InnerText;
+
+                /*dstAdmin.CreateSite(dstUrl ,
+                    "Fucking SC",
+                    "description...",
+                    1033,
+                    "STS#1",
+                    dstDomain + "\\" + dstUser,  //vllt: "SS13-CSS-007\\administrator",
+                    dstUser,
+                    "",
+                    "", //@"http://ss13-css-007:5485/fsc",
+                    ""); //"SP2013Gerhard");*/
+
+                dstAdmin.CreateSite(dstUrl,
+                    allSrcWebsXml.ElementAt(0).Attributes["Title"].InnerText,
+                    allSrcWebsXml.ElementAt(0).Attributes["Description"].InnerText,
+                    Convert.ToInt32(allSrcWebsXml.ElementAt(0).Attributes["Language"].InnerText),
+                    this.getSiteTemplate(),
+                    dstDomain + "\\" + dstUser,
+                    dstUser,
+                    "",
+                    "",
+                    "");
+            }
+            catch (Exception sse)
+            {
+                throw sse;
+                //throw new NotSupportedException("Your destination server does not support creating site collections with a web service.", sse);
+            }
+            
+            //get site templates
+            string strDisplay = "";
+            SitesWS.Template[] templates;
+            srcSites.GetSiteTemplates((uint)(this.getLocale()), out templates);
+            
+            foreach (SitesWS.Template template in templates)
+            {
+                strDisplay = "Title: " + template.Title + "  Name: " + template.Name +
+                    "  Description: " + template.Description + "  IsCustom: " +
+                    template.IsCustom + "  ID: " + template.ID + "  ImageUrl: " + template.ImageUrl +
+                    "  IsHidden: " + template.IsHidden + "  IsUnique: " + template.IsUnique + "\n\n";
+                //Console.WriteLine(strDisplay + "\r\n################");
+            }
+            
+
+        }
+
+        /// <summary>
+        /// Retreives the site template from the HTML site. Web services offer no possibility to do this.
+        /// </summary>
+        /// <returns>the site template name</returns>
+        public string getSiteTemplate()
+        {
+            // get HTML site
+            WebRequest request = WebRequest.Create(srcUrl);
+            request.Credentials = srcCredentials;
+            request.PreAuthenticate = true;
+            WebResponse response =request.GetResponse();
+            Stream dataStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(dataStream);
+            string responseFromServer = reader.ReadToEnd();
+            dataStream.Close();
+            
+            //letz play "find the template"....
+            //SP2010 & 2013: var g_wsaSiteTemplateId = 'STS#1';
+            int startHere = responseFromServer.IndexOf("g_wsaSiteTemplateId");
+            string hereSomewhere = responseFromServer.Substring(startHere, 100);
+            string[] parts = hereSomewhere.Split('\'');
+
+            return parts[1];
+        }
+
+        
+        /// <summary>
+        /// Retreives the locale of a random list. There is no "regular" way to get the locale with a web service
+        /// </summary>
+        /// <returns>Sharepoint LCID locale code</returns>
+        private int getLocale()
+        {
+            XmlNode lc = srcLists.GetListCollection();
+            Console.WriteLine(lc.ChildNodes[0].Attributes["Name"].InnerText);
+            XmlNode list = srcLists.GetList(lc.ChildNodes[0].Attributes["Name"].InnerText);
+            return Convert.ToInt32(list["RegionalSettings"]["Locale"].InnerText);
+        }
+        
 
         /// <summary>
         /// Migrates all new site columns from src to dst. Columns which changed are ignored, as "system columns" can't
@@ -29,14 +278,12 @@ namespace Sharezbold.ContentMigration
         {
             ///////////////////////////////////////////////////////////////////////////
             //set up url
-            string urlLists = @"/_vti_bin/lists.asmx";
-            string urlWebs = @"/_vti_bin/webs.asmx";
-
-            string srcUrl = "http://ss13-css-009:31920/";
+            
+            string srcUrl = @"http://ss13-css-009:31920/";
             string srcUrlLists = srcUrl + urlLists;
             string srcUrlWebs = srcUrl + urlWebs;
            
-            string dstUrl = "http://ss13-css-007:5485/";
+            string dstUrl = @"http://ss13-css-007:5485/";
             string dstUrlLists = dstUrl + urlLists;
             string dstUrlWebs = dstUrl + urlWebs;
 
