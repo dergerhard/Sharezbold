@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Diagnostics;
+using Sharezbold.ContentMigration.ListsWS;
+using Sharezbold.ContentMigration.SitesWS;
+using System.Xml.Linq;
 
 namespace Sharezbold.ContentMigration
 {
@@ -15,6 +18,203 @@ namespace Sharezbold.ContentMigration
     {
         public void abc()
         {
+            
+            /*SitesWS.Sites s = new SitesWS.Sites();
+
+            //string url = "http://ss13-css-009/sites/testsite1/_vti_bin/sites.asmx"; 
+            string url = "http://ss13-css-019/MyTestSiteUrl/_vti_bin/sites.asmx";
+            s.Url = url;
+
+            var cc = new CredentialCache();
+            cc.Add(new Uri(url), "NTLM", new NetworkCredential("Administrator", "P@ssw0rd", "cssdev"));
+            
+            s.Credentials = cc;
+
+            Console.WriteLine(s.GetSite("MyTestSiteUrl"));
+            s.RequestEncoding = Encoding.UTF8;
+            //s.ExportWeb("a", "http://ss13-css-009/sites/testsite1/_vti_bin/sites.asmx", "c:\\spdata\\test\\", false, false, false, Int32.MaxValue);
+            */
+            
+            ///////////////////////////////////////////////////////////////////////////
+            //set up url
+            string urlLists = @"/_vti_bin/lists.asmx";
+            string urlWebs = @"/_vti_bin/webs.asmx";
+
+            string srcUrl = "http://ss13-css-009:31920/";
+            string srcUrlLists = srcUrl + urlLists;
+            string srcUrlWebs = srcUrl + urlWebs;
+            
+            //string dstUrl = "http://ss13-css-009:2617/sites/fuckingwebappMigrateTo/";
+            //string dstUrlLists = dstUrl + urlLists;
+            //string dstUrlWebs = dstUrl + urlWebs;
+
+            string dstUrl = "http://10.10.102.48/MyTestSiteUrl/";
+            string dstUrlLists = dstUrl + urlLists;
+            string dstUrlWebs = dstUrl + urlWebs;
+
+            //set up credentials
+            CredentialCache srcCredentials = new CredentialCache();
+            srcCredentials.Add(new Uri(srcUrl), "NTLM", new NetworkCredential("Administrator", "P@ssw0rd", "cssdev"));
+            
+            CredentialCache dstCredentials = new CredentialCache();
+            dstCredentials.Add(new Uri(dstUrl), "NTLM", new NetworkCredential("Administrator", "P@ssw0rd", "cssdev"));
+            
+            
+            // WORKS #################################################################
+            /*
+            //create web service object
+            ListsWS.Lists ls = new ListsWS.Lists();
+
+            //apply url
+            ls.Url = srcUrlLists;
+
+            //apply credentials
+            ls.Credentials = srcCredentials;
+            
+            XmlNode node = ls.GetList("My Applications");
+            Console.WriteLine(this.XmlToString(node, 4));
+            */
+            ///////////////////////////////////////////////////////////////////////////
+
+            // src ---------------------------------------------
+            WebsWS.Webs srcWebs = new WebsWS.Webs();
+            srcWebs.Url = srcUrlWebs;
+            srcWebs.Credentials = srcCredentials;
+            XmlNode srcColumsXml = srcWebs.GetColumns();
+            
+            // dst ---------------------------------------------
+            WebsWS.Webs dstWebs = new WebsWS.Webs();
+            dstWebs.Url = dstUrlWebs;
+            dstWebs.Credentials = dstCredentials;
+            XmlNode dstColumnsXml = dstWebs.GetColumns();
+            
+            //convert to xdoc
+            XDocument srcDoc = XDocument.Parse(srcColumsXml.OuterXml);
+            XDocument dstDoc = XDocument.Parse(dstColumnsXml.OuterXml);
+
+            /* COLUMNS
+             * create dest dictionary
+             * for all src elements
+             *      if dest contains src
+             *          compare:
+             *            == --> do nothing (same content type)
+             *            != --> add to update list (something changed, so migrate)
+             *      else
+             *          --> add to create list (because its new)
+             */
+            
+            // create dst dictionary
+            Dictionary<string, XElement> dstColumns = new Dictionary<string, XElement>();
+            foreach (XElement el in dstDoc.Root.Elements())
+            {
+                dstColumns.Add(el.Attribute("ID").Value, el);
+            }
+
+            List<XElement> updateColumns = new List<XElement>();
+            List<XElement> createColumns = new List<XElement>();
+
+            XNodeEqualityComparer comparer = new XNodeEqualityComparer();
+            
+            foreach (XElement el in srcDoc.Root.Elements())
+            {
+                if (dstColumns.ContainsKey(el.Attribute("ID").Value))
+                {
+                    if (comparer.GetHashCode(el) != comparer.GetHashCode(dstColumns[el.Attribute("ID").Value]))
+                    {
+                        updateColumns.Add(el);
+                    }
+                }
+                else
+                {
+                    createColumns.Add(el);
+                }
+            }
+            
+
+            // now columns that have to be updated or created are identified
+            // time to create or update them
+            int id = 1;
+            string updateStr = "";
+            foreach (XElement el in updateColumns)
+            {
+                //updateStr += el.ToString();
+                updateStr += "<Method ID=\"" + id++ + "\" Cmd=\"Update\">" + el.ToString() + "</Method>";
+            }
+            XmlDocument updateDoc = new XmlDocument();
+            updateDoc.LoadXml("<Fields>" + updateStr + "</Fields>");
+            XmlNode updateNode = updateDoc.DocumentElement;
+
+
+            string createStr = "";
+            foreach (XElement el in createColumns)
+            {
+                //createStr += el.ToString();
+                createStr += "<Method ID=\"" + id++ + "\" Cmd=\"New\">" + el.ToString() + "</Method>";
+            }
+            XmlDocument createDoc = new XmlDocument();
+            createDoc.LoadXml("<Fields>" + createStr + "</Fields>");
+            XmlNode createNode = createDoc.DocumentElement;
+
+
+            //Console.WriteLine(createNode.OuterXml);
+
+            //apply to dst
+            //XmlNode response = dstWebs.UpdateColumns(createNode, updateNode, null);
+            //Console.WriteLine(response.OuterXml);
+
+            //Console.WriteLine(updateNode.OuterXml);
+            //Console.WriteLine("#################################################");
+            //Console.WriteLine(createNode.OuterXml);
+
+
+
+            //xmldocument object
+            XmlDocument xDoc = new XmlDocument();
+            //Fields to be added
+            XmlElement newFields = xDoc.CreateElement("Fields");
+            //Fields to be edited
+            XmlElement updateFields = xDoc.CreateElement("Fields");
+            //Fields to be deleted
+            //XmlElement deleteFields = xDoc.CreateElement("Fields");
+
+            newFields.InnerXml = createStr; //"<Method ID=\"1\">"+createStr+"</Method>";
+            updateFields.InnerXml = updateStr; //"<Method ID=\"2\">"+updateStr+"</Method>";
+            //deleteFields.InnerXml = "<Method ID='3'><Field Name='FieldName'/></Method>";
+
+            XmlNode returnValue = dstWebs.UpdateColumns(newFields, updateFields, null);
+            Console.WriteLine(this.XmlToString(returnValue, 4));
+
+
+
+
+            Console.WriteLine("{0} elements to update\r\n{1} elements to create", updateColumns.Count, createColumns.Count);
+
+            /*foreach (XElement el in updateColumns)
+            {
+                Console.WriteLine(el.ToString());
+            }*/
+
+
+            /*
+            foreach (XNode node in doc.Root.Elements())
+            {
+                int hash = comparer.GetHashCode(node);
+                if (nodeDictionary.ContainsKey(hash))
+                {
+                    Console.WriteLine("Error, duplicate");
+                }
+                else
+                {
+                    nodeDictionary.Add(hash, node);
+                }
+            }
+
+            for (int i = 0; i < 5; i++)
+                Console.WriteLine(nodeDictionary.ElementAt(i).Value.ToString());
+            */
+
+
+
             //ContentMigration.Lists l = new ContentMigration.Lists();
             //l.Credentials = new NetworkCredential("Administrator", "P@ssw0rd", "cssdev");
 
@@ -61,6 +261,20 @@ namespace Sharezbold.ContentMigration
 
 
 
+        }
+
+        public string XmlToString(System.Xml.XmlNode node, int indentation)
+        {
+            using (var sw = new System.IO.StringWriter())
+            {
+                using (var xw = new System.Xml.XmlTextWriter(sw))
+                {
+                    xw.Formatting = System.Xml.Formatting.Indented;
+                    xw.Indentation = indentation;
+                    node.WriteContentTo(xw);
+                }
+                return sw.ToString();
+            }
         }
     }
 }

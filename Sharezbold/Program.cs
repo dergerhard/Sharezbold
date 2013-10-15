@@ -28,6 +28,9 @@ namespace Sharezbold
         {
             try
             {
+                Test t = new Test();
+                t.abc();
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new MainForm());

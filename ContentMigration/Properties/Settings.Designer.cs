@@ -22,5 +22,35 @@ namespace Sharezbold.ContentMigration.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://ss13-css-019/_vti_bin/sites.asmx")]
+        public string Sharezbold_ContentMigration_SitesWS_Sites {
+            get {
+                return ((string)(this["Sharezbold_ContentMigration_SitesWS_Sites"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://ss13-css-009:31920/_vti_bin/lists.asmx")]
+        public string Sharezbold_ContentMigration_ListsWS_Lists {
+            get {
+                return ((string)(this["Sharezbold_ContentMigration_ListsWS_Lists"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://ss13-css-009:31920/_vti_bin/webs.asmx")]
+        public string Sharezbold_ContentMigration_WebsWS_Webs {
+            get {
+                return ((string)(this["Sharezbold_ContentMigration_WebsWS_Webs"]));
+            }
+        }
     }
 }
