@@ -13,6 +13,22 @@ namespace Sharezbold.FileMigration
     {
         public static void Main(string[] args)
         {
+
+            // PROXY:
+            /*
+             * 
+             * ClientContext context = new ClientContext("<a valid url>");
+context.ExecutingWebRequest += (sen, ags) =>
+{
+  WebProxy myProxy = new WebProxy();
+  myProxy.Address = new Uri("http://<proxy_server_address>");
+
+  myProxy.Credentials = new System.Net.NetworkCredential("jack_reacher","<password>", "<domain>");
+  args.WebRequestExecutor.WebRequest.Proxy = myProxy;
+};
+context.ExecuteQuery();
+             */
+
             Console.WriteLine("Start File-Migration");
 
             ClientContext source = new ClientContext("http://10.10.102.36");
