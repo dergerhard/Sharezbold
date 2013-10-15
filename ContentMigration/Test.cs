@@ -18,23 +18,15 @@ namespace Sharezbold.ContentMigration
     {
         public void abc()
         {
-            
-            /*SitesWS.Sites s = new SitesWS.Sites();
+        }
 
-            //string url = "http://ss13-css-009/sites/testsite1/_vti_bin/sites.asmx"; 
-            string url = "http://ss13-css-019/MyTestSiteUrl/_vti_bin/sites.asmx";
-            s.Url = url;
 
-            var cc = new CredentialCache();
-            cc.Add(new Uri(url), "NTLM", new NetworkCredential("Administrator", "P@ssw0rd", "cssdev"));
-            
-            s.Credentials = cc;
-
-            Console.WriteLine(s.GetSite("MyTestSiteUrl"));
-            s.RequestEncoding = Encoding.UTF8;
-            //s.ExportWeb("a", "http://ss13-css-009/sites/testsite1/_vti_bin/sites.asmx", "c:\\spdata\\test\\", false, false, false, Int32.MaxValue);
-            */
-            
+        /// <summary>
+        /// Migrates all new site columns from src to dst. Columns which changed are ignored, as "system columns" can't
+        /// be  recognised yet.
+        /// </summary>
+        public void MigrateSiteColumns()
+        {
             ///////////////////////////////////////////////////////////////////////////
             //set up url
             string urlLists = @"/_vti_bin/lists.asmx";
@@ -43,12 +35,8 @@ namespace Sharezbold.ContentMigration
             string srcUrl = "http://ss13-css-009:31920/";
             string srcUrlLists = srcUrl + urlLists;
             string srcUrlWebs = srcUrl + urlWebs;
-            
-            //string dstUrl = "http://ss13-css-009:2617/sites/fuckingwebappMigrateTo/";
-            //string dstUrlLists = dstUrl + urlLists;
-            //string dstUrlWebs = dstUrl + urlWebs;
-
-            string dstUrl = "http://10.10.102.48/MyTestSiteUrl/";
+           
+            string dstUrl = "http://ss13-css-007:5485/";
             string dstUrlLists = dstUrl + urlLists;
             string dstUrlWebs = dstUrl + urlWebs;
 
@@ -110,7 +98,7 @@ namespace Sharezbold.ContentMigration
                 dstColumns.Add(el.Attribute("ID").Value, el);
             }
 
-            List<XElement> updateColumns = new List<XElement>();
+            //List<XElement> updateColumns = new List<XElement>();
             List<XElement> createColumns = new List<XElement>();
 
             XNodeEqualityComparer comparer = new XNodeEqualityComparer();
@@ -119,10 +107,10 @@ namespace Sharezbold.ContentMigration
             {
                 if (dstColumns.ContainsKey(el.Attribute("ID").Value))
                 {
-                    if (comparer.GetHashCode(el) != comparer.GetHashCode(dstColumns[el.Attribute("ID").Value]))
+                    /*if (comparer.GetHashCode(el) != comparer.GetHashCode(dstColumns[el.Attribute("ID").Value]))
                     {
                         updateColumns.Add(el);
-                    }
+                    }*/
                 }
                 else
                 {
@@ -130,11 +118,10 @@ namespace Sharezbold.ContentMigration
                 }
             }
             
-
             // now columns that have to be updated or created are identified
             // time to create or update them
             int id = 1;
-            string updateStr = "";
+            /*string updateStr = "";
             foreach (XElement el in updateColumns)
             {
                 //updateStr += el.ToString();
@@ -143,124 +130,33 @@ namespace Sharezbold.ContentMigration
             XmlDocument updateDoc = new XmlDocument();
             updateDoc.LoadXml("<Fields>" + updateStr + "</Fields>");
             XmlNode updateNode = updateDoc.DocumentElement;
-
+            */
 
             string createStr = "";
             foreach (XElement el in createColumns)
             {
-                //createStr += el.ToString();
                 createStr += "<Method ID=\"" + id++ + "\" Cmd=\"New\">" + el.ToString() + "</Method>";
             }
             XmlDocument createDoc = new XmlDocument();
             createDoc.LoadXml("<Fields>" + createStr + "</Fields>");
             XmlNode createNode = createDoc.DocumentElement;
-
-
-            //Console.WriteLine(createNode.OuterXml);
-
-            //apply to dst
-            //XmlNode response = dstWebs.UpdateColumns(createNode, updateNode, null);
-            //Console.WriteLine(response.OuterXml);
-
-            //Console.WriteLine(updateNode.OuterXml);
-            //Console.WriteLine("#################################################");
-            //Console.WriteLine(createNode.OuterXml);
-
-
-
+            
             //xmldocument object
             XmlDocument xDoc = new XmlDocument();
             //Fields to be added
             XmlElement newFields = xDoc.CreateElement("Fields");
             //Fields to be edited
-            XmlElement updateFields = xDoc.CreateElement("Fields");
-            //Fields to be deleted
-            //XmlElement deleteFields = xDoc.CreateElement("Fields");
-
+            //XmlElement updateFields = xDoc.CreateElement("Fields");
+            
             newFields.InnerXml = createStr; //"<Method ID=\"1\">"+createStr+"</Method>";
-            updateFields.InnerXml = updateStr; //"<Method ID=\"2\">"+updateStr+"</Method>";
-            //deleteFields.InnerXml = "<Method ID='3'><Field Name='FieldName'/></Method>";
-
-            XmlNode returnValue = dstWebs.UpdateColumns(newFields, updateFields, null);
+            //updateFields.InnerXml = updateStr; //"<Method ID=\"2\">"+updateStr+"</Method>";
+            
+            //XmlNode returnValue = dstWebs.UpdateColumns(newFields, updateFields, null);
+            XmlNode returnValue = dstWebs.UpdateColumns(newFields, null, null);
+            
             Console.WriteLine(this.XmlToString(returnValue, 4));
 
-
-
-
-            Console.WriteLine("{0} elements to update\r\n{1} elements to create", updateColumns.Count, createColumns.Count);
-
-            /*foreach (XElement el in updateColumns)
-            {
-                Console.WriteLine(el.ToString());
-            }*/
-
-
-            /*
-            foreach (XNode node in doc.Root.Elements())
-            {
-                int hash = comparer.GetHashCode(node);
-                if (nodeDictionary.ContainsKey(hash))
-                {
-                    Console.WriteLine("Error, duplicate");
-                }
-                else
-                {
-                    nodeDictionary.Add(hash, node);
-                }
-            }
-
-            for (int i = 0; i < 5; i++)
-                Console.WriteLine(nodeDictionary.ElementAt(i).Value.ToString());
-            */
-
-
-
-            //ContentMigration.Lists l = new ContentMigration.Lists();
-            //l.Credentials = new NetworkCredential("Administrator", "P@ssw0rd", "cssdev");
-
-            //lists.AddList("ExportBuffer", "export buffer", 101); //document library
-             
-             
-            /* 
-            wsSites.Sites sites = new wsSites.Sites();
-            sites.Credentials = new NetworkCredential("Administrator", "P@ssw0rd", "cssdev");
-
-            Debug.WriteLine("bla: {0}", sites.ExportWeb("job1", "http://ss13-css-019/abcUrl/", "http://ss13-css-019/ExportBuffer", true, true, true, 10000000));
-            */
-
-            /*
-            wsSites.Sites dest = new wsSites.Sites();
-            dest.Url = "http://ss13-css-007/_vti_bin/Lists.asm";
-            dest.Credentials = new NetworkCredential("Holzgethan", "FHWN2013!", "cssdev");
-            string[] datapath = { "http://ss13-css-019/ExportBuffer/job1.cmp" };
-            dest.ImportWeb("job1", "http://ss13-css-007", datapath, null, true, true);
-
-            
-
-            wsSites.Sites sites = new wsSites.Sites();
-            sites.Credentials = new NetworkCredential("Administrator", "P@ssw0rd", "cssdev");
-            Debug.WriteLine(sites.GetSite("http://ss13-css-019/abcUrl/"));
-            */
-
-            /*
-            wsSiteData.SiteData siteData = new wsSiteData.SiteData();
-            siteData.Credentials = new NetworkCredential("Administrator", "P@ssw0rd", "cssdev");
-
-            string lastChangeID = "";
-            string result = siteData.GetContent(wsSiteData.ObjectType.SiteCollection, "", "", "", false, false, ref lastChangeID);
-            Debug.WriteLine(result);
-
-            result = siteData.GetContent(wsSiteData.ObjectType.Site, "", "", "", true, false, ref lastChangeID);
-            Debug.WriteLine(result);
-
-            */
-
-
-            //Debug.WriteLine("bla: {0}", sites.ExportWeb("job1", "http://ss13-css-019/abcUrl/", "http://ss13-css-019/ExportBuffer", true, true, true, 10000000));
-            
-
-
-
+            //Console.WriteLine("{0} elements to update\r\n{1} elements to create", updateColumns.Count, createColumns.Count);
         }
 
         public string XmlToString(System.Xml.XmlNode node, int indentation)
