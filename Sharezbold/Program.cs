@@ -28,8 +28,8 @@ namespace Sharezbold
         {
             try
             {
-                Test t = new Test();
-                t.abc();
+                //Test t = new Test();
+                //t.abc();
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
