@@ -64,6 +64,15 @@ namespace Sharezbold
             this.textBoxFromPassword = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.tabPageMigrationElements = new System.Windows.Forms.TabPage();
+            this.checkBoxMigrateContentType = new System.Windows.Forms.CheckBox();
+            this.buttonElementsMigration = new System.Windows.Forms.Button();
+            this.labelMigrationElementsHeader = new System.Windows.Forms.Label();
+            this.checkBoxMigrateUser = new System.Windows.Forms.CheckBox();
+            this.checkBoxMigrateGroup = new System.Windows.Forms.CheckBox();
+            this.checkBoxMigrateSiteColumns = new System.Windows.Forms.CheckBox();
+            this.checkBoxMigrateWorkflow = new System.Windows.Forms.CheckBox();
+            this.checkBoxMigratePermissionlevels = new System.Windows.Forms.CheckBox();
             this.tabPageContentSelection = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.buttonConfigureMigration = new System.Windows.Forms.Button();
@@ -83,34 +92,35 @@ namespace Sharezbold
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.listViewMigrationContent = new System.Windows.Forms.ListView();
             this.imageListMigrationContent = new System.Windows.Forms.ImageList(this.components);
-            this.tabPageMigrationElements = new System.Windows.Forms.TabPage();
-            this.checkBoxMigrateContentType = new System.Windows.Forms.CheckBox();
-            this.buttonElementsMigration = new System.Windows.Forms.Button();
-            this.labelMigrationElementsHeader = new System.Windows.Forms.Label();
-            this.checkBoxMigrateUser = new System.Windows.Forms.CheckBox();
-            this.checkBoxMigrateGroup = new System.Windows.Forms.CheckBox();
-            this.checkBoxMigrateSiteColumns = new System.Windows.Forms.CheckBox();
-            this.checkBoxMigrateWorkflow = new System.Windows.Forms.CheckBox();
-            this.checkBoxMigratePermissionlevels = new System.Windows.Forms.CheckBox();
             this.tabPageMigrationProgress = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.groupBoxProxySettings = new System.Windows.Forms.GroupBox();
+            this.labelProxyActivate = new System.Windows.Forms.Label();
+            this.labelProxyUrl = new System.Windows.Forms.Label();
+            this.labelProxyUser = new System.Windows.Forms.Label();
+            this.labelProxyPassword = new System.Windows.Forms.Label();
+            this.textBoxProxyUrl = new System.Windows.Forms.TextBox();
+            this.textBoxProxyUsername = new System.Windows.Forms.TextBox();
+            this.textBoxProxyPassword = new System.Windows.Forms.TextBox();
+            this.checkBoxProxyActivate = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.tabControMain.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tabPageMigrationElements.SuspendLayout();
             this.tabPageContentSelection.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.tabPageMigrationPreparation.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
-            this.tabPageMigrationElements.SuspendLayout();
             this.tabPageMigrationProgress.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.groupBoxProxySettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -211,6 +221,7 @@ namespace Sharezbold
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.groupBoxProxySettings);
             this.groupBox3.Controls.Add(this.buttonConfigurationNext);
             this.groupBox3.Controls.Add(this.groupBox2);
             this.groupBox3.Controls.Add(this.groupBox1);
@@ -394,6 +405,106 @@ namespace Sharezbold
             this.label2.Size = new System.Drawing.Size(58, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "Username:";
+            // 
+            // tabPageMigrationElements
+            // 
+            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigrateContentType);
+            this.tabPageMigrationElements.Controls.Add(this.buttonElementsMigration);
+            this.tabPageMigrationElements.Controls.Add(this.labelMigrationElementsHeader);
+            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigrateUser);
+            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigrateGroup);
+            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigrateSiteColumns);
+            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigrateWorkflow);
+            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigratePermissionlevels);
+            this.tabPageMigrationElements.Location = new System.Drawing.Point(4, 22);
+            this.tabPageMigrationElements.Name = "tabPageMigrationElements";
+            this.tabPageMigrationElements.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageMigrationElements.Size = new System.Drawing.Size(1023, 380);
+            this.tabPageMigrationElements.TabIndex = 4;
+            this.tabPageMigrationElements.Text = "Migration Elements";
+            this.tabPageMigrationElements.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMigrateContentType
+            // 
+            this.checkBoxMigrateContentType.AutoSize = true;
+            this.checkBoxMigrateContentType.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBoxMigrateContentType.Location = new System.Drawing.Point(64, 79);
+            this.checkBoxMigrateContentType.Name = "checkBoxMigrateContentType";
+            this.checkBoxMigrateContentType.Size = new System.Drawing.Size(148, 17);
+            this.checkBoxMigrateContentType.TabIndex = 7;
+            this.checkBoxMigrateContentType.Text = "Migrate Content-Type";
+            this.checkBoxMigrateContentType.UseVisualStyleBackColor = true;
+            this.checkBoxMigrateContentType.CheckedChanged += new System.EventHandler(this.CheckBoxMigrateContentTypeCheckedChanged);
+            // 
+            // buttonElementsMigration
+            // 
+            this.buttonElementsMigration.Location = new System.Drawing.Point(244, 321);
+            this.buttonElementsMigration.Name = "buttonElementsMigration";
+            this.buttonElementsMigration.Size = new System.Drawing.Size(183, 23);
+            this.buttonElementsMigration.TabIndex = 6;
+            this.buttonElementsMigration.Text = "Start Migration Elements";
+            this.buttonElementsMigration.UseVisualStyleBackColor = true;
+            this.buttonElementsMigration.Click += new System.EventHandler(this.ButtonElementsMigrationClicked);
+            // 
+            // labelMigrationElementsHeader
+            // 
+            this.labelMigrationElementsHeader.AutoSize = true;
+            this.labelMigrationElementsHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelMigrationElementsHeader.Location = new System.Drawing.Point(54, 27);
+            this.labelMigrationElementsHeader.Name = "labelMigrationElementsHeader";
+            this.labelMigrationElementsHeader.Size = new System.Drawing.Size(189, 24);
+            this.labelMigrationElementsHeader.TabIndex = 5;
+            this.labelMigrationElementsHeader.Text = "Migration Elements";
+            // 
+            // checkBoxMigrateUser
+            // 
+            this.checkBoxMigrateUser.AutoSize = true;
+            this.checkBoxMigrateUser.Location = new System.Drawing.Point(64, 117);
+            this.checkBoxMigrateUser.Name = "checkBoxMigrateUser";
+            this.checkBoxMigrateUser.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxMigrateUser.TabIndex = 4;
+            this.checkBoxMigrateUser.Text = "Migrate User";
+            this.checkBoxMigrateUser.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMigrateGroup
+            // 
+            this.checkBoxMigrateGroup.AutoSize = true;
+            this.checkBoxMigrateGroup.Location = new System.Drawing.Point(64, 156);
+            this.checkBoxMigrateGroup.Name = "checkBoxMigrateGroup";
+            this.checkBoxMigrateGroup.Size = new System.Drawing.Size(93, 17);
+            this.checkBoxMigrateGroup.TabIndex = 3;
+            this.checkBoxMigrateGroup.Text = "Migrate Group";
+            this.checkBoxMigrateGroup.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMigrateSiteColumns
+            // 
+            this.checkBoxMigrateSiteColumns.AutoSize = true;
+            this.checkBoxMigrateSiteColumns.Location = new System.Drawing.Point(64, 234);
+            this.checkBoxMigrateSiteColumns.Name = "checkBoxMigrateSiteColumns";
+            this.checkBoxMigrateSiteColumns.Size = new System.Drawing.Size(122, 17);
+            this.checkBoxMigrateSiteColumns.TabIndex = 2;
+            this.checkBoxMigrateSiteColumns.Text = "Migrate SiteColumns";
+            this.checkBoxMigrateSiteColumns.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMigrateWorkflow
+            // 
+            this.checkBoxMigrateWorkflow.AutoSize = true;
+            this.checkBoxMigrateWorkflow.Location = new System.Drawing.Point(64, 269);
+            this.checkBoxMigrateWorkflow.Name = "checkBoxMigrateWorkflow";
+            this.checkBoxMigrateWorkflow.Size = new System.Drawing.Size(109, 17);
+            this.checkBoxMigrateWorkflow.TabIndex = 1;
+            this.checkBoxMigrateWorkflow.Text = "Migrate Workflow";
+            this.checkBoxMigrateWorkflow.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMigratePermissionlevels
+            // 
+            this.checkBoxMigratePermissionlevels.AutoSize = true;
+            this.checkBoxMigratePermissionlevels.Location = new System.Drawing.Point(64, 197);
+            this.checkBoxMigratePermissionlevels.Name = "checkBoxMigratePermissionlevels";
+            this.checkBoxMigratePermissionlevels.Size = new System.Drawing.Size(145, 17);
+            this.checkBoxMigratePermissionlevels.TabIndex = 0;
+            this.checkBoxMigratePermissionlevels.Text = "Migrate PermissionLevels";
+            this.checkBoxMigratePermissionlevels.UseVisualStyleBackColor = true;
             // 
             // tabPageContentSelection
             // 
@@ -593,106 +704,6 @@ namespace Sharezbold
             this.imageListMigrationContent.Images.SetKeyName(0, "error.png");
             this.imageListMigrationContent.Images.SetKeyName(1, "ok.png");
             // 
-            // tabPageMigrationElements
-            // 
-            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigrateContentType);
-            this.tabPageMigrationElements.Controls.Add(this.buttonElementsMigration);
-            this.tabPageMigrationElements.Controls.Add(this.labelMigrationElementsHeader);
-            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigrateUser);
-            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigrateGroup);
-            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigrateSiteColumns);
-            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigrateWorkflow);
-            this.tabPageMigrationElements.Controls.Add(this.checkBoxMigratePermissionlevels);
-            this.tabPageMigrationElements.Location = new System.Drawing.Point(4, 22);
-            this.tabPageMigrationElements.Name = "tabPageMigrationElements";
-            this.tabPageMigrationElements.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMigrationElements.Size = new System.Drawing.Size(1023, 380);
-            this.tabPageMigrationElements.TabIndex = 4;
-            this.tabPageMigrationElements.Text = "Migration Elements";
-            this.tabPageMigrationElements.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxMigrateContentType
-            // 
-            this.checkBoxMigrateContentType.AutoSize = true;
-            this.checkBoxMigrateContentType.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBoxMigrateContentType.Location = new System.Drawing.Point(64, 79);
-            this.checkBoxMigrateContentType.Name = "checkBoxMigrateContentType";
-            this.checkBoxMigrateContentType.Size = new System.Drawing.Size(148, 17);
-            this.checkBoxMigrateContentType.TabIndex = 7;
-            this.checkBoxMigrateContentType.Text = "Migrate Content-Type";
-            this.checkBoxMigrateContentType.UseVisualStyleBackColor = true;
-            this.checkBoxMigrateContentType.CheckedChanged += new System.EventHandler(this.CheckBoxMigrateContentTypeCheckedChanged);
-            // 
-            // buttonElementsMigration
-            // 
-            this.buttonElementsMigration.Location = new System.Drawing.Point(244, 321);
-            this.buttonElementsMigration.Name = "buttonElementsMigration";
-            this.buttonElementsMigration.Size = new System.Drawing.Size(183, 23);
-            this.buttonElementsMigration.TabIndex = 6;
-            this.buttonElementsMigration.Text = "Start Migration Elements";
-            this.buttonElementsMigration.UseVisualStyleBackColor = true;
-            this.buttonElementsMigration.Click += new System.EventHandler(this.ButtonElementsMigrationClicked);
-            // 
-            // labelMigrationElementsHeader
-            // 
-            this.labelMigrationElementsHeader.AutoSize = true;
-            this.labelMigrationElementsHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMigrationElementsHeader.Location = new System.Drawing.Point(54, 27);
-            this.labelMigrationElementsHeader.Name = "labelMigrationElementsHeader";
-            this.labelMigrationElementsHeader.Size = new System.Drawing.Size(189, 24);
-            this.labelMigrationElementsHeader.TabIndex = 5;
-            this.labelMigrationElementsHeader.Text = "Migration Elements";
-            // 
-            // checkBoxMigrateUser
-            // 
-            this.checkBoxMigrateUser.AutoSize = true;
-            this.checkBoxMigrateUser.Location = new System.Drawing.Point(64, 117);
-            this.checkBoxMigrateUser.Name = "checkBoxMigrateUser";
-            this.checkBoxMigrateUser.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxMigrateUser.TabIndex = 4;
-            this.checkBoxMigrateUser.Text = "Migrate User";
-            this.checkBoxMigrateUser.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxMigrateGroup
-            // 
-            this.checkBoxMigrateGroup.AutoSize = true;
-            this.checkBoxMigrateGroup.Location = new System.Drawing.Point(64, 156);
-            this.checkBoxMigrateGroup.Name = "checkBoxMigrateGroup";
-            this.checkBoxMigrateGroup.Size = new System.Drawing.Size(93, 17);
-            this.checkBoxMigrateGroup.TabIndex = 3;
-            this.checkBoxMigrateGroup.Text = "Migrate Group";
-            this.checkBoxMigrateGroup.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxMigrateSiteColumns
-            // 
-            this.checkBoxMigrateSiteColumns.AutoSize = true;
-            this.checkBoxMigrateSiteColumns.Location = new System.Drawing.Point(64, 234);
-            this.checkBoxMigrateSiteColumns.Name = "checkBoxMigrateSiteColumns";
-            this.checkBoxMigrateSiteColumns.Size = new System.Drawing.Size(122, 17);
-            this.checkBoxMigrateSiteColumns.TabIndex = 2;
-            this.checkBoxMigrateSiteColumns.Text = "Migrate SiteColumns";
-            this.checkBoxMigrateSiteColumns.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxMigrateWorkflow
-            // 
-            this.checkBoxMigrateWorkflow.AutoSize = true;
-            this.checkBoxMigrateWorkflow.Location = new System.Drawing.Point(64, 269);
-            this.checkBoxMigrateWorkflow.Name = "checkBoxMigrateWorkflow";
-            this.checkBoxMigrateWorkflow.Size = new System.Drawing.Size(109, 17);
-            this.checkBoxMigrateWorkflow.TabIndex = 1;
-            this.checkBoxMigrateWorkflow.Text = "Migrate Workflow";
-            this.checkBoxMigrateWorkflow.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxMigratePermissionlevels
-            // 
-            this.checkBoxMigratePermissionlevels.AutoSize = true;
-            this.checkBoxMigratePermissionlevels.Location = new System.Drawing.Point(64, 197);
-            this.checkBoxMigratePermissionlevels.Name = "checkBoxMigratePermissionlevels";
-            this.checkBoxMigratePermissionlevels.Size = new System.Drawing.Size(145, 17);
-            this.checkBoxMigratePermissionlevels.TabIndex = 0;
-            this.checkBoxMigratePermissionlevels.Text = "Migrate PermissionLevels";
-            this.checkBoxMigratePermissionlevels.UseVisualStyleBackColor = true;
-            // 
             // tabPageMigrationProgress
             // 
             this.tabPageMigrationProgress.Controls.Add(this.groupBox5);
@@ -732,6 +743,89 @@ namespace Sharezbold
             this.button1.Text = "Finish & Exit";
             this.button1.UseVisualStyleBackColor = true;
             // 
+            // groupBoxProxySettings
+            // 
+            this.groupBoxProxySettings.Controls.Add(this.checkBoxProxyActivate);
+            this.groupBoxProxySettings.Controls.Add(this.textBoxProxyPassword);
+            this.groupBoxProxySettings.Controls.Add(this.textBoxProxyUsername);
+            this.groupBoxProxySettings.Controls.Add(this.textBoxProxyUrl);
+            this.groupBoxProxySettings.Controls.Add(this.labelProxyPassword);
+            this.groupBoxProxySettings.Controls.Add(this.labelProxyUser);
+            this.groupBoxProxySettings.Controls.Add(this.labelProxyUrl);
+            this.groupBoxProxySettings.Controls.Add(this.labelProxyActivate);
+            this.groupBoxProxySettings.Location = new System.Drawing.Point(459, 19);
+            this.groupBoxProxySettings.Name = "groupBoxProxySettings";
+            this.groupBoxProxySettings.Size = new System.Drawing.Size(436, 150);
+            this.groupBoxProxySettings.TabIndex = 4;
+            this.groupBoxProxySettings.TabStop = false;
+            this.groupBoxProxySettings.Text = "Proxy";
+            // 
+            // labelProxyActivate
+            // 
+            this.labelProxyActivate.AutoSize = true;
+            this.labelProxyActivate.Location = new System.Drawing.Point(14, 31);
+            this.labelProxyActivate.Name = "labelProxyActivate";
+            this.labelProxyActivate.Size = new System.Drawing.Size(49, 13);
+            this.labelProxyActivate.TabIndex = 0;
+            this.labelProxyActivate.Text = "Activate:";
+            // 
+            // labelProxyUrl
+            // 
+            this.labelProxyUrl.AutoSize = true;
+            this.labelProxyUrl.Location = new System.Drawing.Point(14, 57);
+            this.labelProxyUrl.Name = "labelProxyUrl";
+            this.labelProxyUrl.Size = new System.Drawing.Size(61, 13);
+            this.labelProxyUrl.TabIndex = 1;
+            this.labelProxyUrl.Text = "Proxy URL:";
+            // 
+            // labelProxyUser
+            // 
+            this.labelProxyUser.AutoSize = true;
+            this.labelProxyUser.Location = new System.Drawing.Point(14, 80);
+            this.labelProxyUser.Name = "labelProxyUser";
+            this.labelProxyUser.Size = new System.Drawing.Size(58, 13);
+            this.labelProxyUser.TabIndex = 2;
+            this.labelProxyUser.Text = "Username:";
+            // 
+            // labelProxyPassword
+            // 
+            this.labelProxyPassword.AutoSize = true;
+            this.labelProxyPassword.Location = new System.Drawing.Point(14, 106);
+            this.labelProxyPassword.Name = "labelProxyPassword";
+            this.labelProxyPassword.Size = new System.Drawing.Size(56, 13);
+            this.labelProxyPassword.TabIndex = 3;
+            this.labelProxyPassword.Text = "Password:";
+            // 
+            // textBoxProxyUrl
+            // 
+            this.textBoxProxyUrl.Location = new System.Drawing.Point(137, 53);
+            this.textBoxProxyUrl.Name = "textBoxProxyUrl";
+            this.textBoxProxyUrl.Size = new System.Drawing.Size(246, 20);
+            this.textBoxProxyUrl.TabIndex = 4;
+            // 
+            // textBoxProxyUsername
+            // 
+            this.textBoxProxyUsername.Location = new System.Drawing.Point(137, 79);
+            this.textBoxProxyUsername.Name = "textBoxProxyUsername";
+            this.textBoxProxyUsername.Size = new System.Drawing.Size(246, 20);
+            this.textBoxProxyUsername.TabIndex = 5;
+            // 
+            // textBoxProxyPassword
+            // 
+            this.textBoxProxyPassword.Location = new System.Drawing.Point(137, 106);
+            this.textBoxProxyPassword.Name = "textBoxProxyPassword";
+            this.textBoxProxyPassword.Size = new System.Drawing.Size(246, 20);
+            this.textBoxProxyPassword.TabIndex = 6;
+            // 
+            // checkBoxProxyActivate
+            // 
+            this.checkBoxProxyActivate.AutoSize = true;
+            this.checkBoxProxyActivate.Location = new System.Drawing.Point(137, 23);
+            this.checkBoxProxyActivate.Name = "checkBoxProxyActivate";
+            this.checkBoxProxyActivate.Size = new System.Drawing.Size(15, 14);
+            this.checkBoxProxyActivate.TabIndex = 7;
+            this.checkBoxProxyActivate.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -751,6 +845,8 @@ namespace Sharezbold
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.tabPageMigrationElements.ResumeLayout(false);
+            this.tabPageMigrationElements.PerformLayout();
             this.tabPageContentSelection.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.tabPageMigrationPreparation.ResumeLayout(false);
@@ -758,10 +854,10 @@ namespace Sharezbold
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.groupBox7.ResumeLayout(false);
-            this.tabPageMigrationElements.ResumeLayout(false);
-            this.tabPageMigrationElements.PerformLayout();
             this.tabPageMigrationProgress.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
+            this.groupBoxProxySettings.ResumeLayout(false);
+            this.groupBoxProxySettings.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -832,5 +928,14 @@ namespace Sharezbold
         private System.Windows.Forms.Label labelElementName;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.GroupBox groupBoxProxySettings;
+        private System.Windows.Forms.Label labelProxyPassword;
+        private System.Windows.Forms.Label labelProxyUser;
+        private System.Windows.Forms.Label labelProxyUrl;
+        private System.Windows.Forms.Label labelProxyActivate;
+        private System.Windows.Forms.CheckBox checkBoxProxyActivate;
+        private System.Windows.Forms.TextBox textBoxProxyPassword;
+        private System.Windows.Forms.TextBox textBoxProxyUsername;
+        private System.Windows.Forms.TextBox textBoxProxyUrl;
     }
 }

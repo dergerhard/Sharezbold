@@ -404,6 +404,7 @@ namespace Sharezbold
         {
             this.UIToSettings();
             this.source = new ClientContext(this.settings.FromHost);
+            this.SetProxy(this.source);
             var cc = new CredentialCache();
             cc.Add(new Uri(this.source.Url), "NTLM", new NetworkCredential(this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain));
             this.source.Credentials = cc;
@@ -424,6 +425,7 @@ namespace Sharezbold
         {
             this.UIToSettings();
             this.destination = new ClientContext(this.settings.ToHost);
+            this.SetProxy(this.destination);
             var cc = new CredentialCache();
             cc.Add(new Uri(this.destination.Url), "NTLM", new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain));
             this.destination.Credentials = cc;
@@ -435,6 +437,25 @@ namespace Sharezbold
             });
 
             return await t;
+        }
+
+        /// <summary>
+        /// Sets the proxy for the connection to the server.
+        /// </summary>
+        /// <param name="clientContext">the clientcontext of the server</param>
+        private void SetProxy(ClientContext clientContext)
+        {
+            if (this.checkBoxProxyActivate.Checked)
+            {
+                clientContext.ExecutingWebRequest += (sen, args) =>
+                {
+                    System.Net.WebProxy myProxy = new System.Net.WebProxy();
+                    myProxy.Address = new Uri(this.textBoxProxyUrl.Text.Trim());
+
+                    myProxy.Credentials = new System.Net.NetworkCredential(this.textBoxProxyUsername.Text.Trim(), this.textBoxProxyPassword.Text.Trim());
+                    args.WebRequestExecutor.WebRequest.Proxy = myProxy;
+                };
+            }
         }
 
         /// <summary>
