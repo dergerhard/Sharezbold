@@ -13,9 +13,25 @@ namespace Sharezbold.FileMigration
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("Start File-Migration");
+            ClientContext source = new ClientContext("http://10.10.102.36:8080");
+            ClientContext target = new ClientContext("http://10.10.102.38:8080");
+            NetworkCredential credentials = new NetworkCredential("Administrator", "P@ssw0rd", "CSSDEV");
+
+            source.Credentials = credentials;
+            target.Credentials = credentials;
+            
+           // SharePoint2010And2013FileMigrator migrator = new SharePoint2010And2013FileMigrator(source, target);
+
+            string destination = "http://10.10.102.36:8080/images/sharepoint_new_2010.png";
+            string sourceFile = "http://10.10.102.36:8080/images/sharepoint2010.png";
+
+            SharePointFileMigrator migrator = new SharePointFileMigrator(source, target);
+            migrator.Migrate(sourceFile, destination);
+
         //http://blogs.msdn.com/b/sridhara/archive/2010/03/12/uploading-files-using-client-object-model-in-sharepoint-2010.aspx
             // http://www.codeproject.com/Articles/103503/How-to-upload-download-a-document-in-SharePoint-20
-            
+            /*
             Console.WriteLine("Start File-Migration");
 
             ClientContext source = new ClientContext("http://10.10.102.36");
@@ -25,7 +41,7 @@ namespace Sharezbold.FileMigration
             source.Credentials = credentials;
 
             SharePoint2010And2013FileMigrator migrator = new SharePoint2010And2013FileMigrator(source, target);
-
+            
             try
             {
                 // source.Web.Lists;
@@ -36,7 +52,7 @@ namespace Sharezbold.FileMigration
             {
                 Console.WriteLine(e.Message);
             }
-            
+            */
             Console.WriteLine("Finished File-Migartion");
             Console.ReadKey();
         }

@@ -100,6 +100,8 @@ namespace Sharezbold.FileMigration
 
         internal Stream DownloadDocument(string fileUrl)
         {
+            Sharezbold.FileMigration.WebReferenceCopy.Copy myCopyService = new Sharezbold.FileMigration.WebReferenceCopy.Copy();
+
             //strining fileurl = (string)liitem["FileRef"];
             FileInformation ffl = Microsoft.SharePoint.Client.File.OpenBinaryDirect(sourceClientContext, fileUrl);
             byte[] bytesarr = ReadFully(ffl.Stream);
