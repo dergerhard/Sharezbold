@@ -98,6 +98,30 @@ namespace Sharezbold.FileMigration
             throw new FileNotFoundException("File '" + documentName + "' not found on SharePoint.");
         }
 
+        internal Stream DownloadDocument(string fileUrl)
+        {
+            //strining fileurl = (string)liitem["FileRef"];
+            FileInformation ffl = Microsoft.SharePoint.Client.File.OpenBinaryDirect(sourceClientContext, fileUrl);
+            byte[] bytesarr = ReadFully(ffl.Stream);
+            MemoryStream mnm = new MemoryStream(bytesarr);
+            return mnm;
+        }
+
+        private byte[] ReadFully(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
+
+        }
+
         /// <summary>
         /// Uploads the given document, which is handed by a bytearray.
         /// </summary>
@@ -105,7 +129,7 @@ namespace Sharezbold.FileMigration
         /// <param name="documentListURL">url of document-list</param>
         /// <param name="documentName">name of document</param>
         /// <param name="documentStream">documentstream as bytearray to upload</param>
-        private void UploadDocument(string documentListName, string documentListURL, string documentName, byte[] documentStream)
+        internal void UploadDocument(string documentListName, string documentListURL, string documentName, byte[] documentStream)
         {
             //Get Document List
             List documentsList = targetClientContext.Web.Lists.GetByTitle(documentListName);

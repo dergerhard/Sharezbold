@@ -41,7 +41,9 @@ context.ExecuteQuery();
 
             try
             {
-                migrator.DownloadDocument("images", "sharepoint2010.png");
+                // source.Web.Lists;
+                //string fileurl = (string)liitem["FileRef"];
+                migrator.DownloadDocument("./testBLOGsite/Lists/Photos/sharepoint2010.png");// , "sharepoint2010.png");
             }
             catch (Exception e)
             {
