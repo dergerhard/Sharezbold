@@ -45,6 +45,15 @@ namespace Sharezbold
             this.tabControMain = new System.Windows.Forms.TabControl();
             this.tabPageConfiguration = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBoxProxySettings = new System.Windows.Forms.GroupBox();
+            this.checkBoxProxyActivate = new System.Windows.Forms.CheckBox();
+            this.textBoxProxyPassword = new System.Windows.Forms.TextBox();
+            this.textBoxProxyUsername = new System.Windows.Forms.TextBox();
+            this.textBoxProxyUrl = new System.Windows.Forms.TextBox();
+            this.labelProxyPassword = new System.Windows.Forms.Label();
+            this.labelProxyUser = new System.Windows.Forms.Label();
+            this.labelProxyUrl = new System.Windows.Forms.Label();
+            this.labelProxyActivate = new System.Windows.Forms.Label();
             this.buttonConfigurationNext = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.textBoxToHost = new System.Windows.Forms.TextBox();
@@ -96,19 +105,11 @@ namespace Sharezbold
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.groupBoxProxySettings = new System.Windows.Forms.GroupBox();
-            this.labelProxyActivate = new System.Windows.Forms.Label();
-            this.labelProxyUrl = new System.Windows.Forms.Label();
-            this.labelProxyUser = new System.Windows.Forms.Label();
-            this.labelProxyPassword = new System.Windows.Forms.Label();
-            this.textBoxProxyUrl = new System.Windows.Forms.TextBox();
-            this.textBoxProxyUsername = new System.Windows.Forms.TextBox();
-            this.textBoxProxyPassword = new System.Windows.Forms.TextBox();
-            this.checkBoxProxyActivate = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.tabControMain.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBoxProxySettings.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPageMigrationElements.SuspendLayout();
@@ -120,7 +121,6 @@ namespace Sharezbold
             this.groupBox7.SuspendLayout();
             this.tabPageMigrationProgress.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.groupBoxProxySettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -231,6 +231,93 @@ namespace Sharezbold
             this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Configuration";
+            // 
+            // groupBoxProxySettings
+            // 
+            this.groupBoxProxySettings.Controls.Add(this.checkBoxProxyActivate);
+            this.groupBoxProxySettings.Controls.Add(this.textBoxProxyPassword);
+            this.groupBoxProxySettings.Controls.Add(this.textBoxProxyUsername);
+            this.groupBoxProxySettings.Controls.Add(this.textBoxProxyUrl);
+            this.groupBoxProxySettings.Controls.Add(this.labelProxyPassword);
+            this.groupBoxProxySettings.Controls.Add(this.labelProxyUser);
+            this.groupBoxProxySettings.Controls.Add(this.labelProxyUrl);
+            this.groupBoxProxySettings.Controls.Add(this.labelProxyActivate);
+            this.groupBoxProxySettings.Location = new System.Drawing.Point(459, 19);
+            this.groupBoxProxySettings.Name = "groupBoxProxySettings";
+            this.groupBoxProxySettings.Size = new System.Drawing.Size(436, 150);
+            this.groupBoxProxySettings.TabIndex = 4;
+            this.groupBoxProxySettings.TabStop = false;
+            this.groupBoxProxySettings.Text = "Proxy";
+            // 
+            // checkBoxProxyActivate
+            // 
+            this.checkBoxProxyActivate.AutoSize = true;
+            this.checkBoxProxyActivate.Location = new System.Drawing.Point(137, 23);
+            this.checkBoxProxyActivate.Name = "checkBoxProxyActivate";
+            this.checkBoxProxyActivate.Size = new System.Drawing.Size(15, 14);
+            this.checkBoxProxyActivate.TabIndex = 7;
+            this.checkBoxProxyActivate.UseVisualStyleBackColor = true;
+            this.checkBoxProxyActivate.CheckedChanged += new System.EventHandler(this.CheckBoxProxyActivate_CheckedChanged);
+            // 
+            // textBoxProxyPassword
+            // 
+            this.textBoxProxyPassword.Enabled = false;
+            this.textBoxProxyPassword.Location = new System.Drawing.Point(137, 106);
+            this.textBoxProxyPassword.Name = "textBoxProxyPassword";
+            this.textBoxProxyPassword.Size = new System.Drawing.Size(246, 20);
+            this.textBoxProxyPassword.TabIndex = 6;
+            // 
+            // textBoxProxyUsername
+            // 
+            this.textBoxProxyUsername.Enabled = false;
+            this.textBoxProxyUsername.Location = new System.Drawing.Point(137, 79);
+            this.textBoxProxyUsername.Name = "textBoxProxyUsername";
+            this.textBoxProxyUsername.Size = new System.Drawing.Size(246, 20);
+            this.textBoxProxyUsername.TabIndex = 5;
+            // 
+            // textBoxProxyUrl
+            // 
+            this.textBoxProxyUrl.Enabled = false;
+            this.textBoxProxyUrl.Location = new System.Drawing.Point(137, 53);
+            this.textBoxProxyUrl.Name = "textBoxProxyUrl";
+            this.textBoxProxyUrl.Size = new System.Drawing.Size(246, 20);
+            this.textBoxProxyUrl.TabIndex = 4;
+            // 
+            // labelProxyPassword
+            // 
+            this.labelProxyPassword.AutoSize = true;
+            this.labelProxyPassword.Location = new System.Drawing.Point(14, 106);
+            this.labelProxyPassword.Name = "labelProxyPassword";
+            this.labelProxyPassword.Size = new System.Drawing.Size(56, 13);
+            this.labelProxyPassword.TabIndex = 3;
+            this.labelProxyPassword.Text = "Password:";
+            // 
+            // labelProxyUser
+            // 
+            this.labelProxyUser.AutoSize = true;
+            this.labelProxyUser.Location = new System.Drawing.Point(14, 80);
+            this.labelProxyUser.Name = "labelProxyUser";
+            this.labelProxyUser.Size = new System.Drawing.Size(58, 13);
+            this.labelProxyUser.TabIndex = 2;
+            this.labelProxyUser.Text = "Username:";
+            // 
+            // labelProxyUrl
+            // 
+            this.labelProxyUrl.AutoSize = true;
+            this.labelProxyUrl.Location = new System.Drawing.Point(14, 57);
+            this.labelProxyUrl.Name = "labelProxyUrl";
+            this.labelProxyUrl.Size = new System.Drawing.Size(61, 13);
+            this.labelProxyUrl.TabIndex = 1;
+            this.labelProxyUrl.Text = "Proxy URL:";
+            // 
+            // labelProxyActivate
+            // 
+            this.labelProxyActivate.AutoSize = true;
+            this.labelProxyActivate.Location = new System.Drawing.Point(14, 31);
+            this.labelProxyActivate.Name = "labelProxyActivate";
+            this.labelProxyActivate.Size = new System.Drawing.Size(49, 13);
+            this.labelProxyActivate.TabIndex = 0;
+            this.labelProxyActivate.Text = "Activate:";
             // 
             // buttonConfigurationNext
             // 
@@ -743,89 +830,6 @@ namespace Sharezbold
             this.button1.Text = "Finish & Exit";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // groupBoxProxySettings
-            // 
-            this.groupBoxProxySettings.Controls.Add(this.checkBoxProxyActivate);
-            this.groupBoxProxySettings.Controls.Add(this.textBoxProxyPassword);
-            this.groupBoxProxySettings.Controls.Add(this.textBoxProxyUsername);
-            this.groupBoxProxySettings.Controls.Add(this.textBoxProxyUrl);
-            this.groupBoxProxySettings.Controls.Add(this.labelProxyPassword);
-            this.groupBoxProxySettings.Controls.Add(this.labelProxyUser);
-            this.groupBoxProxySettings.Controls.Add(this.labelProxyUrl);
-            this.groupBoxProxySettings.Controls.Add(this.labelProxyActivate);
-            this.groupBoxProxySettings.Location = new System.Drawing.Point(459, 19);
-            this.groupBoxProxySettings.Name = "groupBoxProxySettings";
-            this.groupBoxProxySettings.Size = new System.Drawing.Size(436, 150);
-            this.groupBoxProxySettings.TabIndex = 4;
-            this.groupBoxProxySettings.TabStop = false;
-            this.groupBoxProxySettings.Text = "Proxy";
-            // 
-            // labelProxyActivate
-            // 
-            this.labelProxyActivate.AutoSize = true;
-            this.labelProxyActivate.Location = new System.Drawing.Point(14, 31);
-            this.labelProxyActivate.Name = "labelProxyActivate";
-            this.labelProxyActivate.Size = new System.Drawing.Size(49, 13);
-            this.labelProxyActivate.TabIndex = 0;
-            this.labelProxyActivate.Text = "Activate:";
-            // 
-            // labelProxyUrl
-            // 
-            this.labelProxyUrl.AutoSize = true;
-            this.labelProxyUrl.Location = new System.Drawing.Point(14, 57);
-            this.labelProxyUrl.Name = "labelProxyUrl";
-            this.labelProxyUrl.Size = new System.Drawing.Size(61, 13);
-            this.labelProxyUrl.TabIndex = 1;
-            this.labelProxyUrl.Text = "Proxy URL:";
-            // 
-            // labelProxyUser
-            // 
-            this.labelProxyUser.AutoSize = true;
-            this.labelProxyUser.Location = new System.Drawing.Point(14, 80);
-            this.labelProxyUser.Name = "labelProxyUser";
-            this.labelProxyUser.Size = new System.Drawing.Size(58, 13);
-            this.labelProxyUser.TabIndex = 2;
-            this.labelProxyUser.Text = "Username:";
-            // 
-            // labelProxyPassword
-            // 
-            this.labelProxyPassword.AutoSize = true;
-            this.labelProxyPassword.Location = new System.Drawing.Point(14, 106);
-            this.labelProxyPassword.Name = "labelProxyPassword";
-            this.labelProxyPassword.Size = new System.Drawing.Size(56, 13);
-            this.labelProxyPassword.TabIndex = 3;
-            this.labelProxyPassword.Text = "Password:";
-            // 
-            // textBoxProxyUrl
-            // 
-            this.textBoxProxyUrl.Location = new System.Drawing.Point(137, 53);
-            this.textBoxProxyUrl.Name = "textBoxProxyUrl";
-            this.textBoxProxyUrl.Size = new System.Drawing.Size(246, 20);
-            this.textBoxProxyUrl.TabIndex = 4;
-            // 
-            // textBoxProxyUsername
-            // 
-            this.textBoxProxyUsername.Location = new System.Drawing.Point(137, 79);
-            this.textBoxProxyUsername.Name = "textBoxProxyUsername";
-            this.textBoxProxyUsername.Size = new System.Drawing.Size(246, 20);
-            this.textBoxProxyUsername.TabIndex = 5;
-            // 
-            // textBoxProxyPassword
-            // 
-            this.textBoxProxyPassword.Location = new System.Drawing.Point(137, 106);
-            this.textBoxProxyPassword.Name = "textBoxProxyPassword";
-            this.textBoxProxyPassword.Size = new System.Drawing.Size(246, 20);
-            this.textBoxProxyPassword.TabIndex = 6;
-            // 
-            // checkBoxProxyActivate
-            // 
-            this.checkBoxProxyActivate.AutoSize = true;
-            this.checkBoxProxyActivate.Location = new System.Drawing.Point(137, 23);
-            this.checkBoxProxyActivate.Name = "checkBoxProxyActivate";
-            this.checkBoxProxyActivate.Size = new System.Drawing.Size(15, 14);
-            this.checkBoxProxyActivate.TabIndex = 7;
-            this.checkBoxProxyActivate.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -841,6 +845,8 @@ namespace Sharezbold
             this.tabControMain.ResumeLayout(false);
             this.tabPageConfiguration.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
+            this.groupBoxProxySettings.ResumeLayout(false);
+            this.groupBoxProxySettings.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -856,8 +862,6 @@ namespace Sharezbold
             this.groupBox7.ResumeLayout(false);
             this.tabPageMigrationProgress.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
-            this.groupBoxProxySettings.ResumeLayout(false);
-            this.groupBoxProxySettings.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

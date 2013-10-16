@@ -760,5 +760,26 @@ namespace Sharezbold
             this.currentConfigurationElement.UpdateReadyForMigration();
             this.listViewMigrationContent.Update();
         }
+
+        /// <summary>
+        /// Sets the textboxes for proxy to enabled=true or false.
+        /// </summary>
+        /// <param name="sender">the sender of the event</param>
+        /// <param name="e">the event-arguments</param>
+        private void CheckBoxProxyActivate_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.checkBoxProxyActivate.Checked)
+            {
+                this.textBoxProxyUrl.Enabled = true;
+                this.textBoxProxyUsername.Enabled = true;
+                this.textBoxProxyPassword.Enabled = true;
+            }
+            else
+            {
+                this.textBoxProxyUrl.Enabled = false;
+                this.textBoxProxyUsername.Enabled = false;
+                this.textBoxProxyPassword.Enabled = false;
+            }
+        }
     }
 }
