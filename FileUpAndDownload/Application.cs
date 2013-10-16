@@ -13,22 +13,9 @@ namespace Sharezbold.FileMigration
     {
         public static void Main(string[] args)
         {
-
-            // PROXY:
-            /*
-             * 
-             * ClientContext context = new ClientContext("<a valid url>");
-context.ExecutingWebRequest += (sen, ags) =>
-{
-  WebProxy myProxy = new WebProxy();
-  myProxy.Address = new Uri("http://<proxy_server_address>");
-
-  myProxy.Credentials = new System.Net.NetworkCredential("jack_reacher","<password>", "<domain>");
-  args.WebRequestExecutor.WebRequest.Proxy = myProxy;
-};
-context.ExecuteQuery();
-             */
-
+        //http://blogs.msdn.com/b/sridhara/archive/2010/03/12/uploading-files-using-client-object-model-in-sharepoint-2010.aspx
+            // http://www.codeproject.com/Articles/103503/How-to-upload-download-a-document-in-SharePoint-20
+            
             Console.WriteLine("Start File-Migration");
 
             ClientContext source = new ClientContext("http://10.10.102.36");
