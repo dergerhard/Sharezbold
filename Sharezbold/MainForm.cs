@@ -332,11 +332,10 @@ namespace Sharezbold
             }
         }
 
-
-
         /// <summary>
-        /// Tries to connect to the server and loads the migration tree
+        /// Tries to connect to the server and loads the migration tree.
         /// </summary>
+        /// <returns>Task with bool as return value.</returns>
         private async Task<bool> ApplyConfigurationAndLoadSourceTreeAsync()
         {
             try
@@ -346,13 +345,13 @@ namespace Sharezbold
             }
             catch (Exception ex)
             {
-                this.waitForm.SpecialText = "";
+                this.waitForm.SpecialText = string.Empty;
                 Debug.WriteLine(ex.ToString());
                 throw new LoginFailedException("Could not connect to source SharePoint. Please check your login Data");
             }
             finally
             {
-                this.waitForm.SpecialText = "";
+                this.waitForm.SpecialText = string.Empty;
             }
 
             try
@@ -367,7 +366,7 @@ namespace Sharezbold
             }
             finally
             {
-                this.waitForm.SpecialText = "";
+                this.waitForm.SpecialText = string.Empty;
             }
 
             this.waitForm.SpecialText = "Generating migration tree";
@@ -381,25 +380,26 @@ namespace Sharezbold
 
             return true;
         }
-
+  
         /// <summary>
-        /// loads the tree where you can migrate to
+        /// Loads the tree where you can migrate to.
         /// </summary>
+        /// <returns>Task of SpTreeNode as return value.</returns>
         private async Task<SpTreeNode> LoadDestinationTree()
         {
             Task<SpTreeNode> t = Task.Factory.StartNew(() =>
                 {
                     ContentDownloader downloader = new ContentDownloader(this.destination);
                     return downloader.GenerateMigrationTree(false);
-                    
                 });
 
             return await t;
         }
-
+        
         /// <summary>
-        /// Connects to the source, provides context
+        /// Connects to the source, provides context.
         /// </summary>
+        /// <returns>Task with flag as return value.</returns>
         private async Task<bool> ConnectToSource()
         {
             this.UIToSettings();
@@ -419,8 +419,9 @@ namespace Sharezbold
         }
 
         /// <summary>
-        /// Connects to the destination, provides context
+        /// Connects to the destination, provides context.
         /// </summary>
+        /// <returns>Task with bool as return value.</returns>
         private async Task<bool> ConnectToDestination()
         {
             this.UIToSettings();
@@ -528,7 +529,6 @@ namespace Sharezbold
             //ContentUploader uploader = new ContentUploader(destination);
             //uploader.MigrateListAndItsItems((List)(((SpTreeNode)treeViewContentSelection.SelectedNode).MigrationObject.DataObject), destination.Web);
 
-            
             // Generate the ListView with the source elements to configure
             foreach (TreeNode web in this.sourceTreeRoot.Nodes)
             {
