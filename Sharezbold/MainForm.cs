@@ -28,24 +28,24 @@ namespace Sharezbold
     /// <summary>
     /// Delegate for loading the source tree
     /// </summary>
-    //public delegate void ApplyConfigurationAndLoadSourceTreeDelegate();
+    ////public delegate void ApplyConfigurationAndLoadSourceTreeDelegate();
 
     /// <summary>
     /// Delegate for updating main ui when ApplyConfigurationAndLoadSourceTreeDelegate is finished
     /// </summary>
     /// <param name="node">the resulting source node</param>
-    //public delegate void ApplyConfigurationAndLoadSourceTreeFinishedDelegate(SpTreeNode node);
+    ////public delegate void ApplyConfigurationAndLoadSourceTreeFinishedDelegate(SpTreeNode node);
 
     /// <summary>
     /// Delegate for loading destination tree
     /// </summary>
-    //public delegate void LoadDestinationTreeDelegate();
+    ////public delegate void LoadDestinationTreeDelegate();
 
     /// <summary>
     /// Delegate for updating main ui when LoadDestinationTreeDelegate is finished
     /// </summary>
     /// <param name="node">the root node</param>
-    //public delegate void LoadDestinationTreeFinishedDelegate(SpTreeNode node);
+    ////public delegate void LoadDestinationTreeFinishedDelegate(SpTreeNode node);
 
     /// <summary>
     /// The main form of the program
@@ -164,7 +164,7 @@ namespace Sharezbold
             {
                 this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
                 this.EnableTab(this.tabPageMigrationPreparation, false);
-                // todo
+                //// todo
             }
             else
             {
@@ -520,16 +520,16 @@ namespace Sharezbold
             this.EnableTab(this.tabPageContentSelection, false);
             this.EnableTab(this.tabPageMigrationPreparation, true);
 
-            // Site collections not supported
+            //// Site collections not supported
             if (this.sourceTreeRoot.Checked)
             {
                 listViewMigrationContent.Items.Add(new SpListViewItem(this.sourceTreeRoot.MigrationObject));
             }
 
-            //ContentUploader uploader = new ContentUploader(destination);
-            //uploader.MigrateListAndItsItems((List)(((SpTreeNode)treeViewContentSelection.SelectedNode).MigrationObject.DataObject), destination.Web);
+            ////ContentUploader uploader = new ContentUploader(destination);
+            ////uploader.MigrateListAndItsItems((List)(((SpTreeNode)treeViewContentSelection.SelectedNode).MigrationObject.DataObject), destination.Web);
 
-            // Generate the ListView with the source elements to configure
+            //// Generate the ListView with the source elements to configure
             foreach (TreeNode web in this.sourceTreeRoot.Nodes)
             {
                 if (web.Checked)
@@ -702,7 +702,7 @@ namespace Sharezbold
                 lvi.BackColor = Color.Transparent;
             }
 
-            if (listViewMigrationContent.SelectedItems.Count > 0)
+            if (this.listViewMigrationContent.SelectedItems.Count > 0)
             {
                 // set labels and mark elements
                 this.currentConfigurationElement = (SpListViewItem)listViewMigrationContent.SelectedItems[0];
@@ -745,7 +745,7 @@ namespace Sharezbold
         /// <param name="e">the event</param>
         private void TreeViewMigrateTo_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            SpTreeNode selectedNode = (SpTreeNode)treeViewMigrateTo.SelectedNode;
+            SpTreeNode selectedNode = (SpTreeNode)this.treeViewMigrateTo.SelectedNode;
 
             if ((selectedNode.MigrationObject.DataObject.GetType() == typeof(Web) && this.labelLegalType.Text == "Site") ||
                 (selectedNode.MigrationObject.DataObject.GetType() == typeof(List) && this.labelLegalType.Text == "List"))
