@@ -11,5 +11,8 @@
     <Setting Name="Sharezbold_ContentMigration_WebsWS_Webs" Type="(Web Service URL)" Scope="Application">
       <Value Profile="(Default)">http://ss13-css-009:31920/_vti_bin/webs.asmx</Value>
     </Setting>
+    <Setting Name="Sharezbold_ContentMigration_AdminWS_Admin" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://ss13-css-009:8080/_vti_adm/admin.asmx</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

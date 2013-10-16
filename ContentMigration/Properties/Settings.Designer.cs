@@ -52,5 +52,15 @@ namespace Sharezbold.ContentMigration.Properties {
                 return ((string)(this["Sharezbold_ContentMigration_WebsWS_Webs"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://ss13-css-009:8080/_vti_adm/admin.asmx")]
+        public string Sharezbold_ContentMigration_AdminWS_Admin {
+            get {
+                return ((string)(this["Sharezbold_ContentMigration_AdminWS_Admin"]));
+            }
+        }
     }
 }
