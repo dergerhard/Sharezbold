@@ -50,7 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractMigrator.cs" />
+    <Compile Include="SharePoint2010And2013Migrator.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="FileMigrationException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -59,10 +59,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="SharePoint2010And2013FileMigrator.cs" />
-    <Compile Include="SharePoint2010FileMigrator.cs" />
-    <Compile Include="SharePoint2013FileMigrator.cs" />
-    <Compile Include="SharePointFileMigrator.cs" />
+    <Compile Include="SharePoint2010And2013Downloader.cs" />
+    <Compile Include="SharePoint2010And2013Uploader.cs" />
     <Compile Include="Web References\WebReferenceCopy\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
