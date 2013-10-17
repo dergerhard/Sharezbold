@@ -31,9 +31,10 @@ namespace Sharezbold
                 //Test t = new Test();
                 //t.abc();
 
-                ContentLoader loader = new ContentLoader(@"http://ss13-css-009:31920/", "Administrator", "cssdev", "P@ssw0rd", @"http://ss13-css-007:5485/", @"http://ss13-css-007:8080/", "Administrator", "cssdev", "P@ssw0rd");
-                loader.LoadSourceData();
-                loader.test();
+                //ContentLoader loader = new ContentLoader(@"http://ss13-css-009:31920/", "Administrator", "cssdev", "P@ssw0rd", @"http://ss13-css-007:5485/", @"http://ss13-css-007:8080/", "Administrator", "cssdev", "P@ssw0rd");
+                //loader.LoadSourceData();
+                
+                //loader.test();
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);

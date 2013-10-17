@@ -1,5 +1,9 @@
-﻿
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="ContentDownloader.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 namespace Sharezbold.ContentMigration.Data
 {
     using System;
@@ -7,30 +11,108 @@ namespace Sharezbold.ContentMigration.Data
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-using System.Xml;
+    using System.Windows.Forms;
+    using System.Xml;
 
     /// <summary>
     /// Information for a Sharepoint site collection
     /// </summary>
-    public class SSiteCollection
+    public class SSiteCollection : TreeNode, IMigratable
     {
+        /// <summary>
+        /// Data storage object for Sites
+        /// </summary>
+        private List<SSite> sites;
+
         /// <summary>
         /// Represents all sub sites
         /// </summary>
-        public List<KeyValuePair<SSite, bool>> Sites { get; set; }
+        public List<SSite> Sites
+        {
+            get
+            {
+                return sites;
+            }
+        }
 
         /// <summary>
-        /// Represents the site that is the site collection
+        /// Data storage object for migrate
         /// </summary>
-        public SSite SiteCollectionSite { get; set;}
+        private bool migrate;
+
+        /// <summary>
+        /// Defines wheter to migrate the site collection or not. 
+        /// </summary>
+        public bool Migrate
+        {
+            get
+            {
+                return this.migrate;
+            }
+
+            set
+            {
+                this.migrate = value;
+                foreach (SSite s in this.sites)
+                {
+                    if (s.IsSiteCollectionSite)
+                    {
+                        s.Migrate = value;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Defines whether an object is ready for migration
+        /// </summary>
+        public bool ReadyForMigration
+        {
+            get
+            {
+                return true;
+            }
+
+            set
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// Gaters the name of the object
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return this.Text;
+            }
+        }
+
+        /// <summary>
+        /// Adds a site to the data base and the child tree nodes
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="migrate"></param>
+        public void AddSite(SSite s, bool migrate)
+        {
+            s.Migrate = migrate;
+            this.sites.Add(s);
+            this.Nodes.Add(s);
+            if (s.IsSiteCollectionSite)
+            {
+                this.Text = s.XmlData != null ? s.XmlData.Attributes["Title"].InnerText : "";
+            }
+        }
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public SSiteCollection()
+        public SSiteCollection() : base("")
         {
-            this.Sites = new List<KeyValuePair<SSite, bool>>();
-            this.SiteCollectionSite = null;
+            this.sites = new List<SSite>();
+            this.migrate = false;
         }
     }
 }

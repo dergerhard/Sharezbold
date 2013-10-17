@@ -24,6 +24,7 @@ namespace Sharezbold
     using ContentMigration;
     using Microsoft.SharePoint.Client;
     using Sharezbold.Settings;
+    using Sharezbold.ContentMigration.Data;
 
     /// <summary>
     /// Delegate for loading the source tree
@@ -80,7 +81,12 @@ namespace Sharezbold
         /// <summary>
         /// Root node of the source migration tree
         /// </summary>
-        private SpTreeNode sourceTreeRoot;
+        private SpTreeNode sourceTreeRoot; //eliminate
+
+        /// <summary>
+        /// Root site collection to transfer
+        /// </summary>
+        private SSiteCollection sourceSiteCollection;
 
         /// <summary>
         /// Root node of the destination migration tree
@@ -91,6 +97,21 @@ namespace Sharezbold
         /// As the name says.. current (selected) configuration element
         /// </summary>
         private SpListViewItem currentConfigurationElement = null;
+
+        /// <summary>
+        /// Holds all web services
+        /// </summary>
+        private WebService webServices;
+
+        /// <summary>
+        /// Responsible for loading data from and to the servers with SOAP
+        /// </summary>
+        private ContentLoader contentLoader;
+
+        /// <summary>
+        /// Defines whether site colecction migration is possible
+        /// </summary>
+        private bool isSiteCollectionMigrationPossible = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
@@ -301,7 +322,8 @@ namespace Sharezbold
                 
                 // load trees and move on to the next form
                 await this.ApplyConfigurationAndLoadSourceTreeAsync();
-                this.treeViewContentSelection.Nodes.Add(this.sourceTreeRoot);
+                //this.treeViewContentSelection.Nodes.Add(this.sourceTreeRoot);
+                this.treeViewContentSelection.Nodes.Add(this.sourceSiteCollection);
                 this.waitForm.Hide();
                 this.tabControMain.SelectedTab = this.tabPageContentSelection;
             }
@@ -338,6 +360,10 @@ namespace Sharezbold
         /// <returns>Task with bool as return value.</returns>
         private async Task<bool> ApplyConfigurationAndLoadSourceTreeAsync()
         {
+            // TODO: Central Administration HOST
+            this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, @"http://ss13-css-007:8080/", this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
+            this.contentLoader = new ContentLoader(this.webServices);
+                
             try
             {
                 this.waitForm.SpecialText = "Trying to connect to source";
@@ -370,13 +396,19 @@ namespace Sharezbold
             }
 
             this.waitForm.SpecialText = "Generating migration tree";
-            Task<SpTreeNode> t = Task.Factory.StartNew(() =>
+            Task<SSiteCollection> t = Task.Factory.StartNew(() =>
             {
-                ContentDownloader cm = new ContentDownloader(this.source);
-                return cm.GenerateMigrationTree();
+                //ContentDownloader cm = new ContentDownloader(this.source);
+                //return cm.GenerateMigrationTree();
+                //WebService ws = new WebService(@"http://ss13-css-009:31920/", "Administrator", "cssdev", "P@ssw0rd", @"http://ss13-css-007:5485/", @"http://ss13-css-007:8080/", "Administrator", "cssdev", "P@ssw0rd");
+                //ContentLoader loader = new ContentLoader(ws);
+                this.isSiteCollectionMigrationPossible = contentLoader.IsSiteCollectionMigrationPossible;
+                return this.contentLoader.LoadSourceData();
+                
             });
 
-            this.sourceTreeRoot = await t;
+            //this.sourceTreeRoot = await t;
+            this.sourceSiteCollection = await t;
 
             return true;
         }
@@ -464,7 +496,7 @@ namespace Sharezbold
         /// </summary>
         /// <param name="treeNode">the root to start checking</param>
         /// <param name="nodeChecked">the check state (true if it should be checked)</param>
-        private void CheckAllChildNodes(TreeNode treeNode, bool nodeChecked)
+        /*private void CheckAllChildNodes(TreeNode treeNode, bool nodeChecked)
         {
             foreach (TreeNode node in treeNode.Nodes)
             {
@@ -476,7 +508,7 @@ namespace Sharezbold
                     this.CheckAllChildNodes(node, nodeChecked);
                 }
             }
-        }
+        }*/
 
         /// <summary>
         /// Checks all child nodes recursively
@@ -488,10 +520,25 @@ namespace Sharezbold
             //// The code only executes if the user caused the checked state to change.
             if (e.Action != TreeViewAction.Unknown)
             {
-                ((SpTreeNode)e.Node).MigrationObject.Skip = !e.Node.Checked;
-                if (e.Node.Nodes.Count > 0)
+                if ((this.isSiteCollectionMigrationPossible && e.Node is SSiteCollection) || !(e.Node is SSiteCollection))
+                    ((IMigratable)e.Node).Migrate = e.Node.Checked;
+                else
                 {
-                    this.CheckAllChildNodes(e.Node, e.Node.Checked);
+                    e.Node.Checked = false;
+                    MessageBox.Show("You can't migrate the site collection because there is already a site collection on the destination server present! Migration of site collections is only possible with empty destination web application!", "Error");
+                }
+
+                if (e.Node is SSiteCollection && e.Node.Checked && this.isSiteCollectionMigrationPossible)
+                {
+                    foreach (TreeNode t in e.Node.Nodes)
+                    {
+                        if (t is SSite && ((SSite)t).IsSiteCollectionSite)
+                        {
+                            ((SSite)t).Migrate = e.Node.Checked;
+                            t.Checked = e.Node.Checked;
+                        }
+                    }
+                    treeViewContentSelection.Update();
                 }
             }
         }
@@ -520,40 +567,55 @@ namespace Sharezbold
             this.EnableTab(this.tabPageContentSelection, false);
             this.EnableTab(this.tabPageMigrationPreparation, true);
 
-            //// Site collections not supported
-            if (this.sourceTreeRoot.Checked)
+            /*
+             * 1. Site Collection will be migrated
+             *      a. --> nothing to choose, skip to migration
+             * 2. Sites and lists will be migrated
+             *      a. --> all lists beneath a site will stay there
+             *      b. --> all lists where the site is not migrated must have a combobox to choose the destination site (or the newly created ones)
+             * 3. Only lists are migrated
+             *      a. same as 2.b
+             */
+
+            // Generate the ListView with the source elements to configure
+            // 1. site collection
+            if (this.sourceSiteCollection.Migrate)
             {
-                listViewMigrationContent.Items.Add(new SpListViewItem(this.sourceTreeRoot.MigrationObject));
+                listViewMigrationContent.Items.Add(new SListViewItem(this.sourceSiteCollection));
             }
 
-            ////ContentUploader uploader = new ContentUploader(destination);
-            ////uploader.MigrateListAndItsItems((List)(((SpTreeNode)treeViewContentSelection.SelectedNode).MigrationObject.DataObject), destination.Web);
+            List<SList> listsWithoutSite = new List<SList>();
 
-            //// Generate the ListView with the source elements to configure
-            foreach (TreeNode web in this.sourceTreeRoot.Nodes)
+            // 2. sites
+            foreach (SSite site in this.sourceSiteCollection.Sites)
             {
-                if (web.Checked)
+                if (site.Migrate)
                 {
-                    listViewMigrationContent.Items.Add(new SpListViewItem(((SpTreeNode)web).MigrationObject));
+                    listViewMigrationContent.Items.Add(new SListViewItem(site));
                 }
 
-                foreach (TreeNode li in web.Nodes)
+                foreach (SList li in site.Lists)
                 {
-                    if (li.Checked)
+                    if (li.Migrate && site.Migrate)
                     {
-                        listViewMigrationContent.Items.Add(new SpListViewItem(((SpTreeNode)li).MigrationObject));
+                        listViewMigrationContent.Items.Add(new SListViewItem(li));
                     }
-
-                    foreach (TreeNode lii in li.Nodes)
+                    if (li.Migrate && !site.Migrate)
                     {
-                        if (lii.Checked)
-                        {
-                            listViewMigrationContent.Items.Add(new SpListViewItem(((SpTreeNode)lii).MigrationObject));
-                        }
+                        listsWithoutSite.Add(li);
                     }
                 }
             }
 
+            if (listsWithoutSite.Count > 0)
+            {
+                this.listViewMigrationContent.Items.Add("---Lists without Sites---");
+                foreach (SList li in listsWithoutSite)
+                {
+                    this.listViewMigrationContent.Items.Add(new SListViewItem(li));
+                }
+            }
+            /*
             try
             {
                 // load "migrate to" elements
@@ -574,7 +636,7 @@ namespace Sharezbold
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }*/
         }
 
         /// <summary>
