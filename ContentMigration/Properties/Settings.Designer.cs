@@ -62,5 +62,25 @@ namespace Sharezbold.ContentMigration.Properties {
                 return ((string)(this["Sharezbold_ContentMigration_AdminWS_Admin"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://ss13-css-009:31920/_vti_bin/SiteData.asmx")]
+        public string Sharezbold_ContentMigration_SiteDataWS_SiteData {
+            get {
+                return ((string)(this["Sharezbold_ContentMigration_SiteDataWS_SiteData"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://ss13-css-009:31920/_vti_bin/Views.asmx")]
+        public string Sharezbold_ContentMigration_ViewsWS_Views {
+            get {
+                return ((string)(this["Sharezbold_ContentMigration_ViewsWS_Views"]));
+            }
+        }
     }
 }

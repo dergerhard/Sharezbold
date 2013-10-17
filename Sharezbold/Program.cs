@@ -13,7 +13,7 @@ namespace Sharezbold
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using ContentMigration;
+    using Sharezbold.ContentMigration;
 
     /// <summary>
     /// Main Program
@@ -30,7 +30,11 @@ namespace Sharezbold
             {
                 //Test t = new Test();
                 //t.abc();
-                
+
+                ContentLoader loader = new ContentLoader(@"http://ss13-css-009:31920/", "Administrator", "cssdev", "P@ssw0rd", @"http://ss13-css-007:5485/", @"http://ss13-css-007:8080/", "Administrator", "cssdev", "P@ssw0rd");
+                loader.LoadSourceData();
+                loader.test();
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new MainForm());
@@ -38,6 +42,7 @@ namespace Sharezbold
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                Console.WriteLine(e.Message);
                 MessageBox.Show("Unexpected Error: " + e.Message, "FATAL ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }	
         }

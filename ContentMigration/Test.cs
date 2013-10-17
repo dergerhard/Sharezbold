@@ -112,7 +112,7 @@ namespace Sharezbold.ContentMigration
         /// <summary>
         /// for migration of site collections the central admin-url is needed!
         /// </summary>
-        public void abc()
+        public void migrateSiteCollection()
         {
             /* whole migration
              * 1. Transfer users and groups
