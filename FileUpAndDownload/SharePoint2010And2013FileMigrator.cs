@@ -49,7 +49,7 @@ namespace Sharezbold.FileMigration
             Stream fileStream = null;
             try
             {
-                fileStream = this.DownloadDocument(documentListName, documentName);
+                //fileStream = this.DownloadDocument(documentListName, documentName);
             }
             catch (FileNotFoundException e)
             {
@@ -82,9 +82,10 @@ namespace Sharezbold.FileMigration
         /// <param name="documentName">document name to download</param>
         /// <returns>downloaded file as stream</returns>
         /// <exception cref="FileNotFoundException">if the file was not found</exception>
-        internal Stream DownloadDocument(string documentListName, string documentName)
+        internal Stream DownloadDocument(string documentListName, string documentName, string documentType)
         {
-            ListItem item = GetDocumentFromSharePoint(documentListName, documentName);
+            string fileReference = "FileLeafRef";
+            ListItem item = GetDocumentFromSharePoint(documentListName, fileReference, documentName, documentType);
             if (item != null)
             {
                 FileInformation fileInformation = Microsoft.SharePoint.Client.File.OpenBinaryDirect(sourceClientContext,
@@ -100,6 +101,8 @@ namespace Sharezbold.FileMigration
 
         internal Stream DownloadDocument(string fileUrl)
         {
+            Sharezbold.FileMigration.WebReferenceCopy.Copy myCopyService = new Sharezbold.FileMigration.WebReferenceCopy.Copy();
+
             //strining fileurl = (string)liitem["FileRef"];
             FileInformation ffl = Microsoft.SharePoint.Client.File.OpenBinaryDirect(sourceClientContext, fileUrl);
             byte[] bytesarr = ReadFully(ffl.Stream);
@@ -160,10 +163,10 @@ namespace Sharezbold.FileMigration
         /// <param name="documentListName">name of the documentlist</param>
         /// <param name="documentName">name of the document</param>
         /// <returns>document from SharePoint as ListItem</returns>
-        private ListItem GetDocumentFromSharePoint(string documentListName, string documentName)
+        private ListItem GetDocumentFromSharePoint(string documentListName, string fileReference, string documentName, string documentType)
         {
-            ListItemCollection listItems = GetListItemCollectionFromSharePoint(documentListName, "FileLeafRef",
-                documentName, "Text", 1);
+            ListItemCollection listItems = GetListItemCollectionFromSharePoint(documentListName, fileReference,
+                documentName, documentType, 1);
 
             return (listItems != null && listItems.Count == 1) ? listItems[0] : null;
         }
