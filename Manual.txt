@@ -1,0 +1,16 @@
+Manual:
+Destination host:
+	- site collection (then migrating site collections is not possible)
+	- empty web-application 
+	
+	
+While Sharezbold is running, no changes can be made on the source or the destination server.
+
+
+
+
+It is not possible to check for web applications
+
+TODO:
+Migrate Lists
+Migrate List items

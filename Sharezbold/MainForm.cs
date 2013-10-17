@@ -116,7 +116,7 @@ namespace Sharezbold
         /// <summary>
         /// Defines whether site colecction migration is possible
         /// </summary>
-        private bool isSiteCollectionMigrationPossible = false;
+        //private bool isSiteCollectionMigrationPossible = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
@@ -174,12 +174,12 @@ namespace Sharezbold
         /// </summary>
         /// <param name="sender">sender of the event</param>
         /// <param name="e">event of the sender</param>
-        private void ButtonStartMigration_Click(object sender, EventArgs e)
+        private async void ButtonStartMigration_Click(object sender, EventArgs e)
         {
             bool readyForMigration = true;
             foreach (ListViewItem lvi in listViewMigrationContent.Items)
             {
-                if (!((SpListViewItem)lvi).MigrationObject.ReadyForMigration)
+                if (!((SListViewItem)lvi).MigrationObject.ReadyForMigration)
                 {
                     readyForMigration = false;
                     break;
@@ -190,7 +190,11 @@ namespace Sharezbold
             {
                 this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
                 this.EnableTab(this.tabPageMigrationPreparation, false);
-                //// todo
+                this.EnableTab(this.tabPageMigrationProgress, true);
+                this.buttonFinish.Enabled = false;
+                await this.contentLoader.MigrateAll(this.listBoxMigrationLog);
+                MessageBox.Show("Migration process finished", "Info");
+                this.buttonFinish.Enabled = true;
             }
             else
             {
@@ -212,8 +216,16 @@ namespace Sharezbold
 
             this.textBoxToDomain.Text = settings.ToDomain;
             this.textBoxToHost.Text = settings.ToHost;
+            this.textBoxToHostCA.Text = settings.ToHostCA;
             this.textBoxToUserName.Text = settings.ToUserName;
             this.textBoxToPassword.Text = settings.ToPassword;
+
+            this.checkBoxProxyActivate.Checked = settings.ProxyActive;
+            this.textBoxProxyUrl.Text = settings.ProxyUrl;
+            this.textBoxProxyUsername.Text = settings.ProxyUsername;
+            this.textBoxProxyPassword.Text = settings.ProxyPassword;
+
+            this.checkBoxSiteCollectionMigration.Checked = settings.SiteCollectionMigration;
         }
 
         /// <summary>
@@ -230,8 +242,17 @@ namespace Sharezbold
 
             this.settings.ToDomain = this.textBoxToDomain.Text;
             this.settings.ToHost = this.textBoxToHost.Text;
+            this.settings.ToHostCA = this.textBoxToHostCA.Text;
             this.settings.ToUserName = this.textBoxToUserName.Text;
             this.settings.ToPassword = this.textBoxToPassword.Text;
+
+            this.settings.ProxyActive = this.checkBoxProxyActivate.Checked;
+            this.settings.ProxyUrl = this.textBoxProxyUrl.Text;
+            this.settings.ProxyUsername = this.textBoxProxyUsername.Text;
+            this.settings.ProxyPassword = this.textBoxProxyPassword.Text;
+
+            this.settings.SiteCollectionMigration = this.checkBoxSiteCollectionMigration.Checked;
+
             return this.settings;
         }
 
@@ -327,7 +348,6 @@ namespace Sharezbold
                 
                 // load trees and move on to the next form
                 await this.ApplyConfigurationAndLoadSourceTreeAsync();
-                //this.treeViewContentSelection.Nodes.Add(this.sourceTreeRoot);
                 this.treeViewContentSelection.Nodes.Add(this.sourceSiteCollection);
                 this.waitForm.Hide();
                 this.tabControMain.SelectedTab = this.tabPageContentSelection;
@@ -383,8 +403,12 @@ namespace Sharezbold
 
             try
             {
-                this.waitForm.SpecialText = "Trying to connect to destination";
-                await this.ConnectToDestination();
+                // as there is no site collection at the destination it makes no sense to connect to it
+                if (!this.settings.SiteCollectionMigration)
+                {
+                    this.waitForm.SpecialText = "Trying to connect to destination";
+                    await this.ConnectToDestination();
+                }
             }
             catch (Exception ex)
             {
@@ -399,12 +423,25 @@ namespace Sharezbold
             this.waitForm.SpecialText = "Generating migration tree";
             Task<SSiteCollection> t = Task.Factory.StartNew(() =>
             {
-                this.isSiteCollectionMigrationPossible = contentLoader.IsSiteCollectionMigrationPossible;
                 return this.contentLoader.LoadSourceSiteCollection();
-                
             });
 
             this.sourceSiteCollection = await t;
+            
+            // make sure, the site collection is checked, if it will be migrated
+            if (this.settings.SiteCollectionMigration)
+            {
+                this.sourceSiteCollection.Checked = true;
+                this.sourceSiteCollection.Migrate = true;
+                foreach (SSite s in this.sourceSiteCollection.Sites)
+                {
+                    if (s.IsSiteCollectionSite)
+                    {
+                        s.Migrate = true;
+                        s.Checked = true;
+                    }
+                }
+            }
 
             return true;
         }
@@ -449,7 +486,7 @@ namespace Sharezbold
             {
                 // TODO: Central Administration HOST
                 // set up web services and loader
-                this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, @"http://ss13-css-007:8080/", this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
+                this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, this.settings.ToHostCA, this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
                 this.contentLoader = new ContentLoader(this.webServices);
                 
                 return this.webServices.IsSourceLoginPossible;
@@ -536,15 +573,23 @@ namespace Sharezbold
             //// The code only executes if the user caused the checked state to change.
             if (e.Action != TreeViewAction.Unknown)
             {
-                if ((this.isSiteCollectionMigrationPossible && e.Node is SSiteCollection) || !(e.Node is SSiteCollection))
+                if ((this.settings.SiteCollectionMigration && e.Node is SSiteCollection) || ((e.Node is SSite) && ((SSite)e.Node).IsSiteCollectionSite))
+                {
+                    ((IMigratable)e.Node).Migrate = true;
+                    e.Node.Checked = true;
+                    MessageBox.Show("You checked \"A Site Collection will be migrated\". As the program is limited to migrate site collections to empty Web Applications, the Site Collection must be migrated!", "Info");
+                }
+                else if (!(e.Node is SSiteCollection))
+                {
                     ((IMigratable)e.Node).Migrate = e.Node.Checked;
+                }
                 else
                 {
                     e.Node.Checked = false;
                     MessageBox.Show("You can't migrate the site collection because there is already a site collection on the destination server present! Migration of site collections is only possible with empty destination web application!", "Error");
                 }
 
-                if (e.Node is SSiteCollection && e.Node.Checked && this.isSiteCollectionMigrationPossible)
+                if (e.Node is SSiteCollection && e.Node.Checked && this.settings.SiteCollectionMigration)
                 {
                     foreach (TreeNode t in e.Node.Nodes)
                     {
@@ -580,6 +625,13 @@ namespace Sharezbold
         /// <param name="e">the EventArgs itself</param>
         private async void ButtonConfigureMigration_Click(object sender, EventArgs e)
         {
+            if (this.settings.SiteCollectionMigration)
+            {
+                MessageBox.Show("As the destination web application is empty, migration will be started now.", "Info");
+                this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
+                this.contentLoader.MigrateAll(this.listBoxMigrationLog);
+
+            }
             this.EnableTab(this.tabPageContentSelection, false);
             this.EnableTab(this.tabPageMigrationPreparation, true);
 

@@ -12,9 +12,17 @@ elementFormDefault="qualified">
         <xs:element name="FromPassword" type="xs:string" />
 
         <xs:element name="ToHost" type="xs:string" />
+		<xs:element name="ToHostCA" type="xs:string" />
         <xs:element name="ToDomain" type="xs:string" />
         <xs:element name="ToUserName" type="xs:string" />
         <xs:element name="ToPassword" type="xs:string" />
+		
+		<xs:element name="ProxyActive" type="xs:boolean" />
+		<xs:element name="ProxyUrl" type="xs:string" />
+		<xs:element name="ProxyUsername" type="xs:string" />
+		<xs:element name="ProxyPassword" type="xs:string" />
+		
+		<xs:element name="SiteCollectionMigration" type="xs:boolean" />
      </xs:sequence>
    </xs:complexType>
 </xs:element>
