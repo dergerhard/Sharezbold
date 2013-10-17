@@ -66,13 +66,43 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
+        /// data storage object for MigrateTo
+        /// </summary>
+        private SSite migrateTo;
+
+        /// <summary>
+        /// distination site to where we migrate
+        /// </summary>
+        public SSite MigrateTo
+        {
+            get
+            {
+                return migrateTo;
+            }
+            set
+            {
+                migrateTo = value;
+            }
+        }
+
+        /// <summary>
         /// Defines whether an object is ready for migration
         /// </summary>
         public bool ReadyForMigration
         {
             get
             {
-                return true;
+                // if parent site is migrated we are ready
+                if (((SSite)this.ParentObject).Migrate)
+                {
+                    return true;
+                }
+                else if (this.migrateTo != null)
+                {
+                    return true;
+                }
+                return false;
+
             }
 
             set
@@ -91,7 +121,12 @@ namespace Sharezbold.ContentMigration.Data
                 return this.Text;
             }
         }
-        
+
+        /// <summary>
+        /// Represents the parent object
+        /// </summary>
+        public IMigratable ParentObject { get; set; }
+
         /// <summary>
         /// Storage object for XmlList
         /// </summary>
@@ -127,6 +162,7 @@ namespace Sharezbold.ContentMigration.Data
         /// </summary>
         public SList()
         {
+            this.migrateTo = null;
         }
     }
 }

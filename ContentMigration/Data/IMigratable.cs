@@ -38,5 +38,11 @@ namespace Sharezbold.ContentMigration.Data
         {
             get;
         }
+
+        /// <summary>
+        /// Represents the parent object
+        /// </summary>
+        IMigratable ParentObject { get; set; }
+
     }
 }

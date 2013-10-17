@@ -4,6 +4,7 @@ namespace Sharezbold.ContentMigration
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Text;
@@ -21,21 +22,21 @@ namespace Sharezbold.ContentMigration
         public const string UrlSiteData = @"/_vti_bin/SiteData.asmx";
         public const string UrlViews = @"/_vti_bin/Views.asmx";
 
-        private string srcUrl;
-        private string dstUrl;
-        private string dstUrlCA;
+        public string SrcUrl { get; private set; }
+        public string DstUrl { get; private set; }
+        public string DstUrlCA { get; private set; }
 
-        private CredentialCache srcCredentials;
-        private CredentialCache dstCredentials;
-        private CredentialCache dstCredentialsCA;
+        public CredentialCache SrcCredentials { get; private set; }
+        public CredentialCache DstCredentials { get; private set; }
+        public CredentialCache DstCredentialsCA { get; private set; }
 
         private string srcUser;
         private string srcDomain;
         private string srcPassword;
 
-        private string dstUser;
-        private string dstDomain;
-        private string dstPassword;
+        public string DstUser { get; private set; }
+        public string DstDomain { get; private set; }
+        public string DstPassword { get; private set; }
 
         public SitesWS.Sites SrcSites { get; private set; }
         public SitesWS.Sites DstSites { get; private set; }
@@ -52,87 +53,87 @@ namespace Sharezbold.ContentMigration
         /// <summary>
         /// Sets up the web services
         /// </summary>
-        public WebService(string srcUrl, string srcUser, string srcDomain, string srcPassword, string dstUrl, string dstUrlCA, string dstUser, string dstDomain, string dstPassword)
+        public WebService(string srcUrl, string srcUser, string srcDomain, string srcPassword, string dstUrl, string dstUrlCA, string DstUser, string DstDomain, string DstPassword)
         {
-            this.srcUrl = srcUrl;
+            this.SrcUrl = srcUrl;
             this.srcUser = srcUser;
             this.srcDomain = srcDomain;
             this.srcPassword = srcPassword;
-            this.dstUrl = dstUrl;
-            this.dstUrlCA = dstUrlCA;
-            this.dstUser = dstUser;
-            this.dstDomain = dstDomain;
-            this.dstPassword = dstPassword;
+            this.DstUrl = dstUrl;
+            this.DstUrlCA = dstUrlCA;
+            this.DstUser = DstUser;
+            this.DstDomain = DstDomain;
+            this.DstPassword = DstPassword;
 
             // set up urls
-            string srcUrlLists = this.srcUrl + UrlLists;
-            string srcUrlWebs = this.srcUrl + UrlWebs;
-            string srcUrlSites = this.srcUrl + UrlSites;
-            string srcUrlSiteData = this.srcUrl + UrlSiteData;
-            string srcUrlViews = this.srcUrl + UrlViews;
+            string srcUrlLists = this.SrcUrl + UrlLists;
+            string srcUrlWebs = this.SrcUrl + UrlWebs;
+            string srcUrlSites = this.SrcUrl + UrlSites;
+            string srcUrlSiteData = this.SrcUrl + UrlSiteData;
+            string srcUrlViews = this.SrcUrl + UrlViews;
 
-            string dstUrlLists = this.dstUrl + UrlLists;
-            string dstUrlWebs = this.dstUrl + UrlWebs;
-            string dstUrlSites = this.dstUrl + UrlSites;
-            string dstUrlSiteData = this.dstUrl + UrlSiteData;
-            string dstUrlViews = this.dstUrl + UrlViews;
+            string dstUrlLists = this.DstUrl + UrlLists;
+            string dstUrlWebs = this.DstUrl + UrlWebs;
+            string dstUrlSites = this.DstUrl + UrlSites;
+            string dstUrlSiteData = this.DstUrl + UrlSiteData;
+            string dstUrlViews = this.DstUrl + UrlViews;
 
             //central admin is needed for admin.asmx
-            string dstUrlCaAdmin = dstUrlCA + UrlAdmin;
+            string dstUrlCaAdmin = DstUrlCA + UrlAdmin;
 
-            this.srcCredentials = new CredentialCache();
-            this.srcCredentials.Add(new Uri(srcUrl), "NTLM", new NetworkCredential(srcUser, srcPassword, srcDomain));
+            this.SrcCredentials = new CredentialCache();
+            this.SrcCredentials.Add(new Uri(SrcUrl), "NTLM", new NetworkCredential(srcUser, srcPassword, srcDomain));
 
-            this.dstCredentials = new CredentialCache();
-            this.dstCredentials.Add(new Uri(dstUrl), "NTLM", new NetworkCredential(dstUser, dstPassword, dstDomain));
+            this.DstCredentials = new CredentialCache();
+            this.DstCredentials.Add(new Uri(DstUrl), "NTLM", new NetworkCredential(DstUser, DstPassword, DstDomain));
 
-            this.dstCredentialsCA = new CredentialCache();
-            this.dstCredentialsCA.Add(new Uri(dstUrlCA), "NTLM", new NetworkCredential(dstUser, dstPassword, dstDomain));
+            this.DstCredentialsCA = new CredentialCache();
+            this.DstCredentialsCA.Add(new Uri(DstUrlCA), "NTLM", new NetworkCredential(DstUser, DstPassword, DstDomain));
 
             this.SrcSites = new SitesWS.Sites();
             this.SrcSites.Url = srcUrlSites;
-            this.SrcSites.Credentials = this.srcCredentials;
+            this.SrcSites.Credentials = this.SrcCredentials;
 
             this.SrcWebs = new WebsWS.Webs();
             this.SrcWebs.Url = srcUrlWebs;
-            this.SrcWebs.Credentials = this.srcCredentials;
+            this.SrcWebs.Credentials = this.SrcCredentials;
 
             this.DstWebs = new WebsWS.Webs();
             this.DstWebs.Url = dstUrlWebs;
-            this.DstWebs.Credentials = this.dstCredentials;
+            this.DstWebs.Credentials = this.DstCredentials;
 
             this.DstSites = new SitesWS.Sites();
             this.DstSites.Url = dstUrlSites;
 
-            this.DstSites.Credentials = this.dstCredentials;
+            this.DstSites.Credentials = this.DstCredentials;
 
             this.DstAdmin = new AdminWS.Admin();
             this.DstAdmin.Url = dstUrlCaAdmin;
-            this.DstAdmin.Credentials = this.dstCredentialsCA;
+            this.DstAdmin.Credentials = this.DstCredentialsCA;
 
             this.SrcLists = new ListsWS.Lists();
             this.SrcLists.Url = srcUrlLists;
-            this.SrcLists.Credentials = this.srcCredentials;
+            this.SrcLists.Credentials = this.SrcCredentials;
 
             this.DstLists = new ListsWS.Lists();
             this.DstLists.Url = dstUrlLists;
-            this.DstLists.Credentials = this.dstCredentials;
+            this.DstLists.Credentials = this.DstCredentials;
 
             this.SrcSiteData = new SiteDataWS.SiteData();
             this.SrcSiteData.Url = srcUrlSiteData;
-            this.SrcSiteData.Credentials = this.srcCredentials;
+            this.SrcSiteData.Credentials = this.SrcCredentials;
 
             this.DstSiteData = new SiteDataWS.SiteData();
             this.DstSiteData.Url = dstUrlSiteData;
-            this.DstSiteData.Credentials = this.dstCredentials;
+            this.DstSiteData.Credentials = this.DstCredentials;
 
             this.SrcViews = new ViewsWS.Views();
             this.SrcViews.Url = srcUrlViews;
-            this.SrcViews.Credentials = this.srcCredentials;
+            this.SrcViews.Credentials = this.SrcCredentials;
 
             this.DstViews = new ViewsWS.Views();
             this.DstViews.Url = dstUrlViews;
-            this.DstViews.Credentials = this.dstCredentials;
+            this.DstViews.Credentials = this.DstCredentials;
         }
 
         /// <summary>
@@ -164,12 +165,31 @@ namespace Sharezbold.ContentMigration
                 try
                 {
                     this.DstWebs.GetWebCollection();
+                    return true;
                 }
                 catch (Exception ex)
                 {
-                    return false;
+                    Console.WriteLine("Destination login 1. try failed: " + ex.Message);
+                    try
+                    {
+                        // if that works, there is a web server that works with that authentification
+                        WebRequest request = WebRequest.Create(this.DstUrl);
+                        //request.Credentials = this.DstCredentials;
+                        //request.PreAuthenticate = true;
+                        WebResponse response = request.GetResponse();
+                        Stream dataStream = response.GetResponseStream();
+                        StreamReader reader = new StreamReader(dataStream);
+                        string responseFromServer = reader.ReadToEnd();
+                        dataStream.Close();
+
+                        return true;
+                    }
+                    catch (Exception exx)
+                    {
+                        Console.WriteLine("Destination login 2. try failed: " + exx.Message);
+                        return false;
+                    }
                 }
-                return true;
             }
         }
     }

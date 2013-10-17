@@ -46,10 +46,9 @@ namespace Sharezbold.ContentMigration.Data
             {
                 return true;
             }
-
             set
             {
-
+                // do nothing. site is always migratable
             }
         }
 
@@ -143,6 +142,11 @@ namespace Sharezbold.ContentMigration.Data
         /// Represents all lists
         /// </summary>
         public List<XmlNode> AllLists { get; set; }
+
+        /// <summary>
+        /// Represents the parent object
+        /// </summary>
+        public IMigratable ParentObject { get; set; }
 
         /// <summary>
         /// Default constructor

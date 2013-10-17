@@ -81,7 +81,7 @@ namespace Sharezbold
         /// <summary>
         /// Root node of the source migration tree
         /// </summary>
-        private SpTreeNode sourceTreeRoot; //eliminate
+        //private SpTreeNode sourceTreeRoot; //eliminate
 
         /// <summary>
         /// Root site collection to transfer
@@ -89,14 +89,19 @@ namespace Sharezbold
         private SSiteCollection sourceSiteCollection;
 
         /// <summary>
+        /// Destination site collection
+        /// </summary>
+        private SSiteCollection destinationSiteCollection;
+
+        /// <summary>
         /// Root node of the destination migration tree
         /// </summary>
-        private SpTreeNode destinationTreeRoot;
+        //private SpTreeNode destinationTreeRoot;
 
         /// <summary>
         /// As the name says.. current (selected) configuration element
         /// </summary>
-        private SpListViewItem currentConfigurationElement = null;
+        private SListViewItem currentConfigurationElement = null;
 
         /// <summary>
         /// Holds all web services
@@ -360,10 +365,6 @@ namespace Sharezbold
         /// <returns>Task with bool as return value.</returns>
         private async Task<bool> ApplyConfigurationAndLoadSourceTreeAsync()
         {
-            // TODO: Central Administration HOST
-            this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, @"http://ss13-css-007:8080/", this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
-            this.contentLoader = new ContentLoader(this.webServices);
-                
             try
             {
                 this.waitForm.SpecialText = "Trying to connect to source";
@@ -398,16 +399,11 @@ namespace Sharezbold
             this.waitForm.SpecialText = "Generating migration tree";
             Task<SSiteCollection> t = Task.Factory.StartNew(() =>
             {
-                //ContentDownloader cm = new ContentDownloader(this.source);
-                //return cm.GenerateMigrationTree();
-                //WebService ws = new WebService(@"http://ss13-css-009:31920/", "Administrator", "cssdev", "P@ssw0rd", @"http://ss13-css-007:5485/", @"http://ss13-css-007:8080/", "Administrator", "cssdev", "P@ssw0rd");
-                //ContentLoader loader = new ContentLoader(ws);
                 this.isSiteCollectionMigrationPossible = contentLoader.IsSiteCollectionMigrationPossible;
-                return this.contentLoader.LoadSourceData();
+                return this.contentLoader.LoadSourceSiteCollection();
                 
             });
 
-            //this.sourceTreeRoot = await t;
             this.sourceSiteCollection = await t;
 
             return true;
@@ -435,7 +431,7 @@ namespace Sharezbold
         private async Task<bool> ConnectToSource()
         {
             this.UIToSettings();
-            this.source = new ClientContext(this.settings.FromHost);
+            /*this.source = new ClientContext(this.settings.FromHost);
             this.SetProxy(this.source);
             var cc = new CredentialCache();
             cc.Add(new Uri(this.source.Url), "NTLM", new NetworkCredential(this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain));
@@ -447,7 +443,20 @@ namespace Sharezbold
                 return true;
             });
 
+            return await t;*/
+
+            Task<bool> t = Task.Factory.StartNew(() =>
+            {
+                // TODO: Central Administration HOST
+                // set up web services and loader
+                this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, @"http://ss13-css-007:8080/", this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
+                this.contentLoader = new ContentLoader(this.webServices);
+                
+                return this.webServices.IsSourceLoginPossible;
+            });
+
             return await t;
+
         }
 
         /// <summary>
@@ -457,7 +466,7 @@ namespace Sharezbold
         private async Task<bool> ConnectToDestination()
         {
             this.UIToSettings();
-            this.destination = new ClientContext(this.settings.ToHost);
+            /*this.destination = new ClientContext(this.settings.ToHost);
             this.SetProxy(this.destination);
             var cc = new CredentialCache();
             cc.Add(new Uri(this.destination.Url), "NTLM", new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain));
@@ -467,6 +476,13 @@ namespace Sharezbold
             {
                 this.destination.ExecuteQuery();
                 return true;
+            });
+
+            return await t;*/
+
+            Task<bool> t = Task.Factory.StartNew(() =>
+            {
+                return this.webServices.IsDestinationLoginPossible;
             });
 
             return await t;
@@ -576,67 +592,67 @@ namespace Sharezbold
              * 3. Only lists are migrated
              *      a. same as 2.b
              */
+            this.waitForm.Show();
+            this.waitForm.SpecialText = "loading migration elements";
 
-            // Generate the ListView with the source elements to configure
-            // 1. site collection
-            if (this.sourceSiteCollection.Migrate)
+            Task<bool> t = Task.Factory.StartNew(() =>
             {
-                listViewMigrationContent.Items.Add(new SListViewItem(this.sourceSiteCollection));
-            }
-
-            List<SList> listsWithoutSite = new List<SList>();
-
-            // 2. sites
-            foreach (SSite site in this.sourceSiteCollection.Sites)
-            {
-                if (site.Migrate)
+                // Generate the ListView with the source elements to configure
+                // 1. site collection
+                if (this.sourceSiteCollection.Migrate)
                 {
-                    listViewMigrationContent.Items.Add(new SListViewItem(site));
+                    listViewMigrationContent.Items.Add(new SListViewItem(this.sourceSiteCollection));
                 }
 
-                foreach (SList li in site.Lists)
+                List<SList> listsWithoutSite = new List<SList>();
+
+                // 2. sites
+                foreach (SSite site in this.sourceSiteCollection.Sites)
                 {
-                    if (li.Migrate && site.Migrate)
+                    if (site.Migrate)
                     {
-                        listViewMigrationContent.Items.Add(new SListViewItem(li));
+                        listViewMigrationContent.Items.Add(new SListViewItem(site));
                     }
-                    if (li.Migrate && !site.Migrate)
+
+                    foreach (SList li in site.Lists)
                     {
-                        listsWithoutSite.Add(li);
+                        if (li.Migrate && site.Migrate)
+                        {
+                            listViewMigrationContent.Items.Add(new SListViewItem(li));
+                        }
+                        if (li.Migrate && !site.Migrate)
+                        {
+                            listsWithoutSite.Add(li);
+                        }
                     }
                 }
-            }
 
-            if (listsWithoutSite.Count > 0)
-            {
-                this.listViewMigrationContent.Items.Add("---Lists without Sites---");
-                foreach (SList li in listsWithoutSite)
+                if (listsWithoutSite.Count > 0)
                 {
-                    this.listViewMigrationContent.Items.Add(new SListViewItem(li));
+                    this.listViewMigrationContent.Items.Add("---Lists without Sites---");
+                    foreach (SList li in listsWithoutSite)
+                    {
+                        this.listViewMigrationContent.Items.Add(new SListViewItem(li));
+                    }
                 }
-            }
-            /*
-            try
-            {
-                // load "migrate to" elements
-                this.treeViewMigrateTo.Nodes.Clear();
-                this.waitForm.Show();
-                this.EnableTab(this.tabPageContentSelection, false);
 
-                // async starting of destination tree loading
-                this.waitForm.SpecialText = "Loading destination tree";
-                SpTreeNode node = await this.LoadDestinationTree();
+                try
+                {
+                    this.destinationSiteCollection = this.contentLoader.LoadDestinationSiteCollection();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
 
-                this.destinationTreeRoot = node;
-                this.treeViewMigrateTo.Nodes.Add(this.destinationTreeRoot);
-                this.treeViewMigrateTo.ExpandAll();
-                this.waitForm.Hide();
-                this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }*/
+                return true;
+            });
+
+            await t;
+            this.waitForm.Hide();
+            this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
+
         }
 
         /// <summary>
@@ -758,6 +774,8 @@ namespace Sharezbold
         /// <param name="e">the event</param>
         private void ListViewMigrationContent_SelectedIndexChanged(object sender, EventArgs e)
         {
+            this.listBoxMigrateTo.SelectionMode = SelectionMode.One;
+
             // reset color
             foreach (ListViewItem lvi in listViewMigrationContent.Items)
             {
@@ -766,61 +784,49 @@ namespace Sharezbold
 
             if (this.listViewMigrationContent.SelectedItems.Count > 0)
             {
-                // set labels and mark elements
-                this.currentConfigurationElement = (SpListViewItem)listViewMigrationContent.SelectedItems[0];
-                this.currentConfigurationElement.BackColor = Color.LightBlue;
-                MigrationObject mo = this.currentConfigurationElement.MigrationObject;
+                if (listViewMigrationContent.SelectedItems[0] is SListViewItem)
+                {
+                    this.listBoxMigrateTo.Enabled = true;
+                    this.currentConfigurationElement = (SListViewItem)listViewMigrationContent.SelectedItems[0];
+                    this.currentConfigurationElement.BackColor = Color.LightBlue;
+                    IMigratable mo = this.currentConfigurationElement.MigrationObject;
 
-                if (mo.DataObject.GetType() == typeof(Web))
-                {
-                    this.labelElementType.Text = "Site";
-                    this.labelLegalType.Text = "Site Collection";
-                    this.destinationTreeRoot.BackColor = Color.LightBlue;
-                }
-                else if (mo.DataObject.GetType() == typeof(List))
-                {
-                    this.labelElementType.Text = "List";
-                    this.labelLegalType.Text = "Site";
-                    this.MarkPossibleMigrateToElements(this.destinationTreeRoot, "Site");
+                    this.listBoxMigrateTo.Items.Clear();
+
+                    if (mo is SSite)
+                    {
+                        this.labelMigrateTo.Text = "Migrate to site collection:";
+                        this.listBoxMigrateTo.Items.Add(this.destinationSiteCollection.Name);
+                    }
+                    else if (mo is SList)
+                    {
+                        this.labelMigrateTo.Text = "Migrate to site:";
+                        // if the parent object is migrated, the list will be placed under the parent object
+                        if (!((IMigratable)(((SList)mo).ParentObject)).Migrate)
+                        {
+                            foreach (SSite s in this.destinationSiteCollection.Sites)
+                            {
+                                this.listBoxMigrateTo.Items.Add(this.destinationSiteCollection.Name + ": " + s.Name);
+                            }
+                            foreach (SSite s in this.sourceSiteCollection.Sites)
+                            {
+                                if (s.Migrate)
+                                {
+                                    this.listBoxMigrateTo.Items.Add("From source server: " + s.Name);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            this.listBoxMigrateTo.Items.Add(((IMigratable)(((SList)mo).ParentObject)).Name);
+                        }
+                    }
                 }
                 else
                 {
-                    this.labelElementType.Text = "List Item";
-                    this.labelLegalType.Text = "List";
-                    this.MarkPossibleMigrateToElements(this.destinationTreeRoot, "List");
-                }
-
-                this.labelElementName.Text = mo.Identifier;
-
-                // mark corresponding element if set
-                if (mo.ReadyForMigration)
-                {
-                    this.MarkCorrespondingMigrateToElement(this.destinationTreeRoot, mo.DestinationObject);
+                    this.listBoxMigrateTo.Enabled = false;
                 }
             }
-        }
-
-        /// <summary>
-        /// Update the elements to migrate, if possible
-        /// </summary>
-        /// <param name="sender">the sender</param>
-        /// <param name="e">the event</param>
-        private void TreeViewMigrateTo_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            SpTreeNode selectedNode = (SpTreeNode)this.treeViewMigrateTo.SelectedNode;
-
-            if ((selectedNode.MigrationObject.DataObject.GetType() == typeof(Web) && this.labelLegalType.Text == "Site") ||
-                (selectedNode.MigrationObject.DataObject.GetType() == typeof(List) && this.labelLegalType.Text == "List"))
-            {
-                this.currentConfigurationElement.MigrationObject.DestinationObject = selectedNode.MigrationObject.DataObject;
-            }
-            else
-            {
-                this.currentConfigurationElement.MigrationObject.DestinationObject = null;
-            }
-
-            this.currentConfigurationElement.UpdateReadyForMigration();
-            this.listViewMigrationContent.Update();
         }
 
         /// <summary>
@@ -842,6 +848,51 @@ namespace Sharezbold
                 this.textBoxProxyUsername.Enabled = false;
                 this.textBoxProxyPassword.Enabled = false;
             }
+        }
+
+        /// <summary>
+        /// Selected index changes
+        /// </summary>
+        /// <param name="sender">this is the sender</param>
+        /// <param name="e">these are the eventargs</param>
+        private void ListBoxMigrateTo_SelecedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.listViewMigrationContent.SelectedItems.Count > 0)
+            {
+                string fromSourceServer = "From source server: ";
+                if (this.currentConfigurationElement.MigrationObject is SList)
+                {
+                    //find the site:
+                    SList list = (SList)this.currentConfigurationElement.MigrationObject;
+                    string listBoxText = this.listBoxMigrateTo.SelectedItem.ToString();
+                    
+                    if (listBoxText.StartsWith(fromSourceServer))
+                    {
+                        listBoxText = listBoxText.Remove(0, fromSourceServer.Length);
+                        foreach (SSite site in this.sourceSiteCollection.Sites)
+                        {
+                            if (site.Migrate && site.Name.Equals(listBoxText))
+                            {
+                                list.MigrateTo = site;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (SSite site in this.destinationSiteCollection.Sites)
+                        {
+                            if (listBoxText.Equals(((SSiteCollection)site.ParentObject).Name + ": " + site.Name))
+                            {
+                                list.MigrateTo = site;
+                            }
+                        }
+                    }
+
+                }
+                this.currentConfigurationElement.UpdateReadyForMigration();
+                this.listViewMigrationContent.Update();
+            }
+
         }
     }
 }

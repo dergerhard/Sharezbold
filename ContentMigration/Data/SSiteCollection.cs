@@ -20,6 +20,11 @@ namespace Sharezbold.ContentMigration.Data
     public class SSiteCollection : TreeNode, IMigratable
     {
         /// <summary>
+        /// Xml data of the site collection
+        /// </summary>
+        public List<XmlNode> XmlData { get; set; }
+
+        /// <summary>
         /// Data storage object for Sites
         /// </summary>
         private List<SSite> sites;
@@ -91,6 +96,11 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
+        /// Represents the parent object
+        /// </summary>
+        public IMigratable ParentObject { get; set; }
+
+        /// <summary>
         /// Adds a site to the data base and the child tree nodes
         /// </summary>
         /// <param name="s"></param>
@@ -113,6 +123,7 @@ namespace Sharezbold.ContentMigration.Data
         {
             this.sites = new List<SSite>();
             this.migrate = false;
+            this.ParentObject = null;
         }
     }
 }

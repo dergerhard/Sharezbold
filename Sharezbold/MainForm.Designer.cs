@@ -90,13 +90,8 @@ namespace Sharezbold
             this.tabPageMigrationPreparation = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.treeViewMigrateTo = new System.Windows.Forms.TreeView();
-            this.labelLegalType = new System.Windows.Forms.Label();
-            this.labelElementName = new System.Windows.Forms.Label();
-            this.labelElementType = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
+            this.listBoxMigrateTo = new System.Windows.Forms.ListBox();
+            this.labelMigrateTo = new System.Windows.Forms.Label();
             this.buttonStartMigration = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.listViewMigrationContent = new System.Windows.Forms.ListView();
@@ -105,6 +100,8 @@ namespace Sharezbold
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabControMain.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
@@ -331,6 +328,8 @@ namespace Sharezbold
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.textBox1);
+            this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.textBoxToHost);
             this.groupBox2.Controls.Add(this.textBoxToUserName);
             this.groupBox2.Controls.Add(this.label5);
@@ -341,21 +340,21 @@ namespace Sharezbold
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Location = new System.Drawing.Point(14, 186);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(320, 150);
+            this.groupBox2.Size = new System.Drawing.Size(333, 170);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Destination Configuration";
             // 
             // textBoxToHost
             // 
-            this.textBoxToHost.Location = new System.Drawing.Point(100, 32);
+            this.textBoxToHost.Location = new System.Drawing.Point(111, 32);
             this.textBoxToHost.Name = "textBoxToHost";
             this.textBoxToHost.Size = new System.Drawing.Size(200, 20);
             this.textBoxToHost.TabIndex = 2;
             // 
             // textBoxToUserName
             // 
-            this.textBoxToUserName.Location = new System.Drawing.Point(100, 58);
+            this.textBoxToUserName.Location = new System.Drawing.Point(111, 84);
             this.textBoxToUserName.Name = "textBoxToUserName";
             this.textBoxToUserName.Size = new System.Drawing.Size(200, 20);
             this.textBoxToUserName.TabIndex = 3;
@@ -371,7 +370,7 @@ namespace Sharezbold
             // 
             // textBoxToDomain
             // 
-            this.textBoxToDomain.Location = new System.Drawing.Point(100, 84);
+            this.textBoxToDomain.Location = new System.Drawing.Point(111, 110);
             this.textBoxToDomain.Name = "textBoxToDomain";
             this.textBoxToDomain.Size = new System.Drawing.Size(200, 20);
             this.textBoxToDomain.TabIndex = 6;
@@ -379,7 +378,7 @@ namespace Sharezbold
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(17, 110);
+            this.label8.Location = new System.Drawing.Point(17, 136);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(56, 13);
             this.label8.TabIndex = 5;
@@ -387,7 +386,7 @@ namespace Sharezbold
             // 
             // textBoxToPassword
             // 
-            this.textBoxToPassword.Location = new System.Drawing.Point(100, 110);
+            this.textBoxToPassword.Location = new System.Drawing.Point(111, 136);
             this.textBoxToPassword.Name = "textBoxToPassword";
             this.textBoxToPassword.PasswordChar = '*';
             this.textBoxToPassword.Size = new System.Drawing.Size(200, 20);
@@ -396,7 +395,7 @@ namespace Sharezbold
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(17, 84);
+            this.label7.Location = new System.Drawing.Point(17, 110);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(46, 13);
             this.label7.TabIndex = 4;
@@ -405,7 +404,7 @@ namespace Sharezbold
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(17, 58);
+            this.label6.Location = new System.Drawing.Point(17, 84);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(58, 13);
             this.label6.TabIndex = 1;
@@ -423,21 +422,21 @@ namespace Sharezbold
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(14, 19);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(320, 150);
+            this.groupBox1.Size = new System.Drawing.Size(333, 150);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Source Configuration";
             // 
             // textBoxFromHost
             // 
-            this.textBoxFromHost.Location = new System.Drawing.Point(100, 28);
+            this.textBoxFromHost.Location = new System.Drawing.Point(111, 28);
             this.textBoxFromHost.Name = "textBoxFromHost";
             this.textBoxFromHost.Size = new System.Drawing.Size(200, 20);
             this.textBoxFromHost.TabIndex = 2;
             // 
             // textBoxFromUserName
             // 
-            this.textBoxFromUserName.Location = new System.Drawing.Point(100, 54);
+            this.textBoxFromUserName.Location = new System.Drawing.Point(111, 54);
             this.textBoxFromUserName.Name = "textBoxFromUserName";
             this.textBoxFromUserName.Size = new System.Drawing.Size(200, 20);
             this.textBoxFromUserName.TabIndex = 3;
@@ -453,7 +452,7 @@ namespace Sharezbold
             // 
             // textBoxFromDomain
             // 
-            this.textBoxFromDomain.Location = new System.Drawing.Point(100, 80);
+            this.textBoxFromDomain.Location = new System.Drawing.Point(111, 80);
             this.textBoxFromDomain.Name = "textBoxFromDomain";
             this.textBoxFromDomain.Size = new System.Drawing.Size(200, 20);
             this.textBoxFromDomain.TabIndex = 6;
@@ -469,7 +468,7 @@ namespace Sharezbold
             // 
             // textBoxFromPassword
             // 
-            this.textBoxFromPassword.Location = new System.Drawing.Point(100, 106);
+            this.textBoxFromPassword.Location = new System.Drawing.Point(111, 106);
             this.textBoxFromPassword.Name = "textBoxFromPassword";
             this.textBoxFromPassword.PasswordChar = '*';
             this.textBoxFromPassword.Size = new System.Drawing.Size(200, 20);
@@ -673,13 +672,8 @@ namespace Sharezbold
             // 
             // groupBox8
             // 
-            this.groupBox8.Controls.Add(this.treeViewMigrateTo);
-            this.groupBox8.Controls.Add(this.labelLegalType);
-            this.groupBox8.Controls.Add(this.labelElementName);
-            this.groupBox8.Controls.Add(this.labelElementType);
-            this.groupBox8.Controls.Add(this.label11);
-            this.groupBox8.Controls.Add(this.label10);
-            this.groupBox8.Controls.Add(this.label9);
+            this.groupBox8.Controls.Add(this.listBoxMigrateTo);
+            this.groupBox8.Controls.Add(this.labelMigrateTo);
             this.groupBox8.Location = new System.Drawing.Point(299, 19);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(271, 334);
@@ -687,70 +681,23 @@ namespace Sharezbold
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Migrate elements to...";
             // 
-            // treeViewMigrateTo
+            // listBoxMigrateTo
             // 
-            this.treeViewMigrateTo.ImageIndex = 0;
-            this.treeViewMigrateTo.ImageList = this.imageListTreeView;
-            this.treeViewMigrateTo.Location = new System.Drawing.Point(15, 102);
-            this.treeViewMigrateTo.Name = "treeViewMigrateTo";
-            this.treeViewMigrateTo.SelectedImageIndex = 0;
-            this.treeViewMigrateTo.Size = new System.Drawing.Size(232, 216);
-            this.treeViewMigrateTo.TabIndex = 5;
-            this.treeViewMigrateTo.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeViewMigrateTo_AfterSelect);
+            this.listBoxMigrateTo.FormattingEnabled = true;
+            this.listBoxMigrateTo.Location = new System.Drawing.Point(9, 50);
+            this.listBoxMigrateTo.Name = "listBoxMigrateTo";
+            this.listBoxMigrateTo.Size = new System.Drawing.Size(245, 264);
+            this.listBoxMigrateTo.TabIndex = 8;
+            this.listBoxMigrateTo.SelectedIndexChanged += new System.EventHandler(this.ListBoxMigrateTo_SelecedIndexChanged);
             // 
-            // labelLegalType
+            // labelMigrateTo
             // 
-            this.labelLegalType.AutoSize = true;
-            this.labelLegalType.Location = new System.Drawing.Point(156, 77);
-            this.labelLegalType.Name = "labelLegalType";
-            this.labelLegalType.Size = new System.Drawing.Size(79, 13);
-            this.labelLegalType.TabIndex = 4;
-            this.labelLegalType.Text = "labelLegalType";
-            // 
-            // labelElementName
-            // 
-            this.labelElementName.AutoSize = true;
-            this.labelElementName.Location = new System.Drawing.Point(156, 53);
-            this.labelElementName.Name = "labelElementName";
-            this.labelElementName.Size = new System.Drawing.Size(95, 13);
-            this.labelElementName.TabIndex = 4;
-            this.labelElementName.Text = "labelElementName";
-            // 
-            // labelElementType
-            // 
-            this.labelElementType.AutoSize = true;
-            this.labelElementType.Location = new System.Drawing.Point(156, 30);
-            this.labelElementType.Name = "labelElementType";
-            this.labelElementType.Size = new System.Drawing.Size(91, 13);
-            this.labelElementType.TabIndex = 4;
-            this.labelElementType.Text = "labelElementType";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(12, 77);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(119, 13);
-            this.label11.TabIndex = 3;
-            this.label11.Text = "Legal Destination Type:";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(12, 53);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(116, 13);
-            this.label10.TabIndex = 3;
-            this.label10.Text = "Source Element Name:";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(12, 30);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(112, 13);
-            this.label9.TabIndex = 3;
-            this.label9.Text = "Source Element Type:";
+            this.labelMigrateTo.AutoSize = true;
+            this.labelMigrateTo.Location = new System.Drawing.Point(6, 34);
+            this.labelMigrateTo.Name = "labelMigrateTo";
+            this.labelMigrateTo.Size = new System.Drawing.Size(83, 13);
+            this.labelMigrateTo.TabIndex = 7;
+            this.labelMigrateTo.Text = "Migrate to Web:";
             // 
             // buttonStartMigration
             // 
@@ -777,7 +724,7 @@ namespace Sharezbold
             this.listViewMigrationContent.Location = new System.Drawing.Point(15, 19);
             this.listViewMigrationContent.MultiSelect = false;
             this.listViewMigrationContent.Name = "listViewMigrationContent";
-            this.listViewMigrationContent.Size = new System.Drawing.Size(231, 299);
+            this.listViewMigrationContent.Size = new System.Drawing.Size(238, 299);
             this.listViewMigrationContent.SmallImageList = this.imageListMigrationContent;
             this.listViewMigrationContent.TabIndex = 3;
             this.listViewMigrationContent.UseCompatibleStateImageBehavior = false;
@@ -829,6 +776,22 @@ namespace Sharezbold
             this.button1.TabIndex = 2;
             this.button1.Text = "Finish & Exit";
             this.button1.UseVisualStyleBackColor = true;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(111, 58);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(200, 20);
+            this.textBox1.TabIndex = 9;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(17, 58);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(115, 13);
+            this.label9.TabIndex = 8;
+            this.label9.Text = "Central Admin Url:        ";
             // 
             // MainForm
             // 
@@ -925,13 +888,6 @@ namespace Sharezbold
         private System.Windows.Forms.CheckBox checkBoxMigratePermissionlevels;
         private System.Windows.Forms.CheckBox checkBoxMigrateContentType;
         private System.Windows.Forms.GroupBox groupBox8;
-        private System.Windows.Forms.Label labelElementType;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TreeView treeViewMigrateTo;
-        private System.Windows.Forms.Label labelLegalType;
-        private System.Windows.Forms.Label labelElementName;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label10;
         private System.Windows.Forms.GroupBox groupBoxProxySettings;
         private System.Windows.Forms.Label labelProxyPassword;
         private System.Windows.Forms.Label labelProxyUser;
@@ -941,5 +897,9 @@ namespace Sharezbold
         private System.Windows.Forms.TextBox textBoxProxyPassword;
         private System.Windows.Forms.TextBox textBoxProxyUsername;
         private System.Windows.Forms.TextBox textBoxProxyUrl;
+        private System.Windows.Forms.Label labelMigrateTo;
+        private System.Windows.Forms.ListBox listBoxMigrateTo;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label9;
     }
 }

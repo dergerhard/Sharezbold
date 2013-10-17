@@ -50,21 +50,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContentDownloader.cs" />
+    <Compile Include="old\ContentDownloader.cs" />
     <Compile Include="ContentLoader.cs" />
-    <Compile Include="ContentMigrator.cs" />
-    <Compile Include="ContentUploader.cs" />
+    <Compile Include="old\ContentMigrator.cs" />
+    <Compile Include="old\ContentUploader.cs" />
     <Compile Include="Data\IMigratable.cs" />
     <Compile Include="Data\SList.cs" />
     <Compile Include="Data\SSite.cs" />
     <Compile Include="Data\SSiteCollection.cs" />
     <Compile Include="LoadingElementsException.cs" />
-    <Compile Include="MigrationObject.cs" />
+    <Compile Include="old\MigrationObject.cs" />
     <Compile Include="NotSupportedException.cs" />
     <Compile Include="SListViewItem.cs" />
-    <Compile Include="SpListViewItem.cs" />
-    <Compile Include="SpTreeNode.cs" />
-    <Compile Include="Test.cs" />
+    <Compile Include="old\SpListViewItem.cs" />
+    <Compile Include="old\SpTreeNode.cs" />
+    <Compile Include="old\Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

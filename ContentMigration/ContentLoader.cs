@@ -11,6 +11,8 @@ namespace Sharezbold.ContentMigration
     using System.Xml;
     using Sharezbold.ContentMigration.Data;
     using System.Xml.Linq;
+    using System.Windows.Forms;
+    using System.IO;
 
     /// <summary>
     /// Is responsible for downloading/uploading data from the source to the destinaiton server
@@ -86,10 +88,38 @@ namespace Sharezbold.ContentMigration
             Console.WriteLine("...");
         }*/
 
+         
 
-        public SSiteCollection LoadSourceData()
+        /// <summary>
+        /// Loads the source site collectionand stores it
+        /// </summary>
+        /// <returns>the source site collection</returns>
+        public SSiteCollection LoadSourceSiteCollection()
         {
-            this.SourceSiteCollection = new SSiteCollection();
+            this.SourceSiteCollection = this.LoadSharepointTree(this.ws.SrcWebs, this.ws.SrcLists, true);
+            return this.SourceSiteCollection;
+        }
+
+        /// <summary>
+        /// Loads the destination site collection and stores it
+        /// </summary>
+        /// <returns>the source site collection</returns>
+        public SSiteCollection LoadDestinationSiteCollection()
+        {
+            this.DestinationSiteCollection = this.LoadSharepointTree(this.ws.DstWebs, this.ws.DstLists, false);
+            return this.DestinationSiteCollection;
+        }
+
+        /// <summary>
+        /// Loads the site collection of a Sharepoint server
+        /// </summary>
+        /// <param name="srcWebs">webs web service</param>
+        /// <param name="srcLists">lists web service</param>
+        /// <param name="loadListData">load data items or not</param>
+        /// <returns></returns>
+        private SSiteCollection LoadSharepointTree(WebsWS.Webs srcWebs, ListsWS.Lists srcLists, bool loadListData)
+        {
+            SSiteCollection siteCollection = new SSiteCollection();
 
             /* whole migration
              * 1. Transfer users and groups
@@ -104,30 +134,35 @@ namespace Sharezbold.ContentMigration
              *  6. Transfer list data
              *  7. Transfer files
              */
-            
+
             // get all webs names (first is the site collection)
-            XmlNode allSrcWebs = this.ws.SrcWebs.GetAllSubWebCollection();
+            XmlNode allSrcWebs = srcWebs.GetAllSubWebCollection();
+            
             // result<List>: <Web Title="Fucking site collection" Url="http://ss13-css-009:31920" xmlns="http://schemas.microsoft.com/sharepoint/soap/" />
             Dictionary<string, string> webs = new Dictionary<string, string>();
             foreach (XmlNode web in allSrcWebs)
                 webs.Add(web.Attributes["Url"].InnerText, web.Attributes["Title"].InnerText);
 
             bool firstRun = true;
-            string srcListsUrlBuffer = this.ws.SrcLists.Url;
+            string srcListsUrlBuffer = srcLists.Url;
+            var allSrcWebsXml = new List<XmlNode>();
+            
             foreach (KeyValuePair<string, string> web in webs)
             {
                 // load details on each web
-                XmlNode w = this.ws.SrcWebs.GetWeb(web.Key);
+                XmlNode w = srcWebs.GetWeb(web.Key);
+                allSrcWebsXml.Add(w);
                 SSite site = new SSite();
+                site.ParentObject = siteCollection;
                 site.XmlData = w;
 
                 string url = w.Attributes["Url"].InnerText + WebService.UrlLists;
                 Console.WriteLine(url);
 
                 // get all lists
-               this.ws.SrcLists.Url = url;
-                XmlNode lc =this.ws.SrcLists.GetListCollection(); 
-                
+                srcLists.Url = url;
+                XmlNode lc = srcLists.GetListCollection();
+
                 // lists to migrate: Hidden="False"
                 foreach (XmlNode list in lc.ChildNodes)
                 {
@@ -136,14 +171,17 @@ namespace Sharezbold.ContentMigration
                     if (list.Attributes["Hidden"].InnerText.ToUpper().Equals("FALSE"))
                     {
                         // load list details with all fields
-                        XmlNode listDetails = this.ws.SrcLists.GetList(list.Attributes["Title"].InnerText);
+                        XmlNode listDetails = srcLists.GetList(list.Attributes["Title"].InnerText);
                         SList sList = new SList();
+                        sList.ParentObject = site;
                         sList.XmlList = listDetails;
 
                         // load list data
-                        XmlNode ndListItems = this.ws.SrcLists.GetListItems(list.Attributes["Title"].InnerText, null, null, null, null, null, null);
-                        sList.XmlListData = ndListItems;
-
+                        if (loadListData)
+                        {
+                            XmlNode ndListItems = srcLists.GetListItems(list.Attributes["Title"].InnerText, null, null, null, null, null, null);
+                            sList.XmlListData = ndListItems;
+                        }
                         site.AddList(sList, false);
                         Console.WriteLine("\t\t" + list.Attributes["Title"].InnerText);
                     }
@@ -159,12 +197,50 @@ namespace Sharezbold.ContentMigration
                     site.IsSiteCollectionSite = false;
                 }
 
-                this.SourceSiteCollection.AddSite(site, false);
+                siteCollection.AddSite(site, false);
             }
-            this.ws.SrcLists.Url = srcListsUrlBuffer;
+            srcLists.Url = srcListsUrlBuffer;
+            siteCollection.XmlData = allSrcWebsXml;
 
-            return this.SourceSiteCollection;
+            return siteCollection;
         }
+
+        /// <summary>
+        /// Migrates all selected items from source to destination. Items must be set up by the user!
+        /// </summary>
+        public void MigrateAll(ListBox log)
+        {
+            try
+            {
+                log.Items.Add("Starting Site Columns migration");
+                this.MigrateSiteColumns();
+                log.Items.Add("Site Columns migration finished");
+            }
+            catch (Exception e)
+            {
+                log.Items.Add("Error (Site Column Migration): " + e.Message);
+            }
+
+            try
+            {
+                log.Items.Add("Starting Site Collection migration");
+                this.MigrateSiteCollection();
+                log.Items.Add("Site Collection migration finished");
+            }
+            catch (Exception e)
+            {
+                log.Items.Add("Error (Site Collection Migration): " + e.Message);
+            }
+
+            /*
+             * 1. Site collection to migrate?
+             *      --> migrate site collection
+             * 2. Sites to migrate
+             *      list of sites
+             * 3. All lists without source site
+             */
+        }
+
 
         /// <summary>
         /// Migrates a list and its views. Site Columns are not included
@@ -172,7 +248,6 @@ namespace Sharezbold.ContentMigration
         /// <param name="list"></param>
         public void MigrateList(SList list)
         {
-            //this.MigrateSiteColumns();
 
             // if list with the same name exists --> delete
             XmlElement l = (XmlElement)list.XmlList;
@@ -286,8 +361,7 @@ namespace Sharezbold.ContentMigration
             {
                 dstColumns.Add(el.Attribute("ID").Value, el);
             }
-
-            //List<XElement> updateColumns = new List<XElement>();
+            
             List<XElement> createColumns = new List<XElement>();
 
             XNodeEqualityComparer comparer = new XNodeEqualityComparer();
@@ -378,39 +452,72 @@ String response = new StreamReader(WebResponse.GetResponseStream()).ReadToEnd();
             }
         }
 
-        // todo
-        public void CreateSiteCollection()
+        /// <summary>
+        /// Retreives the site template from the HTML site. Web services offer no possibility to do this.
+        /// </summary>
+        /// <returns>the site template name</returns>
+        public string GetSiteTemplate()
         {
-            /*
-             *  try
-            {
-                string url = allSrcWebsXml.ElementAt(0).Attributes["Url"].InnerText;
+            // get HTML site
+            WebRequest request = WebRequest.Create(this.ws.SrcUrl);
+            request.Credentials = this.ws.SrcCredentials;
+            request.PreAuthenticate = true;
+            WebResponse response = request.GetResponse();
+            Stream dataStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(dataStream);
+            string responseFromServer = reader.ReadToEnd();
+            dataStream.Close();
 
-                dstAdmin.CreateSite(dstUrl,
-                    allSrcWebsXml.ElementAt(0).Attributes["Title"].InnerText,
-                    allSrcWebsXml.ElementAt(0).Attributes["Description"].InnerText,
-                    Convert.ToInt32(allSrcWebsXml.ElementAt(0).Attributes["Language"].InnerText),
-                    this.getSiteTemplate(),
-                    dstDomain + "\\" + dstUser,
-                    dstUser,
-                    "",
-                    "",
-                    "");
-            }
-            catch (Exception sse)
-            {
-                throw sse;
-                //throw new NotSupportedException("Your destination server does not support creating site collections with a web service.", sse);
-            }*/
+            //letz play "find the template"....
+            //SP2010 & 2013: var g_wsaSiteTemplateId = 'STS#1';
+            int startHere = responseFromServer.IndexOf("g_wsaSiteTemplateId");
+            string hereSomewhere = responseFromServer.Substring(startHere, 100);
+            string[] parts = hereSomewhere.Split('\'');
+
+            return parts[1];
         }
 
+        /// <summary>
+        /// Migrates a site collection
+        /// </summary>
+        public void MigrateSiteCollection()
+        {
+            List<XmlNode> scXml = this.SourceSiteCollection.XmlData;
+            string url = scXml.ElementAt(0).Attributes["Url"].InnerText;
+
+            this.ws.DstAdmin.CreateSite(ws.DstUrl,
+                scXml.ElementAt(0).Attributes["Title"].InnerText,
+                scXml.ElementAt(0).Attributes["Description"].InnerText,
+                Convert.ToInt32(scXml.ElementAt(0).Attributes["Language"].InnerText),
+                this.GetSiteTemplate(),
+                ws.DstDomain + "\\" + ws.DstUser,
+                ws.DstUser,
+                "",
+                "",
+                "");
+        }
+
+        /// <summary>
+        /// Retreives the locale of a random list. There is no "regular" way to get the locale with a web service
+        /// </summary>
+        /// <returns>Sharepoint LCID locale code</returns>
+        private int GetLocale()
+        {
+            XmlNode lc = this.ws.SrcLists.GetListCollection();
+            Console.WriteLine(lc.ChildNodes[0].Attributes["Name"].InnerText);
+            XmlNode list = this.ws.SrcLists.GetList(lc.ChildNodes[0].Attributes["Name"].InnerText);
+            return Convert.ToInt32(list["RegionalSettings"]["Locale"].InnerText);
+        }
+        
+        /// <summary>
+        /// retreives the site template
+        /// </summary>
         public void GetSiteTemplates()
         {
-            /*
-             * //get site templates
+             //get site templates
             string strDisplay = "";
             SitesWS.Template[] templates;
-            srcSites.GetSiteTemplates((uint)(this.getLocale()), out templates);
+            ws.SrcSites.GetSiteTemplates((uint)(this.GetLocale()), out templates);
 
             foreach (SitesWS.Template template in templates)
             {
@@ -419,7 +526,7 @@ String response = new StreamReader(WebResponse.GetResponseStream()).ReadToEnd();
                     template.IsCustom + "  ID: " + template.ID + "  ImageUrl: " + template.ImageUrl +
                     "  IsHidden: " + template.IsHidden + "  IsUnique: " + template.IsUnique + "\n\n";
                 //Console.WriteLine(strDisplay + "\r\n################");
-            }*/
+            }
         }
 
 
