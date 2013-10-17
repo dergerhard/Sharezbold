@@ -1,5 +1,9 @@
-﻿
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="ContentDownloader.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 namespace Sharezbold.ContentMigration.Data
 {
     using System;
@@ -7,6 +11,7 @@ namespace Sharezbold.ContentMigration.Data
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using System.Windows.Forms;
     using System.Xml;
     
     /// <summary>
@@ -37,12 +42,115 @@ namespace Sharezbold.ContentMigration.Data
     ///         Hidden="False"
     ///         MaxItemsPerThrottledOperation="5000" />    
     /// </summary>
-    public class SList
+    public class SList : TreeNode, IMigratable
     {
+        /// <summary>
+        /// Data storage object for migrate
+        /// </summary>
+        private bool migrate;
+
+        /// <summary>
+        /// Defines wheter to migrate the site collection or not
+        /// </summary>
+        public bool Migrate
+        {
+            get
+            {
+                return this.migrate;
+            }
+
+            set
+            {
+                this.migrate = value;
+            }
+        }
+
+        /// <summary>
+        /// data storage object for MigrateTo
+        /// </summary>
+        private SSite migrateTo;
+
+        /// <summary>
+        /// distination site to where we migrate
+        /// </summary>
+        public SSite MigrateTo
+        {
+            get
+            {
+                return migrateTo;
+            }
+            set
+            {
+                migrateTo = value;
+            }
+        }
+
+        /// <summary>
+        /// Defines whether an object is ready for migration
+        /// </summary>
+        public bool ReadyForMigration
+        {
+            get
+            {
+                // if parent site is migrated we are ready
+                if (((SSite)this.ParentObject).Migrate)
+                {
+                    return true;
+                }
+                else if (this.migrateTo != null)
+                {
+                    return true;
+                }
+                return false;
+
+            }
+
+            set
+            {
+                
+            }
+        }
+
+        /// <summary>
+        /// Gaters the name of the object
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return this.Text;
+            }
+        }
+
+        /// <summary>
+        /// Represents the parent object
+        /// </summary>
+        public IMigratable ParentObject { get; set; }
+
+        /// <summary>
+        /// Storage object for XmlList
+        /// </summary>
+        private XmlNode xmlList;
+
         /// <summary>
         /// Represents the list description in SOAP
         /// </summary>
-        public XmlNode XmlList { get; set; }
+        public XmlNode XmlList 
+        {
+            get
+            {
+                return this.xmlList;
+            }
+
+            set
+            {
+                this.xmlList = value;
+                if (this.xmlList != null)
+                {
+                    this.Text = xmlList.Attributes["Title"].InnerText;
+                }
+            }
+        }
 
         /// <summary>
         /// Represents the list data
@@ -50,15 +158,11 @@ namespace Sharezbold.ContentMigration.Data
         public XmlNode XmlListData { get; set; }
 
         /// <summary>
-        /// List items - if a list is migrated, all items will be migrated
-        /// </summary>
-        //public List<XmlNode> ListItems { get; set; }
-
-        /// <summary>
         /// 
         /// </summary>
         public SList()
         {
+            this.migrateTo = null;
         }
     }
 }
