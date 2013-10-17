@@ -17,6 +17,9 @@ namespace Sharezbold.FileMigration
     /// </summary>
     internal class SharePoint2010And2013FileMigrator
     {
+
+        public string RelativeUrl { get; set; }
+
         /// <summary>
         /// The ClientContext of the source SharePoint.
         /// </summary>
@@ -65,7 +68,7 @@ namespace Sharezbold.FileMigration
             try
             {
                 ////TODO get the document-list-url
-                this.UploadDocument(documentListName, null, documentName, ConvertStreamToByteArray(fileStream));
+                //this.UploadDocument(documentListName, null, documentName, ConvertStreamToByteArray(fileStream));
             }
             catch (Exception e)
             {
@@ -88,8 +91,8 @@ namespace Sharezbold.FileMigration
             ListItem item = GetDocumentFromSharePoint(documentListName, fileReference, documentName, documentType);
             if (item != null)
             {
-                FileInformation fileInformation = Microsoft.SharePoint.Client.File.OpenBinaryDirect(sourceClientContext,
-                    item["FileRef"].ToString());
+                this.RelativeUrl = item["FileRef"].ToString(); 
+                FileInformation fileInformation = Microsoft.SharePoint.Client.File.OpenBinaryDirect(sourceClientContext, this.RelativeUrl);
 
                 return fileInformation.Stream;
 
@@ -132,7 +135,7 @@ namespace Sharezbold.FileMigration
         /// <param name="documentListURL">url of document-list</param>
         /// <param name="documentName">name of document</param>
         /// <param name="documentStream">documentstream as bytearray to upload</param>
-        internal void UploadDocument(string documentListName, string documentListURL, string documentName, byte[] documentStream)
+        internal void UploadDocument(string documentListName, string documentListURL, byte[] documentStream)
         {
             //Get Document List
             List documentsList = targetClientContext.Web.Lists.GetByTitle(documentListName);
@@ -142,16 +145,13 @@ namespace Sharezbold.FileMigration
             fileCreationInformation.Content = documentStream;
 
             //Allow owerwrite of document
-            fileCreationInformation.Overwrite = true;
+            fileCreationInformation.Overwrite = false;
 
             //Upload URL
-            fileCreationInformation.Url = targetClientContext.Url + documentListURL + documentName;
+            fileCreationInformation.Url = targetClientContext.Url + documentListURL;
 
             Microsoft.SharePoint.Client.File uploadFile = documentsList.RootFolder.Files.Add(
                 fileCreationInformation);
-
-            //Update the metadata for a field having name "DocType"
-            uploadFile.ListItemAllFields["DocType"] = "Favourites";
 
             uploadFile.ListItemAllFields.Update();
             targetClientContext.ExecuteQuery();
