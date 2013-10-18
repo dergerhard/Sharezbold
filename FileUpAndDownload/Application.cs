@@ -16,7 +16,7 @@ namespace Sharezbold.FileMigration
         {
             Console.WriteLine("Start File-Migration");
             ClientContext source = new ClientContext("http://10.10.102.36");
-            ClientContext target = new ClientContext("http://10.10.102.37");
+            ClientContext target = new ClientContext("http://10.10.102.48");
             NetworkCredential credentials = new NetworkCredential("Administrator", "P@ssw0rd", "CSSDEV");
 
             source.Credentials = credentials;
@@ -31,18 +31,23 @@ namespace Sharezbold.FileMigration
             target.Load(target.Web);
             target.ExecuteQuery();
 
+            Console.WriteLine("Sharepoint 2010 version = {0}", target.ServerVersion.Major);
+            Console.WriteLine("Sharepoint 2013 version = {0}", source.ServerVersion.Major);
+
+            /*
             SharePoint2010And2013Migrator migrator = new SharePoint2010And2013Migrator(source, target);
 
             List<string> guids = new List<string>();
             
             foreach (var list in lists)
             {
+                Console.WriteLine("GUID = '{0}'; name of list = '{1}'", list.Id.ToString(), list.Title);
                 guids.Add(list.Id.ToString());
             }
-
+            
             migrator.MigrateFiles(guids);
-
-            /*
+            */
+            /* bd293c00-bfa9-4282-b824-f109900ced64
             Console.WriteLine("Start File-Migration");
             ClientContext source = new ClientContext("http://10.10.102.36");
             ClientContext target = new ClientContext("http://10.10.102.36");
