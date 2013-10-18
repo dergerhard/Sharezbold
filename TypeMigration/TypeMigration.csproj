@@ -69,7 +69,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="SharePoint2007Migrator.cs" />
     <Compile Include="Sharepoint2010Migrator.cs" />
     <Compile Include="Sharepoint2010UserMigrator.cs" />
     <Compile Include="MigrationType.cs" />
