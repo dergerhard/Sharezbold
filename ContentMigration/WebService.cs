@@ -146,12 +146,13 @@ namespace Sharezbold.ContentMigration
                 try
                 {
                     this.SrcWebs.GetWebCollection();
+                    return true;
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine("Source login failed: " + ex.Message);
                     return false;
                 }
-                return true;
             }
         }
 
@@ -169,26 +170,8 @@ namespace Sharezbold.ContentMigration
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Destination login 1. try failed: " + ex.Message);
-                    try
-                    {
-                        // if that works, there is a web server that works with that authentification
-                        WebRequest request = WebRequest.Create(this.DstUrl);
-                        //request.Credentials = this.DstCredentials;
-                        //request.PreAuthenticate = true;
-                        WebResponse response = request.GetResponse();
-                        Stream dataStream = response.GetResponseStream();
-                        StreamReader reader = new StreamReader(dataStream);
-                        string responseFromServer = reader.ReadToEnd();
-                        dataStream.Close();
-
-                        return true;
-                    }
-                    catch (Exception exx)
-                    {
-                        Console.WriteLine("Destination login 2. try failed: " + exx.Message);
-                        return false;
-                    }
+                    Console.WriteLine("Destination login failed: " + ex.Message);
+                    return false;
                 }
             }
         }

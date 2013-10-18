@@ -45,6 +45,9 @@ namespace Sharezbold
             this.tabControMain = new System.Windows.Forms.TabControl();
             this.tabPageConfiguration = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.checkBoxSiteCollectionMigration = new System.Windows.Forms.CheckBox();
+            this.label13 = new System.Windows.Forms.Label();
             this.groupBoxProxySettings = new System.Windows.Forms.GroupBox();
             this.checkBoxProxyActivate = new System.Windows.Forms.CheckBox();
             this.textBoxProxyPassword = new System.Windows.Forms.TextBox();
@@ -56,6 +59,8 @@ namespace Sharezbold
             this.labelProxyActivate = new System.Windows.Forms.Label();
             this.buttonConfigurationNext = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textBoxToHostCA = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.textBoxToHost = new System.Windows.Forms.TextBox();
             this.textBoxToUserName = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -99,13 +104,12 @@ namespace Sharezbold
             this.tabPageMigrationProgress = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.buttonFinish = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tabControMain.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox9.SuspendLayout();
             this.groupBoxProxySettings.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -218,6 +222,7 @@ namespace Sharezbold
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.groupBox9);
             this.groupBox3.Controls.Add(this.groupBoxProxySettings);
             this.groupBox3.Controls.Add(this.buttonConfigurationNext);
             this.groupBox3.Controls.Add(this.groupBox2);
@@ -228,6 +233,35 @@ namespace Sharezbold
             this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Configuration";
+            // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.checkBoxSiteCollectionMigration);
+            this.groupBox9.Controls.Add(this.label13);
+            this.groupBox9.Location = new System.Drawing.Point(459, 186);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(436, 170);
+            this.groupBox9.TabIndex = 5;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Miscellaneous";
+            // 
+            // checkBoxSiteCollectionMigration
+            // 
+            this.checkBoxSiteCollectionMigration.AutoSize = true;
+            this.checkBoxSiteCollectionMigration.Location = new System.Drawing.Point(25, 39);
+            this.checkBoxSiteCollectionMigration.Name = "checkBoxSiteCollectionMigration";
+            this.checkBoxSiteCollectionMigration.Size = new System.Drawing.Size(15, 14);
+            this.checkBoxSiteCollectionMigration.TabIndex = 7;
+            this.checkBoxSiteCollectionMigration.UseVisualStyleBackColor = true;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(46, 39);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(159, 13);
+            this.label13.TabIndex = 0;
+            this.label13.Text = "A Site Collection will be migrated";
             // 
             // groupBoxProxySettings
             // 
@@ -328,7 +362,7 @@ namespace Sharezbold
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.textBox1);
+            this.groupBox2.Controls.Add(this.textBoxToHostCA);
             this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.textBoxToHost);
             this.groupBox2.Controls.Add(this.textBoxToUserName);
@@ -344,6 +378,22 @@ namespace Sharezbold
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Destination Configuration";
+            // 
+            // textBoxToHostCA
+            // 
+            this.textBoxToHostCA.Location = new System.Drawing.Point(111, 58);
+            this.textBoxToHostCA.Name = "textBoxToHostCA";
+            this.textBoxToHostCA.Size = new System.Drawing.Size(200, 20);
+            this.textBoxToHostCA.TabIndex = 9;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(17, 58);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(115, 13);
+            this.label9.TabIndex = 8;
+            this.label9.Text = "Central Admin Url:        ";
             // 
             // textBoxToHost
             // 
@@ -751,7 +801,7 @@ namespace Sharezbold
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.listBoxMigrationLog);
-            this.groupBox5.Controls.Add(this.button1);
+            this.groupBox5.Controls.Add(this.buttonFinish);
             this.groupBox5.Location = new System.Drawing.Point(0, 0);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(1020, 375);
@@ -767,31 +817,15 @@ namespace Sharezbold
             this.listBoxMigrationLog.Size = new System.Drawing.Size(1006, 316);
             this.listBoxMigrationLog.TabIndex = 0;
             // 
-            // button1
+            // buttonFinish
             // 
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(914, 346);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Finish & Exit";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(111, 58);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(200, 20);
-            this.textBox1.TabIndex = 9;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(17, 58);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(115, 13);
-            this.label9.TabIndex = 8;
-            this.label9.Text = "Central Admin Url:        ";
+            this.buttonFinish.Enabled = false;
+            this.buttonFinish.Location = new System.Drawing.Point(914, 346);
+            this.buttonFinish.Name = "buttonFinish";
+            this.buttonFinish.Size = new System.Drawing.Size(100, 23);
+            this.buttonFinish.TabIndex = 2;
+            this.buttonFinish.Text = "Finish & Exit";
+            this.buttonFinish.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -808,6 +842,8 @@ namespace Sharezbold
             this.tabControMain.ResumeLayout(false);
             this.tabPageConfiguration.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
+            this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
             this.groupBoxProxySettings.ResumeLayout(false);
             this.groupBoxProxySettings.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -865,7 +901,7 @@ namespace Sharezbold
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonFinish;
         private System.Windows.Forms.ImageList imageListTreeView;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveMigrationProfileToolStripMenuItem1;
@@ -899,7 +935,10 @@ namespace Sharezbold
         private System.Windows.Forms.TextBox textBoxProxyUrl;
         private System.Windows.Forms.Label labelMigrateTo;
         private System.Windows.Forms.ListBox listBoxMigrateTo;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBoxToHostCA;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.CheckBox checkBoxSiteCollectionMigration;
+        private System.Windows.Forms.Label label13;
     }
 }

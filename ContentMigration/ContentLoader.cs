@@ -13,6 +13,7 @@ namespace Sharezbold.ContentMigration
     using System.Xml.Linq;
     using System.Windows.Forms;
     using System.IO;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Is responsible for downloading/uploading data from the source to the destinaiton server
@@ -208,29 +209,71 @@ namespace Sharezbold.ContentMigration
         /// <summary>
         /// Migrates all selected items from source to destination. Items must be set up by the user!
         /// </summary>
-        public void MigrateAll(ListBox log)
+        public async Task<bool> MigrateAll(ListBox log)
         {
-            try
+            // migrate site collection
+            if (this.SourceSiteCollection.Migrate)
             {
-                log.Items.Add("Starting Site Columns migration");
-                this.MigrateSiteColumns();
-                log.Items.Add("Site Columns migration finished");
-            }
-            catch (Exception e)
-            {
-                log.Items.Add("Error (Site Column Migration): " + e.Message);
+                Task<bool> taskSiteCollection = Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        log.Items.Add("Starting Site Collection migration");
+                        this.MigrateSiteCollection();
+                        log.Items.Add("Site Collection migration finished");
+                        return true;
+                    }
+                    catch (Exception e)
+                    {
+                        log.Items.Add("Error (Site Collection Migration): " + e.Message);
+                        return false;
+                    }
+                });
+                await taskSiteCollection;
             }
 
-            try
+            // migrate sites
+            foreach (SSite site in this.SourceSiteCollection.Sites)
             {
-                log.Items.Add("Starting Site Collection migration");
-                this.MigrateSiteCollection();
-                log.Items.Add("Site Collection migration finished");
+                if (site.Migrate)
+                {
+                    try
+                    {
+                        log.Items.Add("Migrating site \"" + site.Name + "\"");
+                        await this.MigrateSite(site, this.DestinationSiteCollection);
+                        log.Items.Add("Migration of site \"" + site.Name + "\" finished");
+                    }
+                    catch (Exception e)
+                    {
+                        log.Items.Add("Migration of site \"" + site.Name + "\" failed: " + e.Message);
+                    }
+                }
             }
-            catch (Exception e)
+            
+                
+
+
+            // migrate site columns
+            // TODO: implement for all sites
+            /*
+            Task<bool> taskSiteColumns = Task.Factory.StartNew(() =>
             {
-                log.Items.Add("Error (Site Collection Migration): " + e.Message);
-            }
+                try
+                {
+                    log.Items.Add("Starting Site Columns migration");
+                    this.MigrateSiteColumns();
+                    log.Items.Add("Site Columns migration finished");
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    log.Items.Add("Error (Site Column Migration): " + e.Message);
+                    return false;
+                }
+            });
+            await taskSiteColumns;
+             * */
+            
 
             /*
              * 1. Site collection to migrate?
@@ -239,16 +282,58 @@ namespace Sharezbold.ContentMigration
              *      list of sites
              * 3. All lists without source site
              */
+            return true;
         }
 
+        /// <summary>
+        /// Migrate a site
+        /// </summary>
+        /// <param name="src">source site to migrate</param>
+        /// <param name="dstSC">destination site collection</param>
+        public async Task<bool> MigrateSite(SSite src, SSiteCollection dstSC)
+        {
+            Task<bool> t = Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    if (!src.IsSiteCollectionSite)
+                    {
+                        string url = Regex.Replace(src.XmlData.Attributes["Title"].InnerText, @"[^A-Za-z0-9_\.~]+", "-");
+                        string title = src.XmlData.Attributes["Title"].InnerText;
+                        string description = src.XmlData.Attributes["Description"].InnerText;
+                        string templateName = this.GetSiteTemplate(src.XmlData.Attributes["Url"].InnerText);
+                        uint language = this.GetLanguage(this.SourceSiteCollection);
+                        bool languageSpecified = true;
+                        uint locale = this.GetLocale();
+                        bool localeSpecified = true;
+                        uint collationLocale = locale;
+                        bool collationLocaleSpecified = true;
+                        bool uniquePermissions = true;
+                        bool uniquePermissionsSpecified = true;
+                        bool anonymous = true;
+                        bool anonymousSpecified = true;
+                        bool presence = true;
+                        bool presenceSpecified = true;
+
+                        this.ws.DstSites.CreateWeb(url, title, description, templateName, language, languageSpecified, locale, localeSpecified, collationLocale, collationLocaleSpecified, uniquePermissions, uniquePermissionsSpecified, anonymous, anonymousSpecified, presence, presenceSpecified);
+                    }
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error migrating site: " + e.Message);
+                    return false;
+                }
+            });
+            return await t;
+        }
 
         /// <summary>
         /// Migrates a list and its views. Site Columns are not included
         /// </summary>
         /// <param name="list"></param>
-        public void MigrateList(SList list)
+        public bool MigrateList(SList list)
         {
-
             // if list with the same name exists --> delete
             XmlElement l = (XmlElement)list.XmlList;
             string listName = l.Attributes["Title"].InnerText;
@@ -327,16 +412,21 @@ namespace Sharezbold.ContentMigration
                 // add the view
                 this.ws.DstViews.AddView(listName, view.Attributes["DisplayName"].InnerText, viewFields, query, rowLimit, viewDetail.Attributes["Type"].InnerText, makeViewDefault);
             }
-
+            return true;
         }
 
-
         /// <summary>
+        /// TODO
         /// Migrates all new site columns from src to dst. Columns which changed are ignored, as "system columns" can't
         /// be  recognised yet.
         /// </summary>
-        public void MigrateSiteColumns()
+        /// <param name="src">source site to migrate</param>
+        /// <param name="dst">destination site to migrate</param>
+        public void MigrateSiteColumns(SSite src, SSite dst)
         {
+            string websSrcUrlBuffer = this.ws.SrcWebs.Url;
+            string websDstUrlBuffer = this.ws.DstWebs.Url;
+
             XmlNode srcColumsXml = this.ws.SrcWebs.GetColumns();
             XmlNode dstColumnsXml = this.ws.DstWebs.GetColumns();
 
@@ -417,9 +507,8 @@ namespace Sharezbold.ContentMigration
             //XmlNode returnValue = dstWebs.UpdateColumns(newFields, updateFields, null);
             XmlNode returnValue = this.ws.DstWebs.UpdateColumns(newFields, null, null);
 
-            //Console.WriteLine(this.XmlToString(returnValue, 4));
-
-            //Console.WriteLine("{0} elements to update\r\n{1} elements to create", updateColumns.Count, createColumns.Count);
+            this.ws.SrcWebs.Url = websSrcUrlBuffer;
+            this.ws.DstWebs.Url = websDstUrlBuffer;
         }
 
 
@@ -441,25 +530,17 @@ String response = new StreamReader(WebResponse.GetResponseStream()).ReadToEnd();
         }
 
         /// <summary>
-        /// Checks if migration of site collection is possible (only if destination web application is empty)
-        /// </summary>
-        public bool IsSiteCollectionMigrationPossible
-        {
-            get
-            {
-                XmlNode dstWebs = this.ws.DstWebs.GetAllSubWebCollection();
-                return dstWebs.ChildNodes.Count == 0 ? true : false;
-            }
-        }
-
-        /// <summary>
         /// Retreives the site template from the HTML site. Web services offer no possibility to do this.
         /// </summary>
         /// <returns>the site template name</returns>
-        public string GetSiteTemplate()
+        public string GetSiteTemplate(string url="")
         {
             // get HTML site
-            WebRequest request = WebRequest.Create(this.ws.SrcUrl);
+            if (url.Equals(""))
+            {
+                url = this.ws.SrcUrl;
+            }
+            WebRequest request = WebRequest.Create(url);
             request.Credentials = this.ws.SrcCredentials;
             request.PreAuthenticate = true;
             WebResponse response = request.GetResponse();
@@ -478,17 +559,27 @@ String response = new StreamReader(WebResponse.GetResponseStream()).ReadToEnd();
         }
 
         /// <summary>
+        /// Extracts the language number
+        /// </summary>
+        /// <param name="sc">the site collection to look for</param>
+        /// <returns>the language code</returns>
+        public uint GetLanguage(SSiteCollection sc)
+        {
+            return Convert.ToUInt32(sc.XmlData.ElementAt(0).Attributes["Language"].InnerText);
+        }
+
+        /// <summary>
         /// Migrates a site collection
         /// </summary>
         public void MigrateSiteCollection()
         {
             List<XmlNode> scXml = this.SourceSiteCollection.XmlData;
             string url = scXml.ElementAt(0).Attributes["Url"].InnerText;
-
+            
             this.ws.DstAdmin.CreateSite(ws.DstUrl,
                 scXml.ElementAt(0).Attributes["Title"].InnerText,
                 scXml.ElementAt(0).Attributes["Description"].InnerText,
-                Convert.ToInt32(scXml.ElementAt(0).Attributes["Language"].InnerText),
+                (int)this.GetLanguage(this.SourceSiteCollection),
                 this.GetSiteTemplate(),
                 ws.DstDomain + "\\" + ws.DstUser,
                 ws.DstUser,
@@ -501,12 +592,12 @@ String response = new StreamReader(WebResponse.GetResponseStream()).ReadToEnd();
         /// Retreives the locale of a random list. There is no "regular" way to get the locale with a web service
         /// </summary>
         /// <returns>Sharepoint LCID locale code</returns>
-        private int GetLocale()
+        private uint GetLocale()
         {
             XmlNode lc = this.ws.SrcLists.GetListCollection();
             Console.WriteLine(lc.ChildNodes[0].Attributes["Name"].InnerText);
             XmlNode list = this.ws.SrcLists.GetList(lc.ChildNodes[0].Attributes["Name"].InnerText);
-            return Convert.ToInt32(list["RegionalSettings"]["Locale"].InnerText);
+            return Convert.ToUInt32(list["RegionalSettings"]["Locale"].InnerText);
         }
         
         /// <summary>
