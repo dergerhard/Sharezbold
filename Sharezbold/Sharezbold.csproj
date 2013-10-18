@@ -109,6 +109,10 @@
       <Project>{5929e4e8-3668-4e37-936d-e462d6773371}</Project>
       <Name>ContentMigration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FileUpAndDownload\FileMigration.csproj">
+      <Project>{27a175e5-7eda-4359-bb4a-f093dfeccc90}</Project>
+      <Name>FileMigration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TypeMigration\TypeMigration.csproj">
       <Project>{5765b89b-3dd6-4e68-b030-36a3412ea68a}</Project>
       <Name>TypeMigration</Name>
