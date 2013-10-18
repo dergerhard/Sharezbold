@@ -1,53 +1,55 @@
-﻿
+﻿//-----------------------------------------------------------------------
+// <copyright file="SharePoint2010And2013Uploader.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 
 namespace Sharezbold.FileMigration
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.IO;
     using Microsoft.SharePoint.Client;
-
-
+    
+    /// <summary>
+    /// Uploader of files to SharePoint 2010 or 2013.
+    /// </summary>
     internal class SharePoint2010And2013Uploader
     {
-
+        /// <summary>
+        /// ClientContext of the server.
+        /// </summary>
         private ClientContext targetClientContext;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SharePoint2010And2013Uploader"/> class.
+        /// </summary>
+        /// <param name="clientContext">ClientContext of the target SharePoint.</param>
         public SharePoint2010And2013Uploader(ClientContext clientContext)
         {
             this.targetClientContext = clientContext;
         }
-
+        
         /// <summary>
-        /// Uploads the given document, which is handed by a bytearray.
+        /// Uploads the given file to the SharePoint.
         /// </summary>
-        /// <param name="documentListName">name of document-list</param>
-        /// <param name="documentListURL">url of document-list</param>
-        /// <param name="documentName">name of document</param>
-        /// <param name="documentStream">documentstream as bytearray to upload</param>
+        /// <param name="documentListName">name of the list for the file</param>
+        /// <param name="documentListURL">relative url of the document</param>
+        /// <param name="documentStream">file-data as stream</param>
         internal void UploadDocument(string documentListName, string documentListURL, Stream documentStream)
         {
-            //Get Document List
-            List documentsList = targetClientContext.Web.Lists.GetByTitle(documentListName);
+            //// gets the document-list
+            List documentsList = this.targetClientContext.Web.Lists.GetByTitle(documentListName);
 
             var fileCreationInformation = new FileCreationInformation();
-            //Assign to content byte[] i.e. documentStream
-            fileCreationInformation.Content = ConvertStreamToByteArray(documentStream);
+            fileCreationInformation.Content = this.ConvertStreamToByteArray(documentStream);
+            fileCreationInformation.Overwrite = true;
+            //// Upload URL:
+            fileCreationInformation.Url = this.targetClientContext.Url + documentListURL;
 
-            //Allow owerwrite of document
-            fileCreationInformation.Overwrite = false;
-
-            //Upload URL
-            fileCreationInformation.Url = targetClientContext.Url + documentListURL;
-
-            Microsoft.SharePoint.Client.File uploadFile = documentsList.RootFolder.Files.Add(
-                fileCreationInformation);
+            Microsoft.SharePoint.Client.File uploadFile = documentsList.RootFolder.Files.Add(fileCreationInformation);
 
             uploadFile.ListItemAllFields.Update();
-            targetClientContext.ExecuteQuery();
+            this.targetClientContext.ExecuteQuery();
         }
 
         /// <summary>

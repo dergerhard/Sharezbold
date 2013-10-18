@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="AbstractMigrator.cs" company="FH Wiener Neustadt">
+// <copyright file="SharePoint2010And2013Migrator.cs" company="FH Wiener Neustadt">
 //     Copyright (c) FH Wiener Neustadt. All rights reserved.
 // </copyright>
 // <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
@@ -9,9 +9,6 @@ namespace Sharezbold.FileMigration
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.IO;
     using Microsoft.SharePoint.Client;
 
@@ -21,13 +18,18 @@ namespace Sharezbold.FileMigration
     public class SharePoint2010And2013Migrator
     {
         /// <summary>
-        /// Instance of the real migrater.
+        /// ClientContext of the source SharePoint.
         /// </summary>
-        
-
         private ClientContext sourceClientContext;
+
+        /// <summary>
+        /// ClientContext of the target SharePoint.
+        /// </summary>
         private ClientContext targetClientContext;
 
+        /// <summary>
+        /// List of found files.
+        /// </summary>
         private List<ListItem> listItemList;
 
         /// <summary>
@@ -41,14 +43,20 @@ namespace Sharezbold.FileMigration
             this.targetClientContext = targetClientContext;
         }
 
+        /// <summary>
+        /// Migrates the files of the given guid-List.
+        /// </summary>
+        /// <param name="guidList">list with guid of sites.</param>
+        /// <exception cref="SharePointNotSupportedException">If the SharePoint-version is not supported.</exception>
+        /// <exception cref="FileMigrationException">If the migration fails</exception>
         public void MigrateFiles(List<string> guidList)
         {
-            if (sourceClientContext.ServerVersion.Major < 14)
+            if (this.sourceClientContext.ServerVersion.Major < 14)
             {
                 throw new SharePointNotSupportedException("The source SharePoint is not supported (2010 or newer)!");
             }
 
-            if (targetClientContext.ServerVersion.Major < 14)
+            if (this.targetClientContext.ServerVersion.Major < 14)
             {
                 throw new SharePointNotSupportedException("The target SharePoint is not supported (2010 or newer)!");
             }
@@ -56,92 +64,91 @@ namespace Sharezbold.FileMigration
             if (guidList == null || guidList.Count == 0)
             {
                 Console.WriteLine("no guid-list given to migrate files");
+                return;
             }
 
             foreach (var guidAsString in guidList)
             {
                 Guid guid = new Guid(guidAsString);
+                Stream stream = null;
+                string documentListName = null;
 
-                MigrateFile(guid);
-            }
-        }
-
-        private void MigrateFile(Guid guidOfList)
-        {
-            
-
-            SharePoint2010And2013Downloader downloader = new SharePoint2010And2013Downloader(sourceClientContext);
-            SharePoint2010And2013Uploader uploader = new SharePoint2010And2013Uploader(targetClientContext); ;
-
-            Stream stream = null;
-            string relativeUrl = null;
-            string documentListName = null;
-
-            try
-            {
-
-                this.GetListItemCollectionFromSharePoint(guidOfList);
-
-                if (this.listItemList == null)
+                try
                 {
-                    return;
-                }
+                    this.GetListItemCollectionFromSharePoint(guid, out documentListName);
 
-                foreach (var document in this.listItemList)
-                {
-                    stream = downloader.DownloadDocument(guidOfList, out documentListName, out relativeUrl);
-                    if (stream != null)
+                    if (this.listItemList == null)
                     {
-                        uploader.UploadDocument(documentListName, relativeUrl, stream);
+                        return;
+                    }
+
+                    foreach (ListItem item in this.listItemList)
+                    {
+                        this.MigrateFile(item, documentListName);
                     }
                 }
-
-                
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception during migration. Exception = ", e.Message);
-                // throw new FileMigrationException("Could not migrate file with realtive url '" + relativeUrl + "'.", e);
-            }
-            finally
-            {
-                if (stream != null)
+                catch (Exception e)
                 {
-                    stream.Close();
+                    Console.WriteLine("Exception during migration. Exception = ", e.Message);
+                    throw new FileMigrationException("Could not migrate files for GUID '" + guid + "'.", e);
+                }
+                finally
+                {
+                    if (stream != null)
+                    {
+                        stream.Close();
+                    }
                 }
             }
         }
 
         /// <summary>
-        /// Returns the ListItemCollection of the given SharePoint.
+        /// Migrate the file.
         /// </summary>
-        /// <param name="documentListName">name of documentList</param>
-        /// <param name="fileReference">name of field-ref for the query.</param>
-        /// <param name="documentName">value of given type for the query</param>
-        /// <param name="rowLimit">limit of the row for the query</param>
-        /// <returns>ListItemCollection</returns>
-        private void GetListItemCollectionFromSharePoint(Guid guid)
+        /// <param name="item">the ListItem to migrate</param>
+        /// <param name="documentListName">given name of documentlist</param>
+        private void MigrateFile(ListItem item, string documentListName)
         {
-            Console.WriteLine("GUID = {0}", guid.ToString());
-            if (guid.ToString().Equals("bd293c00-bfa9-4282-b824-f109900ced64"))
+            SharePoint2010And2013Downloader downloader = new SharePoint2010And2013Downloader(this.sourceClientContext);
+            SharePoint2010And2013Uploader uploader = new SharePoint2010And2013Uploader(this.targetClientContext);
+
+            string relativeUrl = item["FileRef"].ToString();
+            Stream stream = downloader.DownloadDocument(relativeUrl);
+            if (stream != null)
             {
-                Console.WriteLine("debug");
+                uploader.UploadDocument(documentListName, relativeUrl, stream);
             }
-
-            ListItemCollection listItems = null;
-            List documentsList = sourceClientContext.Web.Lists.GetById(guid);
-            
-            listItems = documentsList.GetItems(CamlQuery.CreateAllItemsQuery());
-
-            sourceClientContext.Load(documentsList);
-            sourceClientContext.Load(listItems);
-
-            sourceClientContext.ExecuteQuery();
-
-            GetListItemCollectionFromSharePoint(documentsList, listItems);
         }
 
-        private void GetListItemCollectionFromSharePoint(List documentsList, ListItemCollection listItems)
+        /// <summary>
+        /// Gets the ListItemCollection of files of the source SharePoint.
+        /// </summary>
+        /// <param name="guid">guid to search for files</param>
+        /// <param name="documentListName">name of documentlist to write</param>
+        private void GetListItemCollectionFromSharePoint(Guid guid, out string documentListName)
+        {
+            Console.WriteLine("GUID = {0}", guid.ToString());
+
+            ListItemCollection listItems = null;
+            List documentsList = this.sourceClientContext.Web.Lists.GetById(guid);
+            
+            listItems = documentsList.GetItems(CamlQuery.CreateAllItemsQuery());
+            documentListName = documentsList.Title;
+
+            this.sourceClientContext.Load(documentsList);
+            this.sourceClientContext.Load(listItems);
+
+            this.sourceClientContext.ExecuteQuery();
+
+            this.FilterFilesOfListItems(documentsList, listItems);
+        }
+
+        /// <summary>
+        /// Filters the files of given ListItemCollection.
+        /// </summary>
+        /// <param name="documentsList">documents list to search for files.</param>
+        /// <param name="listItems">all ListItems to filter for files</param>
+        private void FilterFilesOfListItems(List documentsList, ListItemCollection listItems)
         {
             if (listItems == null)
             {
@@ -153,16 +160,15 @@ namespace Sharezbold.FileMigration
 
             foreach (var item in listItems)
             {
-                sourceClientContext.Load(item);
-                sourceClientContext.ExecuteQuery();
+                this.sourceClientContext.Load(item);
+                this.sourceClientContext.ExecuteQuery();
 
                 Microsoft.SharePoint.Client.File file = item.File;
 
                 try
                 {
-                    sourceClientContext.Load(file);
-                    sourceClientContext.ExecuteQuery();
-                    Console.WriteLine("hurra! file = {0}", file.Name);
+                    this.sourceClientContext.Load(file);
+                    this.sourceClientContext.ExecuteQuery();
                 }
                 catch (Exception e)
                 {
@@ -170,8 +176,8 @@ namespace Sharezbold.FileMigration
                     return;
                 }
                 
-                sourceClientContext.Load(item);
-                sourceClientContext.ExecuteQuery();
+                this.sourceClientContext.Load(item);
+                this.sourceClientContext.ExecuteQuery();
 
                 Console.WriteLine("item = {0}", item.Id);
                 
@@ -196,18 +202,19 @@ namespace Sharezbold.FileMigration
 
                 ListItemCollection filteredListItems = documentsList.GetItems(camlQuery);
 
-                sourceClientContext.Load(documentsList);
-                sourceClientContext.Load(filteredListItems);
+                this.sourceClientContext.Load(documentsList);
+                this.sourceClientContext.Load(filteredListItems);
 
-                sourceClientContext.ExecuteQuery();
+                this.sourceClientContext.ExecuteQuery();
 
                 if (filteredListItems != null && filteredListItems.Count == 1)
                 {
-                    if (listItemList == null)
+                    if (this.listItemList == null)
                     {
-                        listItemList = new List<ListItem>();
+                        this.listItemList = new List<ListItem>();
                     }
-                    listItemList.Add(filteredListItems[0]);
+
+                    this.listItemList.Add(filteredListItems[0]);
                 }
             }
         }

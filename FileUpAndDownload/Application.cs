@@ -1,15 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-using System.IO;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="Application.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
+/*
 using Microsoft.SharePoint.Client;
 
 namespace Sharezbold.FileMigration
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Net;
+    using System.IO;
+
     public class Application
     {
         public static void Main(string[] args)
@@ -66,9 +73,10 @@ namespace Sharezbold.FileMigration
             migrator.UploadDocument(documentListName, migrator.RelativeUrl + "new.png", StreamToByte(inputStream));
 
             inputStream.Close();
-             * */
+             
             Console.WriteLine("Finished File-Migartion");
             Console.ReadKey();
         }
     }
 }
+*/
