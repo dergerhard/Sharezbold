@@ -5,9 +5,10 @@
 ############################################################################################
 
 !define APP_NAME "Sharezbold"
-!define COMP_NAME "FH Wiener Neustadt"
+!define COMP_NAME "FHWN"
+!define WEB_SITE "http://www.fhwn.ac.at"
 !define VERSION "00.00.00.01"
-!define COPYRIGHT "Liebmann Holzgethan 2013"
+!define COPYRIGHT "Liebmann/Holzgethan"
 !define DESCRIPTION "Application"
 !define INSTALLER_NAME ".\bin\setup.exe"
 !define MAIN_APP_EXE "Sharezbold.exe"
@@ -75,8 +76,10 @@ InstallDir "$PROGRAMFILES\Sharezbold"
 
 !insertmacro MUI_UNPAGE_FINISH
 
-!insertmacro MUI_LANGUAGE "German"
+!insertmacro MUI_LANGUAGE "Czech"
 !insertmacro MUI_LANGUAGE "English"
+!insertmacro MUI_LANGUAGE "German"
+!insertmacro MUI_LANGUAGE "Romanian"
 
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
@@ -92,16 +95,23 @@ Section -MainProgram
 ${INSTALL_TYPE}
 SetOverwrite ifnewer
 SetOutPath "$INSTDIR"
-File "..\Sharezbold\bin\Debug\ContentMigration.dll"
-File "..\Sharezbold\bin\Debug\Microsoft.SharePoint.Client.dll"
-File "..\Sharezbold\bin\Debug\Microsoft.SharePoint.Client.Runtime.dll"
-File "..\Sharezbold\bin\Debug\Sharezbold.exe"
-File "..\Sharezbold\bin\Debug\Sharezbold.exe.config"
-File "..\Sharezbold\bin\Debug\Sharezbold.pdb"
-File "..\Sharezbold\bin\Debug\Sharezbold.vshost.exe"
-File "..\Sharezbold\bin\Debug\Sharezbold.vshost.exe.config"
-File "..\Sharezbold\bin\Debug\Sharezbold.vshost.exe.manifest"
-File "..\Sharezbold\bin\Debug\TypeMigration.dll"
+File "..\Sharezbold\bin\Release\FileMigration.dll"
+File "..\Sharezbold\bin\Release\FileMigration.pdb"
+File "..\Sharezbold\bin\Release\FileMigration.XmlSerializers.dll"
+File "..\Sharezbold\bin\Release\Microsoft.SharePoint.Client.dll"
+File "..\Sharezbold\bin\Release\Microsoft.SharePoint.Client.Runtime.dll"
+File "..\Sharezbold\bin\Release\Sharezbold.ContentMigration.dll"
+File "..\Sharezbold\bin\Release\Sharezbold.ContentMigration.pdb"
+File "..\Sharezbold\bin\Release\Sharezbold.ContentMigration.XmlSerializers.dll"
+File "..\Sharezbold\bin\Release\Sharezbold.exe"
+File "..\Sharezbold\bin\Release\Sharezbold.exe.config"
+File "..\Sharezbold\bin\Release\Sharezbold.pdb"
+File "..\Sharezbold\bin\Release\Sharezbold.vshost.exe"
+File "..\Sharezbold\bin\Release\Sharezbold.vshost.exe.config"
+File "..\Sharezbold\bin\Release\Sharezbold.vshost.exe.manifest"
+File "..\Sharezbold\bin\Release\TypeMigration.dll"
+File "..\Sharezbold\bin\Release\TypeMigration.pdb"
+File "..\Sharezbold\bin\Release\TypeMigration.XmlSerializers.dll"
 SectionEnd
 
 ######################################################################
@@ -150,9 +160,14 @@ SectionEnd
 
 Section Uninstall
 ${INSTALL_TYPE}
-Delete "$INSTDIR\ContentMigration.dll"
+Delete "$INSTDIR\FileMigration.dll"
+Delete "$INSTDIR\FileMigration.pdb"
+Delete "$INSTDIR\FileMigration.XmlSerializers.dll"
 Delete "$INSTDIR\Microsoft.SharePoint.Client.dll"
 Delete "$INSTDIR\Microsoft.SharePoint.Client.Runtime.dll"
+Delete "$INSTDIR\Sharezbold.ContentMigration.dll"
+Delete "$INSTDIR\Sharezbold.ContentMigration.pdb"
+Delete "$INSTDIR\Sharezbold.ContentMigration.XmlSerializers.dll"
 Delete "$INSTDIR\Sharezbold.exe"
 Delete "$INSTDIR\Sharezbold.exe.config"
 Delete "$INSTDIR\Sharezbold.pdb"
@@ -160,6 +175,8 @@ Delete "$INSTDIR\Sharezbold.vshost.exe"
 Delete "$INSTDIR\Sharezbold.vshost.exe.config"
 Delete "$INSTDIR\Sharezbold.vshost.exe.manifest"
 Delete "$INSTDIR\TypeMigration.dll"
+Delete "$INSTDIR\TypeMigration.pdb"
+Delete "$INSTDIR\TypeMigration.XmlSerializers.dll"
 Delete "$INSTDIR\uninstall.exe"
 !ifdef WEB_SITE
 Delete "$INSTDIR\${APP_NAME} website.url"
