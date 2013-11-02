@@ -119,6 +119,16 @@ namespace Sharezbold
         //private bool isSiteCollectionMigrationPossible = false;
 
         /// <summary>
+        /// Log data storage
+        /// </summary>
+        private List<string> logList;
+
+        /// <summary>
+        /// Data binding object for logList
+        /// </summary>
+        private BindingSource log;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
         /// </summary>
         public MainForm()
@@ -140,6 +150,8 @@ namespace Sharezbold
             this.EnableTab(this.tabPageMigrationElements, false);
             this.EnableTab(this.tabPageMigrationPreparation, false);
             this.EnableTab(this.tabPageMigrationProgress, false);
+
+
         }
 
         /// <summary>
@@ -179,7 +191,8 @@ namespace Sharezbold
             bool readyForMigration = true;
             foreach (ListViewItem lvi in listViewMigrationContent.Items)
             {
-                if (!((SListViewItem)lvi).MigrationObject.ReadyForMigration)
+                
+                if ((lvi is SListViewItem) && (!((SListViewItem)lvi).MigrationObject.ReadyForMigration))
                 {
                     readyForMigration = false;
                     break;

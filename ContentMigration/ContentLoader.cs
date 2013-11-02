@@ -245,9 +245,19 @@ namespace Sharezbold.ContentMigration
                     }
                     catch (Exception e)
                     {
-                        log.Items.Add("Migration of site \"" + site.Name + "\" failed: " + e.Message);
+                        log.Items.Add("Error: " + e.Message);
                     }
                 }
+                
+                /*foreach (SList list in site.Lists)
+                {
+                    if (list.Migrate)
+                    {
+                        log.Items.Add("Migrating list \"" + list.Name + "\"...");
+                        this.MigrateList(list);
+                        log.Items.Add("Migrating list finished");
+                    }
+                }*/
             }
             
                 
@@ -338,6 +348,8 @@ namespace Sharezbold.ContentMigration
             XmlElement l = (XmlElement)list.XmlList;
             string listName = l.Attributes["Title"].InnerText;
 
+            string urlBuffer = this.ws.DstLists.Url;
+            this.ws.DstLists.Url = list.MigrateTo.XmlData.Attributes["Url"].InnerText + WebService.UrlLists;
             try
             {
                 this.ws.DstLists.DeleteList(listName);
@@ -376,6 +388,7 @@ namespace Sharezbold.ContentMigration
 
             // update the list
             this.ws.DstLists.UpdateList(listName, listProperties, fields, fields, null, "");
+            string viewUrlBuffer = this.ws.DstViews.Url;
 
             // migrate the views
             // first delete the dst views
@@ -392,7 +405,7 @@ namespace Sharezbold.ContentMigration
             }
 
             XmlNode viewCollection = this.ws.SrcViews.GetViewCollection(listName);
-            Console.WriteLine(viewCollection.OuterXml);
+            //Console.WriteLine(viewCollection.OuterXml);
             foreach (XmlNode view in viewCollection)
             {
                 string viewName = view.Attributes["Name"].InnerText;
@@ -412,6 +425,8 @@ namespace Sharezbold.ContentMigration
                 // add the view
                 this.ws.DstViews.AddView(listName, view.Attributes["DisplayName"].InnerText, viewFields, query, rowLimit, viewDetail.Attributes["Type"].InnerText, makeViewDefault);
             }
+            this.ws.DstViews.Url = viewUrlBuffer;
+            this.ws.DstLists.Url = urlBuffer;
             return true;
         }
 
