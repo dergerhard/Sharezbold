@@ -45,59 +45,6 @@ namespace Sharezbold.ContentMigration
 
         public SSiteCollection DestinationSiteCollection { get; private set; }
 
-        /*
-        public void test()
-        {
-
-            SiteDataWS._sWebMetadata siteMData = null;
-            SiteDataWS._sWebWithTime[] siteTime = null;
-            SiteDataWS._sListWithTime[] lstMData = null;
-            SiteDataWS._sFPUrl[] urls = null;
-            string strSGroups;
-            string[] strSGrpUsrs;
-            string[] strSGrpGrps;
-
-            srcSiteData.GetWeb(out siteMData, out siteTime, out lstMData, out urls,
-                out strSGroups, out strSGrpUsrs, out strSGrpGrps);
-
-            string info = "";
-            info = strSGroups + "\n";
-
-            foreach (string usr in strSGrpUsrs)
-            {
-                info += usr + "\n";
-            }
-
-            foreach (string grp in strSGrpGrps)
-            {
-                info += grp + "\n";
-            }
-
-            //Console.WriteLine(info);
-
-
-
-            SiteDataWS._sSiteMetadata scSiteMData;
-            SiteDataWS._sWebWithTime[] scSiteTime;
-
-            string users;
-            string groups;
-            string[] arrGroups;
-
-            srcSiteData.GetSite(out scSiteMData, out scSiteTime, out users, out groups, out arrGroups);
-
-            Console.WriteLine(scSiteMData.ToString() + "\r\n####");
-            Console.WriteLine(scSiteTime.ToString() + "\r\n####");
-            Console.WriteLine(users+"\r\n####");
-            Console.WriteLine(groups + "\r\n#####");
-            foreach (string g in arrGroups)
-                Console.WriteLine(g);
-
-            Console.WriteLine("...");
-        }*/
-
-         
-
         /// <summary>
         /// Loads the source site collectionand stores it
         /// </summary>
@@ -319,6 +266,9 @@ namespace Sharezbold.ContentMigration
                     {
                         string url = Regex.Replace(src.XmlData.Attributes["Title"].InnerText, @"[^A-Za-z0-9_\.~]+", "-");
                         string title = src.XmlData.Attributes["Title"].InnerText;
+
+                        this.log.AddMessage("Site migration: " + title + " is being migrated");
+                        
                         string description = src.XmlData.Attributes["Description"].InnerText;
                         string templateName = this.GetSiteTemplate(src.XmlData.Attributes["Url"].InnerText);
                         uint language = this.GetLanguage(this.SourceSiteCollection);
@@ -335,12 +285,14 @@ namespace Sharezbold.ContentMigration
                         bool presenceSpecified = true;
 
                         this.ws.DstSites.CreateWeb(url, title, description, templateName, language, languageSpecified, locale, localeSpecified, collationLocale, collationLocaleSpecified, uniquePermissions, uniquePermissionsSpecified, anonymous, anonymousSpecified, presence, presenceSpecified);
+                        this.log.AddMessage("Site migration: " + title + " migrated successfully");
                     }
                     return true;
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Error migrating site: " + e.Message);
+                    string title = src.XmlData.Attributes["Title"].InnerText;
+                    this.log.AddMessage("Site migration: " + title + " could NOT be migrated due to: " + e.Message);
                     return false;
                 }
             });
@@ -351,92 +303,96 @@ namespace Sharezbold.ContentMigration
         /// Migrates a list and its views. Site Columns are not included
         /// </summary>
         /// <param name="list"></param>
-        public bool MigrateList(SList list)
+        public async Task<bool> MigrateList(SList list)
         {
-            // if list with the same name exists --> delete
-            XmlElement l = (XmlElement)list.XmlList;
-            string listName = l.Attributes["Title"].InnerText;
-
-            string urlBuffer = this.ws.DstLists.Url;
-            this.ws.DstLists.Url = list.MigrateTo.XmlData.Attributes["Url"].InnerText + WebService.UrlLists;
-            try
+            Task<bool> t = Task.Factory.StartNew(() =>
             {
-                this.ws.DstLists.DeleteList(listName);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Log: " + e.Message);
-            }
+                // if list with the same name exists --> delete
+                XmlElement l = (XmlElement)list.XmlList;
+                string listName = l.Attributes["Title"].InnerText;
 
-            //add list from source
-            this.ws.DstLists.AddList(listName,  l.Attributes["Description"].InnerText, Convert.ToInt32(l.Attributes["ServerTemplate"].InnerText));
-
-            // copy list properties
-            XmlDocument doc = new XmlDocument();
-            XmlElement listProperties = doc.CreateElement("List");
-            foreach (XmlAttribute attr in l.Attributes)
-            {
-                listProperties.SetAttribute(attr.Name, attr.Value);
-            }
-
-            XmlElement fields = doc.CreateElement("Fields");
-            int i = 1;
-            foreach (XmlNode field in l["Fields"])
-            {
-                if (field.Name.Equals("Field"))
+                string urlBuffer = this.ws.DstLists.Url;
+                this.ws.DstLists.Url = list.MigrateTo.XmlData.Attributes["Url"].InnerText + WebService.UrlLists;
+                try
                 {
-                    XmlElement method = doc.CreateElement("Method");
-                    method.SetAttribute("ID", i.ToString());
-                    XmlNode newField = doc.ImportNode(field, true);
-                    newField.Attributes.RemoveNamedItem("ID");
-                    method.AppendChild(newField);
-                    fields.AppendChild(method);
-                    i++;
+                    this.ws.DstLists.DeleteList(listName);
                 }
-            }
-
-            // update the list
-            this.ws.DstLists.UpdateList(listName, listProperties, fields, fields, null, "");
-            string viewUrlBuffer = this.ws.DstViews.Url;
-
-            // migrate the views
-            // first delete the dst views
-            try
-            {
-                XmlNode viewsToDelete = this.ws.DstViews.GetViewCollection(listName);
-                foreach (XmlNode view in viewsToDelete)
+                catch (Exception e)
                 {
-                    this.ws.DstViews.DeleteView(listName, view.Attributes["Name"].InnerText);
+                    Console.WriteLine("Log: " + e.Message);
                 }
-            }
-            catch (Exception e)
-            {
-            }
 
-            XmlNode viewCollection = this.ws.SrcViews.GetViewCollection(listName);
-            //Console.WriteLine(viewCollection.OuterXml);
-            foreach (XmlNode view in viewCollection)
-            {
-                string viewName = view.Attributes["Name"].InnerText;
-                XmlNode viewDetail = this.ws.SrcViews.GetView(listName, viewName);
+                //add list from source
+                this.ws.DstLists.AddList(listName, l.Attributes["Description"].InnerText, Convert.ToInt32(l.Attributes["ServerTemplate"].InnerText));
 
-                XmlDocument doc2 = new XmlDocument();
-                XmlElement viewFields = (XmlElement)doc2.ImportNode(viewDetail["ViewFields"], true);
+                // copy list properties
+                XmlDocument doc = new XmlDocument();
+                XmlElement listProperties = doc.CreateElement("List");
+                foreach (XmlAttribute attr in l.Attributes)
+                {
+                    listProperties.SetAttribute(attr.Name, attr.Value);
+                }
 
-                XmlDocument doc3 = new XmlDocument();
-                XmlElement query = (XmlElement)doc3.ImportNode(viewDetail["Query"], true);
+                XmlElement fields = doc.CreateElement("Fields");
+                int i = 1;
+                foreach (XmlNode field in l["Fields"])
+                {
+                    if (field.Name.Equals("Field"))
+                    {
+                        XmlElement method = doc.CreateElement("Method");
+                        method.SetAttribute("ID", i.ToString());
+                        XmlNode newField = doc.ImportNode(field, true);
+                        newField.Attributes.RemoveNamedItem("ID");
+                        method.AppendChild(newField);
+                        fields.AppendChild(method);
+                        i++;
+                    }
+                }
 
-                XmlDocument doc4 = new XmlDocument();
-                XmlElement rowLimit = (XmlElement)doc4.ImportNode(viewDetail["RowLimit"], true);
+                // update the list
+                this.ws.DstLists.UpdateList(listName, listProperties, fields, fields, null, "");
+                string viewUrlBuffer = this.ws.DstViews.Url;
 
-                bool makeViewDefault = viewDetail.Attributes["DefaultView"].InnerText.ToUpper().Equals("TRUE") ? true : false;
+                // migrate the views
+                // first delete the dst views
+                try
+                {
+                    XmlNode viewsToDelete = this.ws.DstViews.GetViewCollection(listName);
+                    foreach (XmlNode view in viewsToDelete)
+                    {
+                        this.ws.DstViews.DeleteView(listName, view.Attributes["Name"].InnerText);
+                    }
+                }
+                catch (Exception e)
+                {
+                }
 
-                // add the view
-                this.ws.DstViews.AddView(listName, view.Attributes["DisplayName"].InnerText, viewFields, query, rowLimit, viewDetail.Attributes["Type"].InnerText, makeViewDefault);
-            }
-            this.ws.DstViews.Url = viewUrlBuffer;
-            this.ws.DstLists.Url = urlBuffer;
-            return true;
+                XmlNode viewCollection = this.ws.SrcViews.GetViewCollection(listName);
+                //Console.WriteLine(viewCollection.OuterXml);
+                foreach (XmlNode view in viewCollection)
+                {
+                    string viewName = view.Attributes["Name"].InnerText;
+                    XmlNode viewDetail = this.ws.SrcViews.GetView(listName, viewName);
+
+                    XmlDocument doc2 = new XmlDocument();
+                    XmlElement viewFields = (XmlElement)doc2.ImportNode(viewDetail["ViewFields"], true);
+
+                    XmlDocument doc3 = new XmlDocument();
+                    XmlElement query = (XmlElement)doc3.ImportNode(viewDetail["Query"], true);
+
+                    XmlDocument doc4 = new XmlDocument();
+                    XmlElement rowLimit = (XmlElement)doc4.ImportNode(viewDetail["RowLimit"], true);
+
+                    bool makeViewDefault = viewDetail.Attributes["DefaultView"].InnerText.ToUpper().Equals("TRUE") ? true : false;
+
+                    // add the view
+                    this.ws.DstViews.AddView(listName, view.Attributes["DisplayName"].InnerText, viewFields, query, rowLimit, viewDetail.Attributes["Type"].InnerText, makeViewDefault);
+                }
+                this.ws.DstViews.Url = viewUrlBuffer;
+                this.ws.DstLists.Url = urlBuffer;
+                return true;
+            });
+            return await t;
         }
 
         /// <summary>

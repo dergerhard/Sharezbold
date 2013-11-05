@@ -186,3 +186,39 @@ Gemeinsam:
  - Doc (Manual)
  - C# Doc
  - Powerpoint
+
+
+
+NEUER SHAREPOINT 2010
+--------------------------------------------------------------------------------
+10.10.7.179 (=main site collection)
+Administrator
+P@ssw0rd
+CSSSPS2010003
+--------------------------------------------------------------------------------
+Eingestellt wurde
+--------------------------------------------------------------------------------
+	theme: azure
+	site columns:
+		Group: JobApplication
+				 CompanyName
+				 ApplicationDate
+				 ContactPerson
+				 Interview
+	Custom list:
+		MyJobApplications
+			View "AllItems" changed to show site columns only
+			
+			2 items added
+			
+	Site Pages:
+		+ Product Placemet
+		- How to use this Library (Recycle bin)
+		
+	Shared Documents:
+		+ kite_for_kitesurfing..... jpg
+		+ kite_surfing_Oahu.jpg
+		+ KITE.docx --> CHECKED OUT
+		
+	Tasks
+		+ Something about Sharepoint
