@@ -11,6 +11,8 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SharezboldInstaller", "..\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileMigration", "..\FileUpAndDownload\FileMigration.csproj", "{27A175E5-7EDA-4359-BB4A-F093DFECCC90}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging", "..\Logging\Logging.csproj", "{81C78423-D627-4DA9-8D2D-77F5F43C6EFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,16 @@ Global
 		{27A175E5-7EDA-4359-BB4A-F093DFECCC90}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{27A175E5-7EDA-4359-BB4A-F093DFECCC90}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{27A175E5-7EDA-4359-BB4A-F093DFECCC90}.Release|x86.ActiveCfg = Release|Any CPU
+		{81C78423-D627-4DA9-8D2D-77F5F43C6EFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81C78423-D627-4DA9-8D2D-77F5F43C6EFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81C78423-D627-4DA9-8D2D-77F5F43C6EFF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{81C78423-D627-4DA9-8D2D-77F5F43C6EFF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{81C78423-D627-4DA9-8D2D-77F5F43C6EFF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{81C78423-D627-4DA9-8D2D-77F5F43C6EFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81C78423-D627-4DA9-8D2D-77F5F43C6EFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81C78423-D627-4DA9-8D2D-77F5F43C6EFF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{81C78423-D627-4DA9-8D2D-77F5F43C6EFF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{81C78423-D627-4DA9-8D2D-77F5F43C6EFF}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,5 @@
 ﻿
-namespace Sharezbold
+namespace Sharezbold.Logging
 {
     using System;
     using System.Collections.Generic;
@@ -56,7 +56,7 @@ namespace Sharezbold
         /// </summary>
         /// <param name="message">the message</param>
         /// <param name="onlyLogFile">if true, it is only written to the log file</param>
-        public void addMessage(string message, bool onlyLogFile = false)
+        public void AddMessage(string message, bool onlyLogFile = false)
         {
             string msg = DateTime.Now.ToString("HH:mm:ss") + " " + message;
 
@@ -71,6 +71,7 @@ namespace Sharezbold
             lock (logfile)
             {
                 logfile.WriteLine(msg);
+                logfile.Flush();
             }
         }
     }

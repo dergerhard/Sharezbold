@@ -25,6 +25,7 @@ namespace Sharezbold
     using Microsoft.SharePoint.Client;
     using Sharezbold.Settings;
     using Sharezbold.ContentMigration.Data;
+    using Sharezbold.Logging;
 
     /// <summary>
     /// The main form of the program
@@ -82,11 +83,6 @@ namespace Sharezbold
         private ContentLoader contentLoader;
 
         /// <summary>
-        /// Defines whether site colecction migration is possible
-        /// </summary>
-        //private bool isSiteCollectionMigrationPossible = false;
-
-        /// <summary>
         /// Log data storage
         /// </summary>
         private List<string> logList;
@@ -94,7 +90,12 @@ namespace Sharezbold
         /// <summary>
         /// Data binding object for logList
         /// </summary>
-        private BindingSource log;
+        //private BindingSource log;
+
+        /// <summary>
+        /// the message logger
+        /// </summary>
+        private Logger log;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
@@ -119,24 +120,19 @@ namespace Sharezbold
             this.EnableTab(this.tabPageMigrationPreparation, false);
             this.EnableTab(this.tabPageMigrationProgress, false);
 
+            this.log = new Logger(this.listBoxMigrationLog, "c:\\log.txt");
+            log.AddMessage("Program started");
 
         }
-
+                
         /// <summary>
-        /// Updates the progresslog.
+        /// Updates the log
         /// </summary>
-        /// <param name="logItem">item to log</param>
-        internal void UpdateProgressLog(string logItem)
+        /// <param name="logItem">the message</param>
+        /// <param name="onlyLogFile">if true, message is only written to the file</param>
+        internal void UpdateProgressLog(string logItem, bool onlyLogFile=false)
         {
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new Action<string>(this.UpdateProgressLog), logItem);
-            }
-            else
-            {
-                this.listBoxMigrationLog.Items.Add(logItem);
-                this.listBoxMigrationLog.Update();
-            }
+            log.AddMessage(logItem, onlyLogFile);
         }
 
         /// <summary>
@@ -259,15 +255,18 @@ namespace Sharezbold
                     MigrationSettings settings = (MigrationSettings)serializer.Deserialize(reader);
                     reader.Close();
                     this.SettingsToUI(settings);
+                    this.log.AddMessage("Settings file \"" + openFileDialog1.FileName + "\" loaded");
                 }
                 catch (XmlException xe)
                 {
                     Debug.WriteLine(xe.ToString());
+                    this.log.AddMessage("Settings file \"" + openFileDialog1.FileName + "\" could not be loaded due to XML error. Original Message: " + xe.Message);
                     MessageBox.Show("XML reading error. The settings file is corrupted!");
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.ToString());
+                    this.log.AddMessage("Settings file \"" + openFileDialog1.FileName + "\" could not be loaded. Error: " + ex.Message);
                     MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
             }
@@ -295,16 +294,19 @@ namespace Sharezbold
                     XmlSerializer serializer = new XmlSerializer(typeof(MigrationSettings));
                     serializer.Serialize(writer, settings);
                     writer.Close();
+                    this.log.AddMessage("Settings saved to \"" + saveFileDialog1.FileName + "\"");
                 }
                 catch (XmlException xe)
                 {
                     Debug.WriteLine(xe.ToString());
                     MessageBox.Show("XML writing error. The settings file could not be written correctly!");
+                    this.log.AddMessage("Settings could not be saved to \"" + saveFileDialog1.FileName + "\". Error: " + xe.Message);
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.ToString());
                     MessageBox.Show("Error: Could not write file to disk. Original error: " + ex.Message);
+                    this.log.AddMessage("Settings could not be saved to \"" + saveFileDialog1.FileName + "\". Error: " + ex.Message);
                 }
             }
         }
@@ -338,6 +340,7 @@ namespace Sharezbold
                 // on exception - hide wait form, go back to configuration
                 this.waitForm.Hide();
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.log.AddMessage(ex.Message);
                 this.EnableTab(this.tabPageConfiguration, true);
                 this.tabControMain.SelectedTab = this.tabPageConfiguration;
             }
@@ -368,7 +371,9 @@ namespace Sharezbold
         {
             try
             {
-                this.waitForm.SpecialText = "Trying to connect to source";
+                string txt = "Trying to connect to source";
+                this.waitForm.SpecialText = txt;
+                this.log.AddMessage(txt);
                 await this.ConnectToSource();
             }
             catch (Exception ex)
@@ -387,7 +392,9 @@ namespace Sharezbold
                 // as there is no site collection at the destination it makes no sense to connect to it
                 if (!this.settings.SiteCollectionMigration)
                 {
-                    this.waitForm.SpecialText = "Trying to connect to destination";
+                    string txt2 = "Trying to connect to destination";
+                    this.waitForm.SpecialText = txt2;
+                    this.log.AddMessage(txt2);
                     await this.ConnectToDestination();
                 }
             }
@@ -401,7 +408,9 @@ namespace Sharezbold
                 this.waitForm.SpecialText = string.Empty;
             }
 
-            this.waitForm.SpecialText = "Generating migration tree";
+            string txt3 = "Generating migration tree";
+            this.waitForm.SpecialText = txt3;
+            this.log.AddMessage(txt3);
             Task<SSiteCollection> t = Task.Factory.StartNew(() =>
             {
                 return this.contentLoader.LoadSourceSiteCollection();
@@ -524,25 +533,6 @@ namespace Sharezbold
                 };
             }
         }
-
-        /// <summary>
-        /// Checks all child nodes recursively
-        /// </summary>
-        /// <param name="treeNode">the root to start checking</param>
-        /// <param name="nodeChecked">the check state (true if it should be checked)</param>
-        /*private void CheckAllChildNodes(TreeNode treeNode, bool nodeChecked)
-        {
-            foreach (TreeNode node in treeNode.Nodes)
-            {
-                node.Checked = nodeChecked;
-                ((SpTreeNode)node).MigrationObject.Skip = !nodeChecked;
-                if (node.Nodes.Count > 0)
-                {
-                    // If the current node has child nodes, call the CheckAllChildsNodes method recursively.
-                    this.CheckAllChildNodes(node, nodeChecked);
-                }
-            }
-        }*/
 
         /// <summary>
         /// Checks all child nodes recursively

@@ -15,6 +15,7 @@ namespace Sharezbold.ContentMigration
     using System.IO;
     using System.Text.RegularExpressions;
     using System.Diagnostics;
+    using Sharezbold.Logging;
 
     /// <summary>
     /// Is responsible for downloading/uploading data from the source to the destinaiton server
@@ -25,7 +26,12 @@ namespace Sharezbold.ContentMigration
         /// provides access to the web services
         /// </summary>
         private WebService ws;
-
+        
+        /// <summary>
+        /// the logger object
+        /// </summary>
+        private Logger log;
+        
         /// <summary>
         /// Default constructor, takes the initialized web service class
         /// </summary>
