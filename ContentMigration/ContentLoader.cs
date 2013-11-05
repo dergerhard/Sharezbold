@@ -14,6 +14,7 @@ namespace Sharezbold.ContentMigration
     using System.Windows.Forms;
     using System.IO;
     using System.Text.RegularExpressions;
+    using System.Diagnostics;
 
     /// <summary>
     /// Is responsible for downloading/uploading data from the source to the destinaiton server
@@ -211,6 +212,8 @@ namespace Sharezbold.ContentMigration
         /// </summary>
         public async Task<bool> MigrateAll(ListBox log)
         {
+            Debug.WriteLine("");
+
             // migrate site collection
             if (this.SourceSiteCollection.Migrate)
             {

@@ -27,28 +27,6 @@ namespace Sharezbold
     using Sharezbold.ContentMigration.Data;
 
     /// <summary>
-    /// Delegate for loading the source tree
-    /// </summary>
-    ////public delegate void ApplyConfigurationAndLoadSourceTreeDelegate();
-
-    /// <summary>
-    /// Delegate for updating main ui when ApplyConfigurationAndLoadSourceTreeDelegate is finished
-    /// </summary>
-    /// <param name="node">the resulting source node</param>
-    ////public delegate void ApplyConfigurationAndLoadSourceTreeFinishedDelegate(SpTreeNode node);
-
-    /// <summary>
-    /// Delegate for loading destination tree
-    /// </summary>
-    ////public delegate void LoadDestinationTreeDelegate();
-
-    /// <summary>
-    /// Delegate for updating main ui when LoadDestinationTreeDelegate is finished
-    /// </summary>
-    /// <param name="node">the root node</param>
-    ////public delegate void LoadDestinationTreeFinishedDelegate(SpTreeNode node);
-
-    /// <summary>
     /// The main form of the program
     /// </summary>
     public partial class MainForm : System.Windows.Forms.Form
@@ -79,11 +57,6 @@ namespace Sharezbold
         private bool treeViewContentSelectionDisabled = false;
 
         /// <summary>
-        /// Root node of the source migration tree
-        /// </summary>
-        //private SpTreeNode sourceTreeRoot; //eliminate
-
-        /// <summary>
         /// Root site collection to transfer
         /// </summary>
         private SSiteCollection sourceSiteCollection;
@@ -92,11 +65,6 @@ namespace Sharezbold
         /// Destination site collection
         /// </summary>
         private SSiteCollection destinationSiteCollection;
-
-        /// <summary>
-        /// Root node of the destination migration tree
-        /// </summary>
-        //private SpTreeNode destinationTreeRoot;
 
         /// <summary>
         /// As the name says.. current (selected) configuration element
