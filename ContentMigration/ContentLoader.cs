@@ -1,5 +1,9 @@
-﻿
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="LoadingElementsException.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 namespace Sharezbold.ContentMigration
 {
     using System;
@@ -36,9 +40,10 @@ namespace Sharezbold.ContentMigration
         /// Default constructor, takes the initialized web service class
         /// </summary>
         /// <param name="service">Web service access class</param>
-        public ContentLoader(WebService service)
+        public ContentLoader(WebService service, Logger log=null)
         {
             this.ws = service;
+            this.log = log;
         }
 
         public SSiteCollection SourceSiteCollection { get; private set; }
