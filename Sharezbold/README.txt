@@ -146,6 +146,8 @@ Review Infos Gerhard:
 	Jetzt mit delegates und BeginInvoke, Invoke und es ist einfach, übersichtlich und funktioniert fehlerfrei
 	http://dougzuck.com/c-ui-threading-example
 
++ Fragwürdiges Verhalten der web-services z.B. Sites.CreateWeb wirft eine Exception ("Error in XML document(1,30)"), erzeugt jedoch trotzdem die Seite!
+
 Async Programming
 http://msdn.microsoft.com/de-de/library/vstudio/hh191443.aspx
 

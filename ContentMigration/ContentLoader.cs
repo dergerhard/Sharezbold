@@ -8,6 +8,7 @@ namespace Sharezbold.ContentMigration
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections;
     using System.Linq;
     using System.Net;
     using System.Text;
@@ -34,16 +35,24 @@ namespace Sharezbold.ContentMigration
         /// <summary>
         /// the logger object
         /// </summary>
-        private Logger log;
+        private Logger log = null;
         
         /// <summary>
         /// Default constructor, takes the initialized web service class
         /// </summary>
         /// <param name="service">Web service access class</param>
-        public ContentLoader(WebService service, Logger log=null)
+        /// <param name="log">The logger class</param>
+        public ContentLoader(WebService service, Logger log = null)
         {
             this.ws = service;
-            this.log = log;
+            if (log == null)
+            {
+                this.log = new Logger();
+            }
+            else
+            {
+                this.log = log;
+            }
         }
 
         public SSiteCollection SourceSiteCollection { get; private set; }
@@ -71,6 +80,11 @@ namespace Sharezbold.ContentMigration
         }
 
         /// <summary>
+        /// a list with the destinaiton site urls - for checking if a new url is valid
+        /// </summary>
+        private List<string> destinationSiteUrls = new List<string>();
+
+        /// <summary>
         /// Loads the site collection of a Sharepoint server
         /// </summary>
         /// <param name="srcWebs">webs web service</param>
@@ -80,20 +94,6 @@ namespace Sharezbold.ContentMigration
         private SSiteCollection LoadSharepointTree(WebsWS.Webs srcWebs, ListsWS.Lists srcLists, bool loadListData)
         {
             SSiteCollection siteCollection = new SSiteCollection();
-
-            /* whole migration
-             * 1. Transfer users and groups
-             * 2. Transfer all metadata as:
-             *      2.1 site columns
-             *      2.2 content types (depend on site columns)
-             *      2.3 site templates
-             *      
-             *  3. Transfer site collection
-             *  4. Transfer sites
-             *  5. Transfer lists and libraries
-             *  6. Transfer list data
-             *  7. Transfer files
-             */
 
             // get all webs names (first is the site collection)
             XmlNode allSrcWebs = srcWebs.GetAllSubWebCollection();
@@ -117,8 +117,13 @@ namespace Sharezbold.ContentMigration
                 site.XmlData = w;
 
                 string url = w.Attributes["Url"].InnerText + WebService.UrlLists;
-                Console.WriteLine(url);
-
+                
+                // only do this, if destination site is being loaded
+                if (!loadListData)
+                {
+                    destinationSiteUrls.Add(w.Attributes["Url"].InnerText);
+                }
+                 
                 // get all lists
                 srcLists.Url = url;
                 XmlNode lc = srcLists.GetListCollection();
@@ -168,62 +173,65 @@ namespace Sharezbold.ContentMigration
         /// <summary>
         /// Migrates all selected items from source to destination. Items must be set up by the user!
         /// </summary>
-        public async Task<bool> MigrateAll(ListBox log)
+        public async Task<bool> MigrateAllAsync()
         {
-            Debug.WriteLine("");
+            /* whole migration
+             * 
+             * 1. Transfer users and groups
+             * 2. Transfer all metadata as:
+             *      2.1 site columns
+             *      2.2 content types (depend on site columns)
+             *      2.3 site templates
+             *   
+             * 
+             *  3. Transfer site collection - done
+             *  4. Transfer sites
+             *      4.1 Transfer site itself
+             *      4.2 Transfer list and library definitions
+             *      4.3 Transfert list and library data
+             *  5. Set permissions
+             *  
+             *  6. Transfer files
+             */
+
+            // specifies whether to go on with the migration
+            bool keepGoing = true;
 
             // migrate site collection
             if (this.SourceSiteCollection.Migrate)
             {
-                Task<bool> taskSiteCollection = Task.Factory.StartNew(() =>
-                {
-                    try
-                    {
-                        log.Items.Add("Starting Site Collection migration");
-                        this.MigrateSiteCollection();
-                        log.Items.Add("Site Collection migration finished");
-                        return true;
-                    }
-                    catch (Exception e)
-                    {
-                        log.Items.Add("Error (Site Collection Migration): " + e.Message);
-                        return false;
-                    }
-                });
-                await taskSiteCollection;
+                keepGoing = await this.MigrateSiteCollectionAsync();
             }
 
             // migrate sites
             foreach (SSite site in this.SourceSiteCollection.Sites)
             {
-                if (site.Migrate)
+                if (site.Migrate && keepGoing)
                 {
-                    try
+                    keepGoing = await this.MigrateSiteAsync(site, this.DestinationSiteCollection);
+                }
+
+                //migrate its lists and views
+                if (keepGoing)
+                {
+                    foreach (SList list in site.Lists)
                     {
-                        log.Items.Add("Migrating site \"" + site.Name + "\"");
-                        await this.MigrateSite(site, this.DestinationSiteCollection);
-                        log.Items.Add("Migration of site \"" + site.Name + "\" finished");
-                    }
-                    catch (Exception e)
-                    {
-                        log.Items.Add("Error: " + e.Message);
+                        if (list.Migrate)
+                        {
+                            await this.MigrateListAndViewsAsync(list);
+                            // lists are independent parts - no need to write its results to "keepGoing"
+                        }
                     }
                 }
-                
-                /*foreach (SList list in site.Lists)
-                {
-                    if (list.Migrate)
-                    {
-                        log.Items.Add("Migrating list \"" + list.Name + "\"...");
-                        this.MigrateList(list);
-                        log.Items.Add("Migrating list finished");
-                    }
-                }*/
+
+                // TODO: migrate list data
             }
-            
-                
 
-
+            if (!keepGoing)
+            {
+                this.log.AddMessage("MIGRATION ABORTED");
+            }          
+             
             // migrate site columns
             // TODO: implement for all sites
             /*
@@ -253,7 +261,7 @@ namespace Sharezbold.ContentMigration
              *      list of sites
              * 3. All lists without source site
              */
-            return true;
+            return keepGoing;
         }
 
         /// <summary>
@@ -261,19 +269,32 @@ namespace Sharezbold.ContentMigration
         /// </summary>
         /// <param name="src">source site to migrate</param>
         /// <param name="dstSC">destination site collection</param>
-        public async Task<bool> MigrateSite(SSite src, SSiteCollection dstSC)
+        public async Task<bool> MigrateSiteAsync(SSite src, SSiteCollection dstSC)
         {
             Task<bool> t = Task.Factory.StartNew(() =>
             {
                 try
                 {
-                    if (!src.IsSiteCollectionSite)
+                    /// mirate the site f:
+                    ///   - if it is not the site collection site (its a conventional subsite)
+                    ///   - if it is the site collection site and the site collection is not migrated (then the contents are migrated to a conventional site)
+                    if (!src.IsSiteCollectionSite || (src.IsSiteCollectionSite && !this.SourceSiteCollection.Migrate))
                     {
-                        string url = Regex.Replace(src.XmlData.Attributes["Title"].InnerText, @"[^A-Za-z0-9_\.~]+", "-");
-                        string title = src.XmlData.Attributes["Title"].InnerText;
+                        this.log.AddMessage("Migrating site \"" + src.Name + "\" started");
 
-                        this.log.AddMessage("Site migration: " + title + " is being migrated");
+                        string url = Regex.Replace(src.XmlData.Attributes["Title"].InnerText, @"[^A-Za-z0-9_\.~]+", "-");
+
+                        //find a fitting url
+                        int i = 1;
+                        string newUrl = url;
+                        while (destinationSiteUrls.FindAll(delegate(string s) { return s.EndsWith(newUrl); }).Count > 0)
+                        {
+                            newUrl = url + i.ToString();
+                            i++;
+                        }
+                        url = newUrl;
                         
+                        string title = src.XmlData.Attributes["Title"].InnerText;
                         string description = src.XmlData.Attributes["Description"].InnerText;
                         string templateName = this.GetSiteTemplate(src.XmlData.Attributes["Url"].InnerText);
                         uint language = this.GetLanguage(this.SourceSiteCollection);
@@ -289,15 +310,36 @@ namespace Sharezbold.ContentMigration
                         bool presence = true;
                         bool presenceSpecified = true;
 
-                        this.ws.DstSites.CreateWeb(url, title, description, templateName, language, languageSpecified, locale, localeSpecified, collationLocale, collationLocaleSpecified, uniquePermissions, uniquePermissionsSpecified, anonymous, anonymousSpecified, presence, presenceSpecified);
-                        this.log.AddMessage("Site migration: " + title + " migrated successfully");
+                        try
+                        {
+                            this.ws.DstSites.CreateWeb(url, title, description, templateName, language, languageSpecified, locale, localeSpecified, collationLocale, collationLocaleSpecified, uniquePermissions, uniquePermissionsSpecified, anonymous, anonymousSpecified, presence, presenceSpecified);
+                        }
+                        catch (Exception e)
+                        {
+                            // there is always an error... no matter what you do (XML error, altough I couldn't have made one here)
+                            // has to be ignored
+                            //this.log.AddMessage("Site migration of site \"" + src.Name + "\" FAILED. Check if a site with the same name already exists! Error message: " + e.Message);
+                            //return false;
+                        }
+
+                        try
+                        {
+                            //definately runtime error TODO
+                            this.MigrateSiteColumnsAsync(src.XmlData.Attributes["Url"].InnerText, url);
+                        }
+                        catch (Exception e)
+                        { }
+                        //}
+
+                        this.log.AddMessage("Migrating site \"" + src.Name + "\" finished");
+
                     }
                     return true;
                 }
                 catch (Exception e)
                 {
-                    string title = src.XmlData.Attributes["Title"].InnerText;
-                    this.log.AddMessage("Site migration: " + title + " could NOT be migrated due to: " + e.Message);
+                    // here only a http error could occurr
+                    this.log.AddMessage("Migrating site \"" + src.Name + "\" error: " + e.Message);
                     return false;
                 }
             });
@@ -308,7 +350,7 @@ namespace Sharezbold.ContentMigration
         /// Migrates a list and its views. Site Columns are not included
         /// </summary>
         /// <param name="list"></param>
-        public async Task<bool> MigrateList(SList list)
+        public async Task<bool> MigrateListAndViewsAsync(SList list)
         {
             Task<bool> t = Task.Factory.StartNew(() =>
             {
@@ -401,99 +443,132 @@ namespace Sharezbold.ContentMigration
         }
 
         /// <summary>
-        /// TODO
-        /// Migrates all new site columns from src to dst. Columns which changed are ignored, as "system columns" can't
+        /// Migrates all new site columns from src to dst. Columns which changed are ignored, as "system columns". These unfortunately can't
         /// be  recognised yet.
         /// </summary>
         /// <param name="src">source site to migrate</param>
         /// <param name="dst">destination site to migrate</param>
-        public void MigrateSiteColumns(SSite src, SSite dst)
+        public async Task<bool> MigrateSiteColumnsAsync(SSite src, SSite dst)
         {
-            string websSrcUrlBuffer = this.ws.SrcWebs.Url;
-            string websDstUrlBuffer = this.ws.DstWebs.Url;
+            return await this.MigrateSiteColumnsAsync(src.XmlData.Attributes["Url"].InnerText, dst.XmlData.Attributes["Url"].InnerText);
+        }
 
-            XmlNode srcColumsXml = this.ws.SrcWebs.GetColumns();
-            XmlNode dstColumnsXml = this.ws.DstWebs.GetColumns();
 
-            //convert to xdoc
-            XDocument srcDoc = XDocument.Parse(srcColumsXml.OuterXml);
-            XDocument dstDoc = XDocument.Parse(dstColumnsXml.OuterXml);
-
-            /* COLUMNS
-             * create dest dictionary
-             * for all src elements
-             *      if dest contains src
-             *          compare:
-             *            == --> do nothing (same content type)
-             *            != --> add to update list (something changed, so migrate)
-             *      else
-             *          --> add to create list (because its new)
-             */
-
-            // create dst dictionary
-            Dictionary<string, XElement> dstColumns = new Dictionary<string, XElement>();
-            foreach (XElement el in dstDoc.Root.Elements())
+        /// <summary>
+        /// Migrates all new site columns from src to dst. Columns which changed are ignored, as "system columns". These unfortunately can't
+        /// be  recognised yet.
+        /// </summary>
+        /// <param name="src">source site to migrate</param>
+        /// <param name="dst">destination site to migrate</param>
+        public async Task<bool> MigrateSiteColumnsAsync(string src, string dst)
+        {
+            Task<bool> t = Task.Factory.StartNew(() =>
             {
-                dstColumns.Add(el.Attribute("ID").Value, el);
-            }
-            
-            List<XElement> createColumns = new List<XElement>();
+                string websSrcUrlBuffer = this.ws.SrcWebs.Url;
+                string websDstUrlBuffer = this.ws.DstWebs.Url;
 
-            XNodeEqualityComparer comparer = new XNodeEqualityComparer();
-
-            foreach (XElement el in srcDoc.Root.Elements())
-            {
-                if (dstColumns.ContainsKey(el.Attribute("ID").Value))
+                try
                 {
-                    /*if (comparer.GetHashCode(el) != comparer.GetHashCode(dstColumns[el.Attribute("ID").Value]))
+                    this.log.AddMessage("Migrating site columns started");
+                    
+                    this.ws.SrcWebs.Url = src;
+                    this.ws.DstWebs.Url = dst;
+
+                    XmlNode srcColumsXml = this.ws.SrcWebs.GetColumns();
+                    XmlNode dstColumnsXml = this.ws.DstWebs.GetColumns();
+
+                    //convert to xdoc
+                    XDocument srcDoc = XDocument.Parse(srcColumsXml.OuterXml);
+                    XDocument dstDoc = XDocument.Parse(dstColumnsXml.OuterXml);
+
+                    /* COLUMNS
+                     * create dest dictionary
+                     * for all src elements
+                     *      if dest contains src
+                     *          compare:
+                     *            == --> do nothing (same content type)
+                     *            != --> add to update list (something changed, so migrate)
+                     *      else
+                     *          --> add to create list (because its new)
+                     */
+
+                    // create dst dictionary
+                    Dictionary<string, XElement> dstColumns = new Dictionary<string, XElement>();
+                    foreach (XElement el in dstDoc.Root.Elements())
                     {
-                        updateColumns.Add(el);
-                    }*/
+                        dstColumns.Add(el.Attribute("ID").Value, el);
+                    }
+
+                    List<XElement> createColumns = new List<XElement>();
+
+                    XNodeEqualityComparer comparer = new XNodeEqualityComparer();
+
+                    foreach (XElement el in srcDoc.Root.Elements())
+                    {
+                        if (dstColumns.ContainsKey(el.Attribute("ID").Value))
+                        {
+                            /*if (comparer.GetHashCode(el) != comparer.GetHashCode(dstColumns[el.Attribute("ID").Value]))
+                            {
+                                updateColumns.Add(el);
+                            }*/
+                        }
+                        else
+                        {
+                            createColumns.Add(el);
+                        }
+                    }
+
+                    // now columns that have to be updated or created are identified
+                    // time to create or update them
+                    int id = 1;
+                    /*string updateStr = "";
+                    foreach (XElement el in updateColumns)
+                    {
+                        //updateStr += el.ToString();
+                        updateStr += "<Method ID=\"" + id++ + "\" Cmd=\"Update\">" + el.ToString() + "</Method>";
+                    }
+                    XmlDocument updateDoc = new XmlDocument();
+                    updateDoc.LoadXml("<Fields>" + updateStr + "</Fields>");
+                    XmlNode updateNode = updateDoc.DocumentElement;
+                    */
+
+                    this.log.AddMessage("Migriting site columns: preparing " + createColumns.Count + " columns for migration");
+
+                    string createStr = "";
+                    foreach (XElement el in createColumns)
+                    {
+                        createStr += "<Method ID=\"" + id++ + "\" Cmd=\"New\">" + el.ToString() + "</Method>";
+                    }
+                    XmlDocument createDoc = new XmlDocument();
+                    createDoc.LoadXml("<Fields>" + createStr + "</Fields>");
+                    XmlNode createNode = createDoc.DocumentElement;
+
+                    //xmldocument object
+                    XmlDocument xDoc = new XmlDocument();
+                    //Fields to be added
+                    XmlElement newFields = xDoc.CreateElement("Fields");
+                    //Fields to be edited
+                    //XmlElement updateFields = xDoc.CreateElement("Fields");
+
+                    newFields.InnerXml = createStr; //"<Method ID=\"1\">"+createStr+"</Method>";
+                    //updateFields.InnerXml = updateStr; //"<Method ID=\"2\">"+updateStr+"</Method>";
+
+                    //XmlNode returnValue = dstWebs.UpdateColumns(newFields, updateFields, null);
+                    XmlNode returnValue = this.ws.DstWebs.UpdateColumns(newFields, null, null);
                 }
-                else
+                catch (Exception e)
                 {
-                    createColumns.Add(el);
+                    this.log.AddMessage("Migrating site columns error: " + e.Message);
                 }
-            }
+                finally
+                {
+                    this.ws.SrcWebs.Url = websSrcUrlBuffer;
+                    this.ws.DstWebs.Url = websDstUrlBuffer;
+                }
+                return true;
 
-            // now columns that have to be updated or created are identified
-            // time to create or update them
-            int id = 1;
-            /*string updateStr = "";
-            foreach (XElement el in updateColumns)
-            {
-                //updateStr += el.ToString();
-                updateStr += "<Method ID=\"" + id++ + "\" Cmd=\"Update\">" + el.ToString() + "</Method>";
-            }
-            XmlDocument updateDoc = new XmlDocument();
-            updateDoc.LoadXml("<Fields>" + updateStr + "</Fields>");
-            XmlNode updateNode = updateDoc.DocumentElement;
-            */
-
-            string createStr = "";
-            foreach (XElement el in createColumns)
-            {
-                createStr += "<Method ID=\"" + id++ + "\" Cmd=\"New\">" + el.ToString() + "</Method>";
-            }
-            XmlDocument createDoc = new XmlDocument();
-            createDoc.LoadXml("<Fields>" + createStr + "</Fields>");
-            XmlNode createNode = createDoc.DocumentElement;
-
-            //xmldocument object
-            XmlDocument xDoc = new XmlDocument();
-            //Fields to be added
-            XmlElement newFields = xDoc.CreateElement("Fields");
-            //Fields to be edited
-            //XmlElement updateFields = xDoc.CreateElement("Fields");
-
-            newFields.InnerXml = createStr; //"<Method ID=\"1\">"+createStr+"</Method>";
-            //updateFields.InnerXml = updateStr; //"<Method ID=\"2\">"+updateStr+"</Method>";
-
-            //XmlNode returnValue = dstWebs.UpdateColumns(newFields, updateFields, null);
-            XmlNode returnValue = this.ws.DstWebs.UpdateColumns(newFields, null, null);
-
-            this.ws.SrcWebs.Url = websSrcUrlBuffer;
-            this.ws.DstWebs.Url = websDstUrlBuffer;
+            });
+            return await t;
         }
 
 
@@ -534,7 +609,7 @@ String response = new StreamReader(WebResponse.GetResponseStream()).ReadToEnd();
             string responseFromServer = reader.ReadToEnd();
             dataStream.Close();
 
-            //letz play "find the template"....
+            //lets play "find the template"....
             //SP2010 & 2013: var g_wsaSiteTemplateId = 'STS#1';
             int startHere = responseFromServer.IndexOf("g_wsaSiteTemplateId");
             string hereSomewhere = responseFromServer.Substring(startHere, 100);
@@ -556,21 +631,40 @@ String response = new StreamReader(WebResponse.GetResponseStream()).ReadToEnd();
         /// <summary>
         /// Migrates a site collection
         /// </summary>
-        public void MigrateSiteCollection()
+        public async Task<bool> MigrateSiteCollectionAsync()
         {
-            List<XmlNode> scXml = this.SourceSiteCollection.XmlData;
-            string url = scXml.ElementAt(0).Attributes["Url"].InnerText;
-            
-            this.ws.DstAdmin.CreateSite(ws.DstUrl,
-                scXml.ElementAt(0).Attributes["Title"].InnerText,
-                scXml.ElementAt(0).Attributes["Description"].InnerText,
-                (int)this.GetLanguage(this.SourceSiteCollection),
-                this.GetSiteTemplate(),
-                ws.DstDomain + "\\" + ws.DstUser,
-                ws.DstUser,
-                "",
-                "",
-                "");
+            Task<bool> t = Task.Factory.StartNew(() =>
+            {
+                XmlNode scXml = this.SourceSiteCollection.XmlData.ElementAt(0);
+                string url = scXml.Attributes["Url"].InnerText;
+
+                this.log.AddMessage("Migrating site collection \"" + scXml.Attributes["Title"] + "\"");
+                
+                try
+                {
+                    this.ws.DstAdmin.CreateSite(ws.DstUrl,
+                        scXml.Attributes["Title"].InnerText,
+                        scXml.Attributes["Description"].InnerText,
+                        (int)this.GetLanguage(this.SourceSiteCollection),
+                        this.GetSiteTemplate(),
+                        ws.DstDomain + "\\" + ws.DstUser,
+                        ws.DstUser,
+                        "",
+                        "",
+                        "");
+                }
+                catch (Exception e)
+                {
+                    this.log.AddMessage("Error migrating site collection \"" + scXml.Attributes["Title"] + "\". Message: " + e.Message);
+                }
+                finally
+                {
+                    this.log.AddMessage("Migrating site collection \"" + scXml.Attributes["Title"] + "\" finished");
+                }
+                return true;
+            });
+
+            return await t;
         }
 
         /// <summary>

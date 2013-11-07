@@ -169,8 +169,8 @@ namespace Sharezbold
                 this.EnableTab(this.tabPageMigrationPreparation, false);
                 this.EnableTab(this.tabPageMigrationProgress, true);
                 this.buttonFinish.Enabled = false;
-                await this.contentLoader.MigrateAll(this.listBoxMigrationLog);
-                MessageBox.Show("Migration process finished", "Info");
+                bool result = await this.contentLoader.MigrateAllAsync();
+                MessageBox.Show("Migration process finished " + (result?"successfully":"with Errors. Please read the log!"), "Info");
                 this.buttonFinish.Enabled = true;
             }
             else
@@ -477,7 +477,7 @@ namespace Sharezbold
                 // TODO: Central Administration HOST
                 // set up web services and loader
                 this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, this.settings.ToHostCA, this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
-                this.contentLoader = new ContentLoader(this.webServices);
+                this.contentLoader = new ContentLoader(this.webServices, this.log);
                 
                 return this.webServices.IsSourceLoginPossible;
             });
@@ -600,7 +600,7 @@ namespace Sharezbold
             {
                 MessageBox.Show("As the destination web application is empty, migration will be started now.", "Info");
                 this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
-                this.contentLoader.MigrateAll(this.listBoxMigrationLog);
+                await this.contentLoader.MigrateAllAsync();
 
             }
             this.EnableTab(this.tabPageContentSelection, false);
@@ -618,7 +618,7 @@ namespace Sharezbold
             this.waitForm.Show();
             this.waitForm.SpecialText = "loading migration elements";
 
-            Task<bool> t = Task.Factory.StartNew(() =>
+            Task<bool> t = Task<bool>.Factory.StartNew(() =>
             {
                 // Generate the ListView with the source elements to configure
                 // 1. site collection
