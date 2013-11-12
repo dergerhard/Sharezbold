@@ -18,7 +18,6 @@ namespace Sharezbold.FileMigration
     using System.IO;
     using System.ServiceModel;
     using System.ServiceModel.Security;
-    using Sharezbold.Filemigration.Contract;
 
     public class Application
     {
