@@ -48,18 +48,16 @@ namespace Sharezbold.FileMigration
             this.targetClientContext = targetClientContext;
         }
 
-        public void MigrateFilesOfWeb(Web web)
+        public void MigrateFilesOfWeb(Web sourceWeb, Web targetWeb)
         {
             SharePoint2010And2013Downloader downloader = new SharePoint2010And2013Downloader(this.sourceClientContext);
 
-            FileCollection files = GetFilesOfSharedDocumentsFolder(this.sourceClientContext, web);
+            FileCollection files = GetFilesOfSharedDocumentsFolder(this.sourceClientContext, sourceWeb);
 
             foreach (File file in files)
             {
                 MigrationFile migrationFile = downloader.DownloadDocument(file);
             }
-
-            
         }
 
         private FileCollection GetFilesOfSharedDocumentsFolder(ClientContext clientContext, Web web)

@@ -7,7 +7,7 @@
 
 namespace Sharezbold.FileMigration
 {
-    using System.IO;
+    using System.Linq;
     using Microsoft.SharePoint.Client;
     
     /// <summary>
@@ -15,6 +15,9 @@ namespace Sharezbold.FileMigration
     /// </summary>
     internal class SharePoint2010And2013Uploader
     {
+
+        private static string SHARED_DOCUMENTS_FOLDERNAME = "Shared Documents";
+
         /// <summary>
         /// ClientContext of the server.
         /// </summary>
@@ -28,41 +31,51 @@ namespace Sharezbold.FileMigration
         {
             this.targetClientContext = clientContext;
         }
-        
-        /// <summary>
-        /// Uploads the given file to the SharePoint.
-        /// </summary>
-        /// <param name="documentListName">name of the list for the file</param>
-        /// <param name="documentListURL">relative url of the document</param>
-        /// <param name="documentStream">file-data as stream</param>
-        internal void UploadDocument(string documentListName, string documentListURL, Stream documentStream)
+
+        internal void UploadDocument(MigrationFile migrationFile,  Web targetWeb)
         {
-            //// gets the document-list
-            List documentsList = this.targetClientContext.Web.Lists.GetByTitle(documentListName);
+            Folder rootFolder = targetWeb.RootFolder;
+            this.targetClientContext.Load(rootFolder);
+            this.targetClientContext.ExecuteQuery();
 
-            var fileCreationInformation = new FileCreationInformation();
-            fileCreationInformation.Content = this.ConvertStreamToByteArray(documentStream);
-            fileCreationInformation.Overwrite = true;
-            //// Upload URL:
-            fileCreationInformation.Url = this.targetClientContext.Url + documentListURL;
+            FileCreationInformation newFile = new FileCreationInformation();
+            newFile.ContentStream = migrationFile.DownloadedStream;
+            newFile.Overwrite = true;
+            newFile.Url = GetSharedDocumentsUrl(rootFolder) + migrationFile.File.Name;
 
-            Microsoft.SharePoint.Client.File uploadFile = documentsList.RootFolder.Files.Add(fileCreationInformation);
+            File file;
+            Folder folder = GetSharedDocumentsFolder(rootFolder);
 
-            uploadFile.ListItemAllFields.Update();
+            file = folder.Files.Add(newFile);
             this.targetClientContext.ExecuteQuery();
         }
 
-        /// <summary>
-        /// Converts a stream to a byte-array.
-        /// </summary>
-        /// <param name="stream">stream to convert</param>
-        /// <returns>bytearray of stream</returns>
-        private byte[] ConvertStreamToByteArray(Stream stream)
+        private string GetSharedDocumentsUrl(Folder rootFolder)
         {
-            using (var memoryStream = new MemoryStream())
+            string url = GetSharedDocumentsFolder(rootFolder).ServerRelativeUrl;
+            if (!url.EndsWith("/"))
             {
-                stream.CopyTo(memoryStream);
-                return memoryStream.ToArray();
+                url += "/";
+            }
+
+            return url;
+        }
+
+        private Folder GetSharedDocumentsFolder(Folder folder)
+        {
+            FolderCollection folders = folder.Folders;
+            targetClientContext.Load(folders);
+            targetClientContext.ExecuteQuery();
+
+            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(SHARED_DOCUMENTS_FOLDERNAME));
+
+            if (sharedDocumentsFolder == null)
+            {
+                throw new FileMigrationException("Shared Documents folder not found!");
+            }
+            else
+            {
+                return sharedDocumentsFolder;
             }
         }
     }
