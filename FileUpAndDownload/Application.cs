@@ -16,6 +16,9 @@ namespace Sharezbold.FileMigration
     using System.Threading.Tasks;
     using System.Net;
     using System.IO;
+    using System.ServiceModel;
+    using System.ServiceModel.Security;
+    using Sharezbold.Filemigration.Contract;
 
     public class Application
     {
@@ -42,48 +45,21 @@ namespace Sharezbold.FileMigration
             Console.WriteLine("Sharepoint 2010 version = {0}", target.ServerVersion.Major);
             Console.WriteLine("Sharepoint 2013 version = {0}", source.ServerVersion.Major);
 
-            SharePoint2010And2013Migrator migrator = new SharePoint2010And2013Migrator(source, target);
-            migrator.MigrateFilesOfWeb(source.Web, target.Web);
-
-            Console.WriteLine("finished program");
-            Console.ReadKey();
+            var endpointAddress = new EndpointAddress("http://sps2013003:12345/FileMigrationService");
+            FileMigration.FileMigrationClient client = new FileMigration.FileMigrationClient(new WSHttpBinding(SecurityMode.None), endpointAddress);
+            FileMigration.IFileMigration fileMigration = client.ChannelFactory.CreateChannel();
+            IDictionary<string, int> maxFileSizes = fileMigration.GetMaxFileSizePerExtension();
+            foreach (var item in maxFileSizes)
+            {
+                Console.WriteLine("The max file size of '{0}' is '{1}' MegaByte", item.Key, item.Value);
+            }
 
             /*
             SharePoint2010And2013Migrator migrator = new SharePoint2010And2013Migrator(source, target);
-
-            List<string> guids = new List<string>();
-            
-            foreach (var list in lists)
-            {
-                Console.WriteLine("GUID = '{0}'; name of list = '{1}'", list.Id.ToString(), list.Title);
-                guids.Add(list.Id.ToString());
-            }
-            
-            migrator.MigrateFiles(guids);
+            migrator.MigrateFilesOfWeb(source.Web, target.Web);
             */
-            /* bd293c00-bfa9-4282-b824-f109900ced64
-            Console.WriteLine("Start File-Migration");
-            ClientContext source = new ClientContext("http://10.10.102.36");
-            ClientContext target = new ClientContext("http://10.10.102.36");
-            NetworkCredential credentials = new NetworkCredential("Administrator", "P@ssw0rd", "CSSDEV");
-
-            source.Credentials = credentials;
-            target.Credentials = credentials;
-
-            SharePoint2010And2013FileMigrator migrator = new SharePoint2010And2013FileMigrator(source, target);
-
-            string documentListName = "Documents";
-            string documentName = "sharepoint2010.png";
-            string documentType = "Image";
-            string documentNewName = "sharepoint2010_new.png";
-            Stream inputStream = migrator.DownloadDocument(documentListName, documentName);
-            migrator.UploadDocument(documentListName, migrator.RelativeUrl + "new.png", StreamToByte(inputStream));
-
-            inputStream.Close();
-             
-            Console.WriteLine("Finished File-Migartion");
+            Console.WriteLine("finished program");
             Console.ReadKey();
-             * */
         }
     }
 }

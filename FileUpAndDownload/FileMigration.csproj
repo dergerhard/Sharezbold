@@ -39,9 +39,14 @@
     <Reference Include="Microsoft.SharePoint.Client.Runtime">
       <HintPath>..\Dependencies\Microsoft.SharePoint.Client.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="SharezboldContract">
+      <HintPath>..\Dependencies\SharezboldContract.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -51,6 +56,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MigrationFile.cs" />
+    <Compile Include="Service References\FileMigration\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="SharePoint2010And2013Migrator.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="FileMigrationException.cs" />
@@ -63,11 +73,6 @@
     <Compile Include="SharePoint2010And2013Downloader.cs" />
     <Compile Include="SharePoint2010And2013Uploader.cs" />
     <Compile Include="SharePointNotSupportedException.cs" />
-    <Compile Include="Web References\WebReferenceCopy\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -76,35 +81,20 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://10.10.102.36/_vti_bin/copy.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\WebReferenceCopy\</RelPath>
-      <UpdateFromURL>http://10.10.102.36/_vti_bin/copy.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>FileMigration_WebReferenceCopy_Copy</CachedSettingsPropName>
-    </WebReferenceUrl>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Web References\WebReferenceCopy\copy.disco" />
-    <None Include="Web References\WebReferenceCopy\copy.wsdl" />
-    <None Include="Web References\WebReferenceCopy\CopyResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
+    <None Include="Service References\FileMigration\FileMigrationService.wsdl" />
+    <None Include="Service References\FileMigration\FileMigrationService.xsd">
+      <SubType>Designer</SubType>
     </None>
-    <None Include="Web References\WebReferenceCopy\FieldInformation.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
+    <None Include="Service References\FileMigration\FileMigrationService1.xsd">
+      <SubType>Designer</SubType>
     </None>
-    <None Include="Web References\WebReferenceCopy\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
+    <None Include="Service References\FileMigration\FileMigrationService2.xsd">
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +102,21 @@
       <Project>{81c78423-d627-4da9-8d2d-77f5f43c6eff}</Project>
       <Name>Logging</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\FileMigration\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FileMigration\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FileMigration\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FileMigration\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
