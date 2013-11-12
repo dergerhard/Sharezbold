@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MigrationFile.cs" />
     <Compile Include="SharePoint2010And2013Migrator.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="FileMigrationException.cs" />

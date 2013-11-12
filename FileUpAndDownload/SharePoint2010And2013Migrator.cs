@@ -33,11 +33,6 @@ namespace Sharezbold.FileMigration
         private ClientContext targetClientContext;
 
         /// <summary>
-        /// List of found files.
-        /// </summary>
-        private List<ListItem> listItemList;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="SharePoint2010And2013Migrator"/> class.
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
@@ -51,12 +46,14 @@ namespace Sharezbold.FileMigration
         public void MigrateFilesOfWeb(Web sourceWeb, Web targetWeb)
         {
             SharePoint2010And2013Downloader downloader = new SharePoint2010And2013Downloader(this.sourceClientContext);
+            SharePoint2010And2013Uploader uploader = new SharePoint2010And2013Uploader(this.targetClientContext);
 
             FileCollection files = GetFilesOfSharedDocumentsFolder(this.sourceClientContext, sourceWeb);
 
             foreach (File file in files)
             {
                 MigrationFile migrationFile = downloader.DownloadDocument(file);
+                uploader.UploadDocument(migrationFile, targetWeb);
             }
         }
 
