@@ -29,13 +29,16 @@ namespace Sharezbold.FileMigration
             this.sourceClientContext = sourceClientContext;
         }
 
-        internal System.IO.Stream DownloadDocument(File file)
+        internal MigrationFile DownloadDocument(File file)
         {
             ClientResult<System.IO.Stream> streamResult = file.OpenBinaryStream();
             this.sourceClientContext.ExecuteQuery();
 
-            System.IO.Stream stream = streamResult.Value;
-            return stream;
+            MigrationFile migrationFile = new MigrationFile();
+            migrationFile.File = file;
+            migrationFile.DownloadedStream = streamResult.Value;
+
+            return migrationFile;
         }
     }
 }

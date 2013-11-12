@@ -9,7 +9,6 @@ namespace Sharezbold.FileMigration
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using Microsoft.SharePoint.Client;
 
@@ -51,9 +50,16 @@ namespace Sharezbold.FileMigration
 
         public void MigrateFilesOfWeb(Web web)
         {
-            GetFilesOfSharedDocumentsFolder(this.sourceClientContext, web);
-            // TODO download files...
-            // TODO upload files...
+            SharePoint2010And2013Downloader downloader = new SharePoint2010And2013Downloader(this.sourceClientContext);
+
+            FileCollection files = GetFilesOfSharedDocumentsFolder(this.sourceClientContext, web);
+
+            foreach (File file in files)
+            {
+                MigrationFile migrationFile = downloader.DownloadDocument(file);
+            }
+
+            
         }
 
         private FileCollection GetFilesOfSharedDocumentsFolder(ClientContext clientContext, Web web)
