@@ -31,12 +31,18 @@ namespace Sharezbold.FileMigration
 
         internal MigrationFile DownloadDocument(File file)
         {
-            ClientResult<System.IO.Stream> streamResult = file.OpenBinaryStream();
+            Console.WriteLine("Downlaod file '{0}' now.", file.Name);
+            // ClientResult<System.IO.Stream> streamResult = file.OpenBinaryStream();
+            FileInformation fileInformation = File.OpenBinaryDirect(this.sourceClientContext, file.ServerRelativeUrl);
+
+            // this.sourceClientContext.Load(fileInformation);
             this.sourceClientContext.ExecuteQuery();
+
+            System.IO.Stream streamResult = fileInformation.Stream;
 
             MigrationFile migrationFile = new MigrationFile();
             migrationFile.File = file;
-            migrationFile.DownloadedStream = streamResult.Value;
+            migrationFile.DownloadedStream = streamResult;
 
             return migrationFile;
         }
