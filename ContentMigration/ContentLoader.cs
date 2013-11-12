@@ -354,6 +354,7 @@ namespace Sharezbold.ContentMigration
         {
             Task<bool> t = Task.Factory.StartNew(() =>
             {
+                this.log.AddMessage("Migrate lists starting migration of list \"" + list.Name + "\"");
                 // if list with the same name exists --> delete
                 XmlElement l = (XmlElement)list.XmlList;
                 string listName = l.Attributes["Title"].InnerText;
@@ -363,14 +364,16 @@ namespace Sharezbold.ContentMigration
                 try
                 {
                     this.ws.DstLists.DeleteList(listName);
+                    this.log.AddMessage("Migrate lists found list with same title at destinaiton and deleted it");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Log: " + e.Message);
+                    this.log.AddMessage("Migrate lists: " + e.Message, true);
                 }
 
                 //add list from source
                 this.ws.DstLists.AddList(listName, l.Attributes["Description"].InnerText, Convert.ToInt32(l.Attributes["ServerTemplate"].InnerText));
+                this.log.AddMessage("Migrate lists added the new list");
 
                 // copy list properties
                 XmlDocument doc = new XmlDocument();
@@ -399,20 +402,23 @@ namespace Sharezbold.ContentMigration
                 // update the list
                 this.ws.DstLists.UpdateList(listName, listProperties, fields, fields, null, "");
                 string viewUrlBuffer = this.ws.DstViews.Url;
+                this.log.AddMessage("Migrate lists migrated the fields");
 
                 // migrate the views
                 // first delete the dst views
-                try
+                XmlNode viewsToDelete = this.ws.DstViews.GetViewCollection(listName);
+                foreach (XmlNode view in viewsToDelete)
                 {
-                    XmlNode viewsToDelete = this.ws.DstViews.GetViewCollection(listName);
-                    foreach (XmlNode view in viewsToDelete)
+                    try
                     {
                         this.ws.DstViews.DeleteView(listName, view.Attributes["Name"].InnerText);
                     }
+                    catch (Exception e)
+                    {
+                        this.log.AddMessage("Migrate lists, view deletion: " + e.Message, true);
+                    }    
                 }
-                catch (Exception e)
-                {
-                }
+                
 
                 XmlNode viewCollection = this.ws.SrcViews.GetViewCollection(listName);
                 //Console.WriteLine(viewCollection.OuterXml);
@@ -433,10 +439,19 @@ namespace Sharezbold.ContentMigration
                     bool makeViewDefault = viewDetail.Attributes["DefaultView"].InnerText.ToUpper().Equals("TRUE") ? true : false;
 
                     // add the view
-                    this.ws.DstViews.AddView(listName, view.Attributes["DisplayName"].InnerText, viewFields, query, rowLimit, viewDetail.Attributes["Type"].InnerText, makeViewDefault);
+                    try
+                    {
+                        this.ws.DstViews.AddView(listName, view.Attributes["DisplayName"].InnerText, viewFields, query, rowLimit, viewDetail.Attributes["Type"].InnerText, makeViewDefault);
+                        this.log.AddMessage("Migrate lists added view \"" + view.Attributes["DisplayName"].InnerText + "\"");
+                    }
+                    catch (Exception e)
+                    {
+                        this.log.AddMessage("Migrate lists add view error at \"" + view.Attributes["DisplayName"].InnerText + "\": " + e.Message);
+                    }
                 }
                 this.ws.DstViews.Url = viewUrlBuffer;
                 this.ws.DstLists.Url = urlBuffer;
+                this.log.AddMessage("Migrate lists finished");
                 return true;
             });
             return await t;
