@@ -8,7 +8,6 @@
 namespace Sharezbold.FileMigration
 {
     using System;
-    using System.IO;
     using Microsoft.SharePoint.Client;
 
     /// <summary>
@@ -30,25 +29,12 @@ namespace Sharezbold.FileMigration
             this.sourceClientContext = sourceClientContext;
         }
 
-        /// <summary>
-        /// Downloads the document from the SharePoint.
-        /// </summary>
-        /// <param name="relativeUrl">relative url of file</param>
-        /// <returns>Stream of file</returns>
-        internal Stream DownloadDocument(string relativeUrl)
+        internal System.IO.Stream DownloadDocument(File file)
         {
-            Stream stream = null;
-            if (relativeUrl != null)
-            {
-                FileInformation fileInformation = Microsoft.SharePoint.Client.File.OpenBinaryDirect(this.sourceClientContext, relativeUrl);
+            ClientResult<System.IO.Stream> streamResult = file.OpenBinaryStream();
+            this.sourceClientContext.ExecuteQuery();
 
-                stream = fileInformation.Stream;
-            }
-            else
-            {
-                Console.WriteLine("no file-reference was given.");
-            }
-
+            System.IO.Stream stream = streamResult.Value;
             return stream;
         }
     }
