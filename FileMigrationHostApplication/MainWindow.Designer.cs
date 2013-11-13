@@ -1,6 +1,6 @@
 ﻿namespace Sharezbold.FileMigration.Host
 {
-    partial class Form1
+    partial class MainWindow
     {
         /// <summary>
         /// Erforderliche Designervariable.
@@ -38,6 +38,8 @@
             this.buttonStartStopService = new System.Windows.Forms.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.rectangleShapeStatus = new Microsoft.VisualBasic.PowerPacks.RectangleShape();
+            this.textBoxServiceName = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,7 +71,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(3, 55);
+            this.label2.Location = new System.Drawing.Point(5, 51);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 13);
             this.label2.TabIndex = 3;
@@ -77,6 +79,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.textBoxServiceName);
             this.panel1.Controls.Add(this.comboBoxProtocol);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
@@ -115,6 +119,7 @@
             this.buttonStartStopService.TabIndex = 3;
             this.buttonStartStopService.Text = "Start Service";
             this.buttonStartStopService.UseVisualStyleBackColor = true;
+            this.buttonStartStopService.Click += new System.EventHandler(this.ButtonStartStopServiceClick);
             // 
             // shapeContainer1
             // 
@@ -135,7 +140,24 @@
             this.rectangleShapeStatus.Name = "rectangleShapeStatus";
             this.rectangleShapeStatus.Size = new System.Drawing.Size(75, 58);
             // 
-            // Form1
+            // textBoxServiceName
+            // 
+            this.textBoxServiceName.Location = new System.Drawing.Point(99, 77);
+            this.textBoxServiceName.Name = "textBoxServiceName";
+            this.textBoxServiceName.Size = new System.Drawing.Size(158, 20);
+            this.textBoxServiceName.TabIndex = 5;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(3, 80);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(86, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Service-Name";
+            // 
+            // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -144,7 +166,7 @@
             this.Controls.Add(this.labelHeader);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.shapeContainer1);
-            this.Name = "Form1";
+            this.Name = "MainWindow";
             this.Text = "FileMigration - Host Application";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -165,6 +187,8 @@
         private System.Windows.Forms.Button buttonStartStopService;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.RectangleShape rectangleShapeStatus;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textBoxServiceName;
     }
 }
 
