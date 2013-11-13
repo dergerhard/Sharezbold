@@ -32,10 +32,8 @@ namespace Sharezbold.FileMigration
         internal MigrationFile DownloadDocument(File file)
         {
             Console.WriteLine("Downlaod file '{0}' now.", file.Name);
-            // ClientResult<System.IO.Stream> streamResult = file.OpenBinaryStream();
             FileInformation fileInformation = File.OpenBinaryDirect(this.sourceClientContext, file.ServerRelativeUrl);
 
-            // this.sourceClientContext.Load(fileInformation);
             this.sourceClientContext.ExecuteQuery();
 
             System.IO.Stream streamResult = fileInformation.Stream;

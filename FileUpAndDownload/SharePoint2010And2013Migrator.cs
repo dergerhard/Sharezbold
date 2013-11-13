@@ -18,11 +18,6 @@ namespace Sharezbold.FileMigration
     public class SharePoint2010And2013Migrator
     {
         /// <summary>
-        /// Name of shared documents folder.
-        /// </summary>
-        private static string SHARED_DOCUMENTS_FOLDERNAME = "Shared Documents";
-
-        /// <summary>
         /// ClientContext of the source SharePoint.
         /// </summary>
         private ClientContext sourceClientContext;
@@ -45,15 +40,11 @@ namespace Sharezbold.FileMigration
 
         public void MigrateFilesOfWeb(Web sourceWeb, Web targetWeb)
         {
-            SharePoint2010And2013Downloader downloader = new SharePoint2010And2013Downloader(this.sourceClientContext);
-            SharePoint2010And2013Uploader uploader = new SharePoint2010And2013Uploader(this.targetClientContext);
-
             FileCollection files = GetFilesOfSharedDocumentsFolder(this.sourceClientContext, sourceWeb);
 
             foreach (File file in files)
             {
-                MigrationFile migrationFile = downloader.DownloadDocument(file);
-                uploader.UploadDocument(migrationFile, targetWeb);
+                new FileMigrator().MigrateFile(file, this.sourceClientContext, this.targetClientContext, targetWeb);
             }
         }
 
@@ -73,7 +64,7 @@ namespace Sharezbold.FileMigration
             clientContext.Load(folders);
             clientContext.ExecuteQuery();
 
-            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(SHARED_DOCUMENTS_FOLDERNAME));
+            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(FolderName.SHARED_DOCUMENTS_FOLDERNAME));
 
             if (sharedDocumentsFolder == null)
             {

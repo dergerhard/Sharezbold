@@ -16,9 +16,6 @@ namespace Sharezbold.FileMigration
     /// </summary>
     internal class SharePoint2010And2013Uploader
     {
-
-        private static string SHARED_DOCUMENTS_FOLDERNAME = "Shared Documents";
-
         /// <summary>
         /// ClientContext of the server.
         /// </summary>
@@ -70,7 +67,7 @@ namespace Sharezbold.FileMigration
             targetClientContext.Load(folders);
             targetClientContext.ExecuteQuery();
 
-            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(SHARED_DOCUMENTS_FOLDERNAME));
+            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(FolderName.SHARED_DOCUMENTS_FOLDERNAME));
 
             if (sharedDocumentsFolder == null)
             {

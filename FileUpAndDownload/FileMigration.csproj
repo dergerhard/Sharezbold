@@ -55,6 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileMigrator.cs" />
+    <Compile Include="FolderName.cs" />
     <Compile Include="MigrationFile.cs" />
     <Compile Include="Service References\FileMigration\Reference.cs">
       <AutoGen>True</AutoGen>
