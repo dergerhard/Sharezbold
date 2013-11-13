@@ -10,17 +10,17 @@ namespace Sharezbold.FileMigration.Host
         /// </summary>
         static int Main()
         {
-            Console.WriteLine("Please enter the whole uri for the Service (like http://hostname:1234/ServiceName):");
-            string uriAsString = Console.ReadLine();
+            UriBuilder uriBuilder = new UriBuilder();
+            uriBuilder.BuildTheUriWithUserInput();
 
-            HostService hostService = new HostService(new Uri(uriAsString));
+            HostService hostService = new HostService(uriBuilder.Uri);
             bool started = hostService.Start();
 
             if (started)
             {
                 bool stopped = false;
 
-                Console.WriteLine("Started the service. The uri of the service is '{0}'. Write <stop> to stop the service.", uriAsString);
+                Console.WriteLine("Started the service. The uri of the service is '{0}'. Write <stop> to stop the service.", uriBuilder.Uri.ToString());
                 while (!stopped)
                 {
                     string command = Console.ReadLine();
