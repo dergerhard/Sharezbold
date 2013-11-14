@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileMigrationBuilder.cs" />
-    <Compile Include="FileMigrationSpecifikation.cs" />
+    <Compile Include="FileMigrationSpecification.cs" />
     <Compile Include="FileMigrator.cs" />
     <Compile Include="FolderName.cs" />
     <Compile Include="MigrationFile.cs" />

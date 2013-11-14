@@ -17,34 +17,25 @@ namespace Sharezbold.FileMigration
     /// </summary>
     public class SharePoint2010And2013Migrator
     {
-        /// <summary>
-        /// ClientContext of the source SharePoint.
-        /// </summary>
-        private ClientContext sourceClientContext;
-
-        /// <summary>
-        /// ClientContext of the target SharePoint.
-        /// </summary>
-        private ClientContext targetClientContext;
+        private FileMigrationSpecification fileMigrationSpecification;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SharePoint2010And2013Migrator"/> class.
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
-        public SharePoint2010And2013Migrator(ClientContext sourceClientContext, ClientContext targetClientContext)
+        internal SharePoint2010And2013Migrator(FileMigrationSpecification fileMigrationSpecification)
         {
-            this.sourceClientContext = sourceClientContext;
-            this.targetClientContext = targetClientContext;
+            this.fileMigrationSpecification = fileMigrationSpecification;
         }
 
         public void MigrateFilesOfWeb(Web sourceWeb, Web targetWeb)
         {
-            FileCollection files = GetFilesOfSharedDocumentsFolder(this.sourceClientContext, sourceWeb);
+            FileCollection files = GetFilesOfSharedDocumentsFolder(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
 
             foreach (File file in files)
             {
-                new FileMigrator().MigrateFile(file, this.sourceClientContext, this.targetClientContext, targetWeb);
+                new FileMigrator().MigrateFile(file, this.fileMigrationSpecification.SourceClientContext, this.fileMigrationSpecification.TargetClientContext, targetWeb);
             }
         }
 

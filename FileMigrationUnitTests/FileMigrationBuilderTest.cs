@@ -12,12 +12,12 @@ namespace Sharezbold.FileMigration.Unittests
         [TestMethod]
         public void TestBuildfileMigratorWithoutSourceClientContext()
         {
-            ClientContext clientContext = new ClientContext("blub");
+            ClientContext clientContext = new ClientContext("http://blub");
 
             FileMigrationBuilder builder = FileMigrationBuilder.GetNewFileMigrationBuilder();
             builder.WithTargetClientContext(clientContext);
             builder.WithBandwith(10);
-            builder.WithServiceAddress(new Uri("Address"));
+            builder.WithServiceAddress(new Uri("http://Address"));
 
             try
             {
@@ -33,12 +33,12 @@ namespace Sharezbold.FileMigration.Unittests
         [TestMethod]
         public void TestBuildfileMigratorWithoutTargetClientContext()
         {
-            ClientContext clientContext = new ClientContext("blub");
+            ClientContext clientContext = new ClientContext("http://blub");
 
             FileMigrationBuilder builder = FileMigrationBuilder.GetNewFileMigrationBuilder();
             builder.WithSourceClientContext(clientContext);
             builder.WithBandwith(10);
-            builder.WithServiceAddress(new Uri("Address"));
+            builder.WithServiceAddress(new Uri("http://Address"));
 
             try
             {
@@ -54,7 +54,7 @@ namespace Sharezbold.FileMigration.Unittests
         [TestMethod]
         public void TestBuildfileMigratorWithoutServiceAddress()
         {
-            ClientContext clientContext = new ClientContext("blub");
+            ClientContext clientContext = new ClientContext("http://blub");
 
             FileMigrationBuilder builder = FileMigrationBuilder.GetNewFileMigrationBuilder();
             builder.WithTargetClientContext(clientContext);
@@ -75,12 +75,12 @@ namespace Sharezbold.FileMigration.Unittests
         [TestMethod]
         public void TestBuildfileMigratorWithoutBandwith()
         {
-            ClientContext clientContext = new ClientContext("blub");
+            ClientContext clientContext = new ClientContext("http://blub");
 
             FileMigrationBuilder builder = FileMigrationBuilder.GetNewFileMigrationBuilder();
             builder.WithTargetClientContext(clientContext);
             builder.WithSourceClientContext(clientContext);
-            builder.WithBandwith(10);
+            builder.WithServiceAddress(new Uri("http://bulub"));
 
             SharePoint2010And2013Migrator migrator = builder.CreateMigrator();
 
@@ -91,7 +91,13 @@ namespace Sharezbold.FileMigration.Unittests
         [TestMethod]
         public void TestBuildFileMigratorSuccessful()
         {
+            ClientContext clientContext = new ClientContext("http://blub");
+
             FileMigrationBuilder builder = FileMigrationBuilder.GetNewFileMigrationBuilder();
+            builder.WithTargetClientContext(clientContext);
+            builder.WithSourceClientContext(clientContext);
+            builder.WithBandwith(10);
+            builder.WithServiceAddress(new Uri("http://address"));
 
             SharePoint2010And2013Migrator migrator = builder.CreateMigrator();
             

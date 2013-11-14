@@ -48,7 +48,7 @@ namespace Sharezbold.FileMigration
         {
             this.specification.Validate();
 
-            return new SharePoint2010And2013Migrator(null, null);
+            return new SharePoint2010And2013Migrator(this.specification);
         }
     }
 }

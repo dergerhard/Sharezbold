@@ -10,6 +10,16 @@ namespace Sharezbold.FileMigration
 
     internal class FileMigrationSpecification
     {
+        public FileMigrationSpecification()
+        {
+            this.SourceClientContext = null;
+            this.TargetClientContext = null;
+            this.ServiceAddress = null;
+            this.Bandwith = 100;
+            this.BlockedFileExtensions = null;
+            this.MaxFileSize = int.MaxValue;
+        }
+
         internal ClientContext SourceClientContext { get; set; }
         internal ClientContext TargetClientContext { get; set; }
         internal Uri ServiceAddress { get; set; }
