@@ -12,13 +12,20 @@ namespace Sharezbold.FileMigration
     internal class FileMigrator
     {
 
-        internal void MigrateFile(File file, ClientContext sourceClientContext, ClientContext targetClientContext, Web targetWeb)
+        internal void MigrateFile(File file, FileMigrationSpecification specification, Web targetWeb)
         {
-            SharePoint2010And2013Downloader downloader = new SharePoint2010And2013Downloader(sourceClientContext);
-            SharePoint2010And2013Uploader uploader = new SharePoint2010And2013Uploader(targetClientContext);
+            SharePoint2010And2013Downloader downloader = new SharePoint2010And2013Downloader(specification);
+            SharePoint2010And2013Uploader uploader = new SharePoint2010And2013Uploader(specification.TargetClientContext);
 
-            MigrationFile migrationFile = downloader.DownloadDocument(file);
-            uploader.UploadDocument(migrationFile, targetWeb);
+            try
+            {                
+                MigrationFile migrationFile = downloader.DownloadDocument(file);
+                uploader.UploadDocument(migrationFile, targetWeb);
+            }
+            catch (OperationCanceledException e)
+            {
+                Console.WriteLine("Exception: {0}", e.Message);
+            }
         }
     }
 }

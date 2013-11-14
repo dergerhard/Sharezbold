@@ -12,6 +12,6 @@ namespace Sharezbold.FileMigration
     internal class MigrationFile
     {
         internal File File { get; set; }
-        internal System.IO.Stream DownloadedStream { get; set; }
+        internal byte[] Content { get; set; }
     }
 }

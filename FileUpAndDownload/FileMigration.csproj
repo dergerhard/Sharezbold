@@ -39,9 +39,6 @@
     <Reference Include="Microsoft.SharePoint.Client.Runtime">
       <HintPath>..\Dependencies\Microsoft.SharePoint.Client.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="SharezboldContract">
-      <HintPath>..\Dependencies\SharezboldContract.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.EnterpriseServices" />
@@ -60,7 +57,7 @@
     <Compile Include="FileMigrator.cs" />
     <Compile Include="FolderName.cs" />
     <Compile Include="MigrationFile.cs" />
-    <Compile Include="Service References\FileMigration\Reference.cs">
+    <Compile Include="Service References\FileMigrationService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -91,14 +88,14 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Service References\FileMigration\FileMigrationService.wsdl" />
-    <None Include="Service References\FileMigration\FileMigrationService.xsd">
+    <None Include="Service References\FileMigrationService\FileMigrationService.wsdl" />
+    <None Include="Service References\FileMigrationService\FileMigrationService.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\FileMigration\FileMigrationService1.xsd">
+    <None Include="Service References\FileMigrationService\FileMigrationService1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\FileMigration\FileMigrationService2.xsd">
+    <None Include="Service References\FileMigrationService\FileMigrationService2.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -109,16 +106,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Service References\FileMigration\" />
+    <WCFMetadataStorage Include="Service References\FileMigrationService\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\FileMigration\configuration91.svcinfo" />
+    <None Include="Service References\FileMigrationService\configuration91.svcinfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\FileMigration\configuration.svcinfo" />
+    <None Include="Service References\FileMigrationService\configuration.svcinfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\FileMigration\Reference.svcmap">
+    <None Include="Service References\FileMigrationService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

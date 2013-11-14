@@ -10,6 +10,8 @@ namespace Sharezbold.FileMigration
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.ServiceModel;
+    using System.ServiceModel.Description;
     using Microsoft.SharePoint.Client;
 
     /// <summary>
@@ -27,6 +29,8 @@ namespace Sharezbold.FileMigration
         internal SharePoint2010And2013Migrator(FileMigrationSpecification fileMigrationSpecification)
         {
             this.fileMigrationSpecification = fileMigrationSpecification;
+
+            this.SpecifySharePointSpecification();
         }
 
         public void MigrateFilesOfWeb(Web sourceWeb, Web targetWeb)
@@ -35,7 +39,7 @@ namespace Sharezbold.FileMigration
 
             foreach (File file in files)
             {
-                new FileMigrator().MigrateFile(file, this.fileMigrationSpecification.SourceClientContext, this.fileMigrationSpecification.TargetClientContext, targetWeb);
+                new FileMigrator().MigrateFile(file, this.fileMigrationSpecification, targetWeb);
             }
         }
 
@@ -72,10 +76,27 @@ namespace Sharezbold.FileMigration
             FileCollection files = folder.Files;
             clientContext.Load(files);
             clientContext.ExecuteQuery();
-            
+
             // TODO where files ends with...
 
             return files;
+        }
+
+        private void SpecifySharePointSpecification()
+        {
+            try
+            {
+                var endpointAddress = new EndpointAddress(this.fileMigrationSpecification.ServiceAddress);
+                FileMigrationService.FileMigrationClient client = new FileMigrationService.FileMigrationClient(new WSHttpBinding(SecurityMode.None), endpointAddress);
+                FileMigrationService.IFileMigration fileMigrationService = client.ChannelFactory.CreateChannel();
+
+                Console.WriteLine("Setting the max file size.");
+                this.fileMigrationSpecification.MaxFileSize = fileMigrationService.GetMaxMessageSize();
+            }
+            catch (Exception)
+            {
+                throw new FileMigrationException("Could not connect to the service '" + this.fileMigrationSpecification.ServiceAddress.ToString() + "'.");
+            }
         }
     }
 }
