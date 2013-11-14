@@ -121,7 +121,7 @@ namespace Sharezbold
             this.EnableTab(this.tabPageMigrationProgress, false);
 
             this.log = new Logger(this.listBoxMigrationLog, "c:\\log.txt");
-            log.AddMessage("Program started");
+            this.log.AddMessage("Program started");
 
         }
                 
@@ -132,7 +132,7 @@ namespace Sharezbold
         /// <param name="onlyLogFile">if true, message is only written to the file</param>
         internal void UpdateProgressLog(string logItem, bool onlyLogFile=false)
         {
-            log.AddMessage(logItem, onlyLogFile);
+            this.log.AddMessage(logItem, onlyLogFile);
         }
 
         /// <summary>
@@ -617,6 +617,7 @@ namespace Sharezbold
              */
             this.waitForm.Show();
             this.waitForm.SpecialText = "loading migration elements";
+            this.log.AddMessage("Loading migration elements");
 
             Task<bool> t = Task<bool>.Factory.StartNew(() =>
             {

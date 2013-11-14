@@ -194,6 +194,8 @@ namespace Sharezbold.ContentMigration
              *  6. Transfer files
              */
 
+            this.log.AddMessage("Migration started");
+
             // specifies whether to go on with the migration
             bool keepGoing = true;
 
@@ -229,8 +231,12 @@ namespace Sharezbold.ContentMigration
 
             if (!keepGoing)
             {
-                this.log.AddMessage("MIGRATION ABORTED");
-            }          
+                this.log.AddMessage("Migration ABORTED");
+            }
+            else
+            {
+                this.log.AddMessage("Migration finished");
+            }
              
             // migrate site columns
             // TODO: implement for all sites
@@ -375,8 +381,16 @@ namespace Sharezbold.ContentMigration
                 }
 
                 //add list from source
-                this.ws.DstLists.AddList(listName, l.Attributes["Description"].InnerText, Convert.ToInt32(l.Attributes["ServerTemplate"].InnerText));
-                this.log.AddMessage("Migrate lists added the new list");
+                try
+                {
+                    this.ws.DstLists.AddList(listName, l.Attributes["Description"].InnerText, Convert.ToInt32(l.Attributes["ServerTemplate"].InnerText));
+                    this.log.AddMessage("Migrate lists added the new list");
+                }
+                catch (Exception e)
+                {
+                    //if this occurrs, the list already exists - altought this should not be possible as it is deleted before, it still happens
+                    this.log.AddMessage("Adding the list \"" + listName + "\" failed. Error: " + e.Message);
+                }
 
                 // copy list properties
                 XmlDocument doc = new XmlDocument();
@@ -388,7 +402,7 @@ namespace Sharezbold.ContentMigration
                     try
                     {
                         this.ws.DstLists.UpdateList(listName, listProperties, null, null, null, "");
-                        this.log.AddMessage("added attribute: " + attr.Name);
+                        //this.log.AddMessage("added attribute: " + attr.Name, true);
                     }
                     catch (Exception e)
                     {
@@ -416,7 +430,7 @@ namespace Sharezbold.ContentMigration
                         try
                         {
                             this.ws.DstLists.UpdateList(listName, null, fields, fields, null, "");
-                            this.log.AddMessage("Migrate lists migrated the field  with id " + i.ToString());
+                            //this.log.AddMessage("Migrate lists migrated the field  with id " + i.ToString());
                         }
                         catch (Exception e)
                         {
@@ -458,7 +472,6 @@ namespace Sharezbold.ContentMigration
                     }
                 }
                 
-
                 XmlNode viewCollection = this.ws.SrcViews.GetViewCollection(listName);
                 //Console.WriteLine(viewCollection.OuterXml);
                 foreach (XmlNode view in viewCollection)
@@ -467,21 +480,34 @@ namespace Sharezbold.ContentMigration
                     XmlNode viewDetail = this.ws.SrcViews.GetView(listName, viewName);
 
                     XmlDocument doc2 = new XmlDocument();
-                    XmlElement viewFields = (XmlElement)doc2.ImportNode(viewDetail["ViewFields"], true);
+                    XmlElement viewFields =viewDetail.SelectSingleNode("ViewFields")!= null ? (XmlElement)doc2.ImportNode(viewDetail["ViewFields"], true) : null;
 
                     XmlDocument doc3 = new XmlDocument();
-                    XmlElement query = (XmlElement)doc3.ImportNode(viewDetail["Query"], true);
+                    XmlElement query = viewDetail.SelectSingleNode("Query")!= null ? (XmlElement)doc3.ImportNode(viewDetail["Query"], true) : null;
 
                     XmlDocument doc4 = new XmlDocument();
-                    XmlElement rowLimit = (XmlElement)doc4.ImportNode(viewDetail["RowLimit"], true);
-
-                    bool makeViewDefault = viewDetail.Attributes["DefaultView"].InnerText.ToUpper().Equals("TRUE") ? true : false;
+                    XmlElement rowLimit = viewDetail.SelectSingleNode("RowLimit")!=null ?  (XmlElement)doc4.ImportNode(viewDetail["RowLimit"], true) : null;
+                    
+                    bool makeViewDefault = false;
+                    try
+                    {
+                        makeViewDefault = viewDetail.Attributes["DefaultView"].InnerText.ToUpper().Equals("TRUE") ? true : false;
+                    }
+                    catch (Exception e)
+                    {
+                        this.log.AddMessage("\"DefaultView\" attribute missing. Continuing.", true);
+                    }
 
                     // add the view
                     try
                     {
                         this.ws.DstViews.AddView(listName, view.Attributes["DisplayName"].InnerText, viewFields, query, rowLimit, viewDetail.Attributes["Type"].InnerText, makeViewDefault);
                         this.log.AddMessage("Migrate lists added view \"" + view.Attributes["DisplayName"].InnerText + "\"");
+                        if (view.Attributes["DisplayName"].InnerText.Equals("All Events"))
+                        {
+                            Console.WriteLine("yay");
+                        }
+
                     }
                     catch (Exception e)
                     {
@@ -525,9 +551,111 @@ namespace Sharezbold.ContentMigration
              *          ows_Modified="2013-11-05 16:50:12" 
              *          ows_FileRef="1;#Lists/MyJobApplications/1_.000" 
              *          xmlns:z="#RowsetSchema" />
+             *          
+             *          how to do it:
+             *          1. get the ids and all information
+             *          2. create the elements only with its IDs
+             *          3. Update every attribute in own Method for failsafe
              */
+            
+
+            
+            XmlElement listdata = (XmlElement)list.XmlListData;
+
+            //                                      ID, List<Attribute, AttributeValue>
+            var migrationElements = new Dictionary<int, List<KeyValuePair<string, string>>>();
+
+            //iterate through z:row-nodes
+            foreach (XmlLinkedNode row in listdata["rs:data"])
+            {
+                if (row.GetType() == typeof(XmlElement))
+                {
+                    int id = int.Parse(row.Attributes["ows_ID"].InnerText);
+                    var attrs = new List<KeyValuePair<string, string>>();
+
+                    XmlElement el = (XmlElement)row;
+                    
+                    // iterate through attributes
+                    foreach (XmlAttribute attr in el.Attributes)
+                    {
+                        if (attr.Name.StartsWith("ows_") && !attr.Name.Equals("ID"))
+                        {
+                            attrs.Add(new KeyValuePair<string,string>(attr.Name.Substring(4), attr.Value));
+                        }
+                    }
+                    migrationElements.Add(id, attrs);
+                }
+            }
 
 
+            //generate batch
+            // set up batch node
+            XmlDocument doc = new XmlDocument();
+            XmlElement batchElement = doc.CreateElement("Batch");
+            batchElement.SetAttribute("OnError", "Continue");
+            batchElement.SetAttribute("ListVersion", "1");
+        
+            int i=1;
+            foreach (var el in migrationElements)
+            {
+                //create new element with id
+                var method = doc.CreateElement("Method");
+                method.SetAttribute("ID", i.ToString());
+                method.SetAttribute("Cmd", "New");
+                
+                var field = doc.CreateElement("Field");
+                field.SetAttribute("Name", "ID");
+                field.InnerText = el.Key.ToString();
+                method.AppendChild(field);
+                batchElement.AppendChild(method);
+
+                i++;
+                //create all following elements
+                foreach (var attribute in el.Value)
+                {
+                    if (!attribute.Key.Equals("ID"))
+                    {
+                        var method2 = doc.CreateElement("Method");
+                        method2.SetAttribute("ID", i.ToString());
+                        method2.SetAttribute("Cmd", "Update");
+
+                        var field2 = doc.CreateElement("Field");
+                        field2.SetAttribute("Name", "ID");
+                        field2.InnerText = el.Key.ToString();
+                        method2.AppendChild(field2);
+
+                        var field3 = doc.CreateElement("Field");
+                        field3.SetAttribute("Name", attribute.Key);
+                        field3.InnerText = attribute.Value;
+                        method2.AppendChild(field3);
+
+                        batchElement.AppendChild(method2);
+                        i++;
+                    }
+                }
+
+            }
+            /*
+                            Console.WriteLine(attr.Name.Substring(4) + ": " + attr.Value);
+                            var field = doc.CreateElement("Field");
+                            field.SetAttribute("Name", attr.Name.Substring(4));
+                            field.InnerText = attr.Value.Replace("1;#", "");
+                            method.AppendChild(field);*/
+
+                                //batchElement.AppendChild(method);
+
+
+            try
+            {
+                this.ws.DstLists.UpdateListItems(list.Name, batchElement);
+            }
+            catch (Exception ex)
+            {
+                this.log.AddMessage("Error while transfering list data. Error message: " + ex.Message);
+            }
+
+
+            /*
             // set up batch node
             XmlDocument doc = new XmlDocument();
             XmlElement batchElement = doc.CreateElement("Batch");
@@ -573,6 +701,8 @@ namespace Sharezbold.ContentMigration
             {
                 this.log.AddMessage("Error while transfering list data. Error message: " + ex.Message);
             }
+             * 
+             */
 
 
             return true;

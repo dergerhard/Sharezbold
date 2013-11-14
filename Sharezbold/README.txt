@@ -150,6 +150,37 @@ Review Infos Gerhard:
 
 + manchmal wirklich blöde fehler (Mitschnitt mit Wireshark, jedoch wird gar nix angezeigt... nach langer suche draufgekommen, dass er beim Zugriff auf den Localhost das offensichtlich über eine Art loopback sendet und somit gar nix anzeigt....)
 
+
+
+Fehlermeldungen: Werden in der Exception nicht ausgegeben (nur SoapServerException). Im SOAP wird dann folgendes mitgeschickt:
+--> Einfügen eines Listenelements (keine Exception, jedoch wird das vom Server zurückgeschickt)
+
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<soap:Body>
+		<UpdateListItemsResponse xmlns="http://schemas.microsoft.com/sharepoint/soap/">
+			<UpdateListItemsResult>
+				<Results>
+					<Result ID="1,New">
+						<ErrorCode>0x80070057</ErrorCode>
+						<ErrorText>Bad parameter passed to Web Server Extensions.  Check the information you entered and try again.</ErrorText>
+					</Result>
+					<Result ID="2,New">
+						<ErrorCode>0x80020005</ErrorCode>
+						<ErrorText>The operation failed because an unexpected error occurred. (Result Code: 0x80020005)</ErrorText>
+					</Result>
+				</Results>
+			</UpdateListItemsResult>
+		</UpdateListItemsResponse>
+	</soap:Body>
+</soap:Envelope>
+
+--> keine Information welche Liste oder welches Element betroffen ist
+--> Das Web Service weiß offensichtlich, dass es einen "Bad parameter" gegeben hat, sagt mir aber nicht welchen. 
+-->			Also muss ich im Ausschlussverfahren (was passiert, wenn ich den einen oder den anderen weglasse) nach dem Fehler suchen
+
+
+
 Async Programming
 http://msdn.microsoft.com/de-de/library/vstudio/hh191443.aspx
 
