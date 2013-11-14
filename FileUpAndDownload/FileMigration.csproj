@@ -55,6 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileMigrationBuilder.cs" />
+    <Compile Include="FileMigrationSpecifikation.cs" />
     <Compile Include="FileMigrator.cs" />
     <Compile Include="FolderName.cs" />
     <Compile Include="MigrationFile.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="SharePoint2010And2013Downloader.cs" />
     <Compile Include="SharePoint2010And2013Uploader.cs" />
     <Compile Include="SharePointNotSupportedException.cs" />
+    <Compile Include="ValidationException.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
