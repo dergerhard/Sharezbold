@@ -28,6 +28,7 @@ namespace Sharezbold.FileMigration.Service
             {
                 Console.WriteLine("Exception: {0}", e.Message);
             }
+
             return maxFileSizes;
         }
 
@@ -44,6 +45,8 @@ namespace Sharezbold.FileMigration.Service
                 Console.WriteLine("Exception: {0}", e.Message);
             }
 
+            Console.WriteLine("The max file size is {0}", maxFileSize);
+
             return maxFileSize;
         }
 
@@ -59,6 +62,8 @@ namespace Sharezbold.FileMigration.Service
             {
                 Console.WriteLine("Exception: {0}", e.Message);
             }
+
+            Console.WriteLine("The max message size is {0}", maxMessageSize);
 
             return maxMessageSize;
         }
