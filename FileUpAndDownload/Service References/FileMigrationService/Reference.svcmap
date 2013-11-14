@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="c9b809b0-2652-4fc3-adb6-93d9e2ea2a1d" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="e54e0930-de69-4864-8c5b-a68e4fe1ed13" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -22,10 +22,10 @@
     <MetadataSource Address="http://sps2013003:12345/FileMigrationService?wsdl" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="FileMigrationService.xsd" MetadataType="Schema" ID="122024a7-1fb4-4f43-821e-b44ca74b4450" SourceId="1" SourceUrl="http://sps2013003:12345/FileMigrationService?xsd=xsd0" />
-    <MetadataFile FileName="FileMigrationService1.xsd" MetadataType="Schema" ID="30eba329-9f86-47c0-ab0d-3eb12a1c11e7" SourceId="1" SourceUrl="http://sps2013003:12345/FileMigrationService?xsd=xsd1" />
-    <MetadataFile FileName="FileMigrationService.wsdl" MetadataType="Wsdl" ID="e6a72124-1c79-4c5f-9a7b-2f7ce6541c78" SourceId="1" SourceUrl="http://sps2013003:12345/FileMigrationService?wsdl" />
-    <MetadataFile FileName="FileMigrationService2.xsd" MetadataType="Schema" ID="15b2f0ca-593f-4efa-a56c-0f8a6fd2143f" SourceId="1" SourceUrl="http://sps2013003:12345/FileMigrationService?xsd=xsd2" />
+    <MetadataFile FileName="FileMigrationService.xsd" MetadataType="Schema" ID="422c7748-2dd1-4498-bc0e-83032e3d073d" SourceId="1" SourceUrl="http://sps2013003:12345/FileMigrationService?xsd=xsd0" />
+    <MetadataFile FileName="FileMigrationService1.xsd" MetadataType="Schema" ID="ee714407-8042-4e5d-82fa-6ee92555b5e2" SourceId="1" SourceUrl="http://sps2013003:12345/FileMigrationService?xsd=xsd1" />
+    <MetadataFile FileName="FileMigrationService.wsdl" MetadataType="Wsdl" ID="2bb15c97-4860-47c1-8866-1b09a09cdaab" SourceId="1" SourceUrl="http://sps2013003:12345/FileMigrationService?wsdl" />
+    <MetadataFile FileName="FileMigrationService2.xsd" MetadataType="Schema" ID="7b685b28-b1ff-4498-a328-ca63d96fa2e3" SourceId="1" SourceUrl="http://sps2013003:12345/FileMigrationService?xsd=xsd2" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

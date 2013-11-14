@@ -43,7 +43,7 @@ namespace Sharezbold.FileMigration
 
             Console.WriteLine("Sharepoint 2010 version = {0}", target.ServerVersion.Major);
             Console.WriteLine("Sharepoint 2013 version = {0}", source.ServerVersion.Major);
-
+            /*
             var endpointAddress = new EndpointAddress("http://sps2013003:12345/FileMigrationService");
             FileMigration.FileMigrationClient client = new FileMigration.FileMigrationClient(new WSHttpBinding(SecurityMode.None), endpointAddress);
             FileMigration.IFileMigration fileMigration = client.ChannelFactory.CreateChannel();
@@ -52,11 +52,11 @@ namespace Sharezbold.FileMigration
             {
                 Console.WriteLine("The max file size of '{0}' is '{1}' MegaByte", item.Key, item.Value);
             }
-
-            /*
-            SharePoint2010And2013Migrator migrator = new SharePoint2010And2013Migrator(source, target);
-            migrator.MigrateFilesOfWeb(source.Web, target.Web);
             */
+
+            SharePoint2010And2013Migrator migrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithServiceAddress(new Uri("http://sps2013003:12345/FileMigrationService")).WithSourceClientContext(source).WithTargetClientContext(target).CreateMigrator();
+            migrator.MigrateFilesOfWeb(source.Web, target.Web);
+            
             Console.WriteLine("finished program");
             Console.ReadKey();
         }

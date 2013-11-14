@@ -10,6 +10,8 @@ namespace Sharezbold.FileMigration
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.ServiceModel;
+    using System.ServiceModel.Description;
     using Microsoft.SharePoint.Client;
 
     /// <summary>
@@ -17,43 +19,27 @@ namespace Sharezbold.FileMigration
     /// </summary>
     public class SharePoint2010And2013Migrator
     {
-        /// <summary>
-        /// Name of shared documents folder.
-        /// </summary>
-        private static string SHARED_DOCUMENTS_FOLDERNAME = "Shared Documents";
-
-        /// <summary>
-        /// ClientContext of the source SharePoint.
-        /// </summary>
-        private ClientContext sourceClientContext;
-
-        /// <summary>
-        /// ClientContext of the target SharePoint.
-        /// </summary>
-        private ClientContext targetClientContext;
+        private FileMigrationSpecification fileMigrationSpecification;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SharePoint2010And2013Migrator"/> class.
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
-        public SharePoint2010And2013Migrator(ClientContext sourceClientContext, ClientContext targetClientContext)
+        internal SharePoint2010And2013Migrator(FileMigrationSpecification fileMigrationSpecification)
         {
-            this.sourceClientContext = sourceClientContext;
-            this.targetClientContext = targetClientContext;
+            this.fileMigrationSpecification = fileMigrationSpecification;
+
+            this.SpecifySharePointSpecification();
         }
 
         public void MigrateFilesOfWeb(Web sourceWeb, Web targetWeb)
         {
-            SharePoint2010And2013Downloader downloader = new SharePoint2010And2013Downloader(this.sourceClientContext);
-            SharePoint2010And2013Uploader uploader = new SharePoint2010And2013Uploader(this.targetClientContext);
-
-            FileCollection files = GetFilesOfSharedDocumentsFolder(this.sourceClientContext, sourceWeb);
+            FileCollection files = GetFilesOfSharedDocumentsFolder(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
 
             foreach (File file in files)
             {
-                MigrationFile migrationFile = downloader.DownloadDocument(file);
-                uploader.UploadDocument(migrationFile, targetWeb);
+                new FileMigrator().MigrateFile(file, this.fileMigrationSpecification, targetWeb);
             }
         }
 
@@ -73,7 +59,7 @@ namespace Sharezbold.FileMigration
             clientContext.Load(folders);
             clientContext.ExecuteQuery();
 
-            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(SHARED_DOCUMENTS_FOLDERNAME));
+            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(FolderName.SHARED_DOCUMENTS_FOLDERNAME));
 
             if (sharedDocumentsFolder == null)
             {
@@ -90,10 +76,27 @@ namespace Sharezbold.FileMigration
             FileCollection files = folder.Files;
             clientContext.Load(files);
             clientContext.ExecuteQuery();
-            
+
             // TODO where files ends with...
 
             return files;
+        }
+
+        private void SpecifySharePointSpecification()
+        {
+            try
+            {
+                var endpointAddress = new EndpointAddress(this.fileMigrationSpecification.ServiceAddress);
+                FileMigrationService.FileMigrationClient client = new FileMigrationService.FileMigrationClient(new WSHttpBinding(SecurityMode.None), endpointAddress);
+                FileMigrationService.IFileMigration fileMigrationService = client.ChannelFactory.CreateChannel();
+
+                Console.WriteLine("Setting the max file size.");
+                this.fileMigrationSpecification.MaxFileSize = fileMigrationService.GetMaxMessageSize();
+            }
+            catch (Exception)
+            {
+                throw new FileMigrationException("Could not connect to the service '" + this.fileMigrationSpecification.ServiceAddress.ToString() + "'.");
+            }
         }
     }
 }

@@ -15,36 +15,51 @@ namespace Sharezbold.FileMigration
     /// </summary>
     internal class SharePoint2010And2013Downloader
     {
-        /// <summary>
-        /// The ClientContext of the source SharePoint.
-        /// </summary>
-        private ClientContext sourceClientContext;
+        private FileMigrationSpecification specification;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SharePoint2010And2013Downloader"/> class.
         /// </summary>
         /// <param name="sourceClientContext">clientContext of the source SharePoint</param>
-        public SharePoint2010And2013Downloader(ClientContext sourceClientContext)
+        public SharePoint2010And2013Downloader(FileMigrationSpecification specification)
         {
-            this.sourceClientContext = sourceClientContext;
+            this.specification = specification;
         }
 
         internal MigrationFile DownloadDocument(File file)
         {
+            ClientContext sourceClientContext = this.specification.SourceClientContext;
             Console.WriteLine("Downlaod file '{0}' now.", file.Name);
-            // ClientResult<System.IO.Stream> streamResult = file.OpenBinaryStream();
-            FileInformation fileInformation = File.OpenBinaryDirect(this.sourceClientContext, file.ServerRelativeUrl);
+            FileInformation fileInformation = File.OpenBinaryDirect(sourceClientContext, file.ServerRelativeUrl);
+            sourceClientContext.ExecuteQuery();
 
-            // this.sourceClientContext.Load(fileInformation);
-            this.sourceClientContext.ExecuteQuery();
+            byte[] content = ReadFully(fileInformation.Stream);
 
-            System.IO.Stream streamResult = fileInformation.Stream;
+            if (content.Length > this.specification.MaxFileSize)
+            {
+                throw new OperationCanceledException("Filesize of file '" + file.Name + "' is too big for upload.");
+            }
 
             MigrationFile migrationFile = new MigrationFile();
             migrationFile.File = file;
-            migrationFile.DownloadedStream = streamResult;
+            migrationFile.Content = content;
 
             return migrationFile;
+        }
+
+        private byte[] ReadFully(System.IO.Stream input)
+        {
+
+            byte[] buffer = new byte[16 * 1024];
+            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
         }
     }
 }

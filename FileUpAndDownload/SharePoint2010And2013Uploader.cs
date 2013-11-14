@@ -16,9 +16,6 @@ namespace Sharezbold.FileMigration
     /// </summary>
     internal class SharePoint2010And2013Uploader
     {
-
-        private static string SHARED_DOCUMENTS_FOLDERNAME = "Shared Documents";
-
         /// <summary>
         /// ClientContext of the server.
         /// </summary>
@@ -42,7 +39,7 @@ namespace Sharezbold.FileMigration
             this.targetClientContext.ExecuteQuery();
 
             FileCreationInformation newFile = new FileCreationInformation();
-            newFile.Content = ReadFully(migrationFile.DownloadedStream);
+            newFile.Content = migrationFile.Content;
             newFile.Overwrite = true;
             newFile.Url = GetSharedDocumentsUrl(rootFolder) + migrationFile.File.Name;
 
@@ -70,7 +67,7 @@ namespace Sharezbold.FileMigration
             targetClientContext.Load(folders);
             targetClientContext.ExecuteQuery();
 
-            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(SHARED_DOCUMENTS_FOLDERNAME));
+            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(FolderName.SHARED_DOCUMENTS_FOLDERNAME));
 
             if (sharedDocumentsFolder == null)
             {
@@ -79,39 +76,6 @@ namespace Sharezbold.FileMigration
             else
             {
                 return sharedDocumentsFolder;
-            }
-        }
-
-        private System.IO.MemoryStream ConvertStreamToMemoryStream(System.IO.Stream stream)
-        {
-            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
- 
-            if (stream != null)
-            {
-
-                byte[] buffer = ReadFully(stream);
- 
-                if (buffer != null)
-                {
-                    var binaryWriter = new System.IO.BinaryWriter(memoryStream);
-                    binaryWriter.Write(buffer);
-                }
-            }
-            return memoryStream;
-        }
-
-        private byte[] ReadFully(System.IO.Stream input)
-        {
- 
-            byte[] buffer = new byte[16 * 1024];
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-            {
-                int read;
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    ms.Write(buffer, 0, read);
-                }
-                return ms.ToArray();
             }
         }
     }
