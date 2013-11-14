@@ -1,5 +1,4 @@
 ﻿
-
 namespace Sharezbold.FileMigration.Unittests
 {
     using System;
