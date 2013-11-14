@@ -26,7 +26,7 @@ namespace Sharezbold.FileMigration.Service
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: ", e);
+                Console.WriteLine("Exception: {0}", e.Message);
             }
             return maxFileSizes;
         }
@@ -41,10 +41,26 @@ namespace Sharezbold.FileMigration.Service
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: ", e);
+                Console.WriteLine("Exception: {0}", e.Message);
             }
 
             return maxFileSize;
+        }
+
+        public int GetMaxMessageSize()
+        {
+            Console.WriteLine("Called GetMaxMessageSize()");
+            int maxMessageSize = -1;
+            try
+            {
+                maxMessageSize = SPWebService.ContentService.ClientRequestServiceSettings.MaxReceivedMessageSize;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: {0}", e.Message);
+            }
+
+            return maxMessageSize;
         }
 
 

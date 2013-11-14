@@ -16,5 +16,8 @@ namespace Sharezbold.FileMigration.Contract
 
         [OperationContract]
         IDictionary<string, int> GetMaxFileSizePerExtension();
+
+        [OperationContract]
+        int GetMaxMessageSize();
     }
 }
