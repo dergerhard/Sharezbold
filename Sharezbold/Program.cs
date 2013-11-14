@@ -35,6 +35,7 @@ namespace Sharezbold
                 //loader.LoadSourceData();
                 
                 //loader.test();
+                //TEST t = new TEST();
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);

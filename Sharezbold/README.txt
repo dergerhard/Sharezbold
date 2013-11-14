@@ -148,6 +148,8 @@ Review Infos Gerhard:
 
 + Fragwürdiges Verhalten der web-services z.B. Sites.CreateWeb wirft eine Exception ("Error in XML document(1,30)"), erzeugt jedoch trotzdem die Seite!
 
++ manchmal wirklich blöde fehler (Mitschnitt mit Wireshark, jedoch wird gar nix angezeigt... nach langer suche draufgekommen, dass er beim Zugriff auf den Localhost das offensichtlich über eine Art loopback sendet und somit gar nix anzeigt....)
+
 Async Programming
 http://msdn.microsoft.com/de-de/library/vstudio/hh191443.aspx
 

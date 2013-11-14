@@ -73,13 +73,39 @@ namespace Sharezbold.Logging
         }
 
         /// <summary>
+        /// Specifies the number of tabs in front of the log text.
+        /// </summary>
+        private uint indent = 0;
+
+        /// <summary>
+        /// Specifies the number of tabs in front of the log text. Maximum is 5. The indention stays the same, till it is set to another value.
+        /// </summary>
+        public uint Indent
+        {
+            get { return this.indent; }
+            set
+            {
+                if (value > 5)
+                {
+                    this.indent = 5;
+                }
+                else
+                {
+                    this.indent = value;
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Writes a message to the log and syncs it with the list box. If default constructor was used, the message is displayed in the console
         /// </summary>
         /// <param name="message">the message</param>
         /// <param name="onlyLogFile">if true, it is only written to the log file</param>
         public void AddMessage(string message, bool onlyLogFile = false)
         {
-            string msg = DateTime.Now.ToString("HH:mm:ss") + " " + message;
+            string tabs = new String('\t', (int)this.indent);
+            string msg = DateTime.Now.ToString("HH:mm:ss") + " " + tabs + message;
 
             if (this.writeOnlyToDebug)
             {

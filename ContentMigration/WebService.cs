@@ -2,6 +2,7 @@
 
 namespace Sharezbold.ContentMigration
 {
+    using Sharezbold.ContentMigration.Data;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -30,9 +31,9 @@ namespace Sharezbold.ContentMigration
         public CredentialCache DstCredentials { get; private set; }
         public CredentialCache DstCredentialsCA { get; private set; }
 
-        private string srcUser;
-        private string srcDomain;
-        private string srcPassword;
+        public string SrcUser { get; private set; }
+        public string SrcDomain { get; private set; }
+        public string SrcPassword { get; private set; }
 
         public string DstUser { get; private set; }
         public string DstDomain { get; private set; }
@@ -56,9 +57,9 @@ namespace Sharezbold.ContentMigration
         public WebService(string srcUrl, string srcUser, string srcDomain, string srcPassword, string dstUrl, string dstUrlCA, string DstUser, string DstDomain, string DstPassword)
         {
             this.SrcUrl = srcUrl;
-            this.srcUser = srcUser;
-            this.srcDomain = srcDomain;
-            this.srcPassword = srcPassword;
+            this.SrcUser = srcUser;
+            this.SrcDomain = srcDomain;
+            this.SrcPassword = srcPassword;
             this.DstUrl = dstUrl;
             this.DstUrlCA = dstUrlCA;
             this.DstUser = DstUser;
@@ -82,7 +83,7 @@ namespace Sharezbold.ContentMigration
             string dstUrlCaAdmin = DstUrlCA + UrlAdmin;
 
             this.SrcCredentials = new CredentialCache();
-            this.SrcCredentials.Add(new Uri(SrcUrl), "NTLM", new NetworkCredential(srcUser, srcPassword, srcDomain));
+            this.SrcCredentials.Add(new Uri(SrcUrl), "NTLM", new NetworkCredential(SrcUser, SrcPassword, SrcDomain));
 
             this.DstCredentials = new CredentialCache();
             this.DstCredentials.Add(new Uri(DstUrl), "NTLM", new NetworkCredential(DstUser, DstPassword, DstDomain));
@@ -134,6 +135,15 @@ namespace Sharezbold.ContentMigration
             this.DstViews = new ViewsWS.Views();
             this.DstViews.Url = dstUrlViews;
             this.DstViews.Credentials = this.DstCredentials;
+        }
+
+        /// <summary>
+        /// Set the correct url to views web service
+        /// </summary>
+        /// <param name="list">list to migrate</param>
+        public void SetViewsMigrateTo(SList list)
+        {
+            this.DstViews.Url = list.MigrateTo.XmlData.Attributes["Url"].InnerText + UrlViews;
         }
 
         /// <summary>

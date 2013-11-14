@@ -346,6 +346,7 @@ namespace Sharezbold.ContentMigration
             return await t;
         }
 
+        
         /// <summary>
         /// Migrates a list and its views. Site Columns are not included
         /// </summary>
@@ -355,6 +356,8 @@ namespace Sharezbold.ContentMigration
             Task<bool> t = Task.Factory.StartNew(() =>
             {
                 this.log.AddMessage("Migrate lists starting migration of list \"" + list.Name + "\"");
+                this.log.Indent = this.log.Indent + 1;
+
                 // if list with the same name exists --> delete
                 XmlElement l = (XmlElement)list.XmlList;
                 string listName = l.Attributes["Title"].InnerText;
@@ -377,46 +380,82 @@ namespace Sharezbold.ContentMigration
 
                 // copy list properties
                 XmlDocument doc = new XmlDocument();
-                XmlElement listProperties = doc.CreateElement("List");
                 foreach (XmlAttribute attr in l.Attributes)
                 {
+
+                    XmlElement listProperties = doc.CreateElement("List");
                     listProperties.SetAttribute(attr.Name, attr.Value);
+                    try
+                    {
+                        this.ws.DstLists.UpdateList(listName, listProperties, null, null, null, "");
+                        this.log.AddMessage("added attribute: " + attr.Name);
+                    }
+                    catch (Exception e)
+                    {
+                        this.log.AddMessage("added attribute FAILED: " + attr.Name + ". Error: " + e.Message);
+                    }
                 }
 
-                XmlElement fields = doc.CreateElement("Fields");
                 int i = 1;
+                //var fieldsList = new List<XmlElement>();
+
+                            
+                
                 foreach (XmlNode field in l["Fields"])
                 {
                     if (field.Name.Equals("Field"))
                     {
+                        XmlElement fields = doc.CreateElement("Fields");
+                
                         XmlElement method = doc.CreateElement("Method");
                         method.SetAttribute("ID", i.ToString());
                         XmlNode newField = doc.ImportNode(field, true);
                         newField.Attributes.RemoveNamedItem("ID");
                         method.AppendChild(newField);
                         fields.AppendChild(method);
+                        try
+                        {
+                            this.ws.DstLists.UpdateList(listName, null, fields, fields, null, "");
+                            this.log.AddMessage("Migrate lists migrated the field  with id " + i.ToString());
+                        }
+                        catch (Exception e)
+                        {
+                            this.log.AddMessage("Migrate lists migration of fields failed. XML: " + fields.OuterXml + " Error: " + e.Message);
+                        }
                         i++;
                     }
                 }
 
                 // update the list
-                this.ws.DstLists.UpdateList(listName, listProperties, fields, fields, null, "");
-                string viewUrlBuffer = this.ws.DstViews.Url;
-                this.log.AddMessage("Migrate lists migrated the fields");
-
+                
+                
                 // migrate the views
                 // first delete the dst views
-                XmlNode viewsToDelete = this.ws.DstViews.GetViewCollection(listName);
-                foreach (XmlNode view in viewsToDelete)
+                this.ws.SetViewsMigrateTo(list);
+                
+                XmlNode viewsToDelete = null;
+                try
                 {
-                    try
+                    viewsToDelete = this.ws.DstViews.GetViewCollection(listName);
+                }
+                catch (Exception e)
+                {
+                    this.log.AddMessage(e.Message);
+                }
+
+                if (viewsToDelete != null)
+                {
+                    foreach (XmlNode view in viewsToDelete)
                     {
-                        this.ws.DstViews.DeleteView(listName, view.Attributes["Name"].InnerText);
+                        try
+                        {
+                            this.ws.DstViews.DeleteView(listName, view.Attributes["Name"].InnerText);
+                        }
+                        catch (Exception e)
+                        {
+                            this.log.AddMessage("Migrate lists, view deletion: " + e.Message, true);
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        this.log.AddMessage("Migrate lists, view deletion: " + e.Message, true);
-                    }    
                 }
                 
 
@@ -449,12 +488,94 @@ namespace Sharezbold.ContentMigration
                         this.log.AddMessage("Migrate lists add view error at \"" + view.Attributes["DisplayName"].InnerText + "\": " + e.Message);
                     }
                 }
-                this.ws.DstViews.Url = viewUrlBuffer;
+                //this.ws.DstViews.Url = viewUrlBuffer;
                 this.ws.DstLists.Url = urlBuffer;
+
+                this.log.Indent = this.log.Indent - 1;
                 this.log.AddMessage("Migrate lists finished");
+                this.MigrateListData(list);
                 return true;
             });
             return await t;
+        }
+
+        /// <summary>
+        /// Migrates a list data.
+        /// </summary>
+        /// <param name="list">the list whichs data will be migrated</param>
+        private bool MigrateListData(SList list)
+        {
+            /*
+             * 
+             * <rs:data ItemCount="2" xmlns:rs="urn:schemas-microsoft-com:rowset">
+             * <z:row 
+             *          ows_CompanyName="IBM" 
+             *          ows_ApplicationDate="2013-11-04 00:00:00" 
+             *          ows_ContactPerson="John Doe" 
+             *          ows_Interview="Yes" 
+             *          ows_MetaInfo="1;#" 
+             *          ows__ModerationStatus="0" 
+             *          ows__Level="1" 
+             *          ows_ID="1" 
+             *          ows_UniqueId="1;#{C99A189F-FCC5-4FF5-8DC5-298B9DA1C579}" 
+             *          ows_owshiddenversion="1" 
+             *          ows_FSObjType="1;#0" 
+             *          ows_Created="2013-11-05 16:50:12" 
+             *          ows_PermMask="0x7fffffffffffffff" 
+             *          ows_Modified="2013-11-05 16:50:12" 
+             *          ows_FileRef="1;#Lists/MyJobApplications/1_.000" 
+             *          xmlns:z="#RowsetSchema" />
+             */
+
+
+            // set up batch node
+            XmlDocument doc = new XmlDocument();
+            XmlElement batchElement = doc.CreateElement("Batch");
+            batchElement.SetAttribute("OnError", "Continue");
+            batchElement.SetAttribute("ListVersion", "1");
+        
+            XmlElement listdata = (XmlElement)list.XmlListData;
+            int i = 1;
+
+            //iterate through z:row-nodes
+            foreach (XmlLinkedNode row in listdata["rs:data"])
+            {
+                if (row.GetType() == typeof(XmlElement))
+                {
+                    var method = doc.CreateElement("Method");
+                    method.SetAttribute("ID", i.ToString());
+                    method.SetAttribute("Cmd", "New");
+
+                    XmlElement el = (XmlElement)row;
+                    // iterate through attributes
+                    foreach (XmlAttribute attr in el.Attributes)
+                    {
+                        if (attr.Name.StartsWith("ows_") && !attr.Name.StartsWith("ows__") && !attr.Name.Contains("MetaInfo") && !attr.Name.Contains("FSObjType") && !attr.Name.Contains("PermMask") && !attr.Name.Contains("FileRef"))
+                        {
+                            Console.WriteLine(attr.Name.Substring(4) + ": " + attr.Value);
+                            var field = doc.CreateElement("Field");
+                            field.SetAttribute("Name", attr.Name.Substring(4));
+                            field.InnerText = attr.Value.Replace("1;#", "");
+                            method.AppendChild(field);
+                        }
+                    }
+
+                    batchElement.AppendChild(method);
+                    i++;
+                }
+            }
+
+            try
+            {
+                this.ws.DstLists.UpdateListItems(list.Name, batchElement);
+            }
+            catch (Exception ex)
+            {
+                this.log.AddMessage("Error while transfering list data. Error message: " + ex.Message);
+            }
+
+
+            return true;
         }
 
         /// <summary>

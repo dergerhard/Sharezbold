@@ -154,6 +154,11 @@ namespace Sharezbold.ContentMigration.Data
 
         /// <summary>
         /// Represents the list data
+        /// Data example:
+        /// <rs:data ItemCount="2" xmlns:rs="urn:schemas-microsoft-com:rowset">
+        ///     <z:row ows_CompanyName="IBM" ows_ApplicationDate="2013-11-04 00:00:00" ows_ContactPerson="John Doe" ows_Interview="Yes" ows_MetaInfo="1;#" ows__ModerationStatus="0" ows__Level="1" ows_ID="1" ows_UniqueId="1;#{C99A189F-FCC5-4FF5-8DC5-298B9DA1C579}" ows_owshiddenversion="1" ows_FSObjType="1;#0" ows_Created="2013-11-05 16:50:12" ows_PermMask="0x7fffffffffffffff" ows_Modified="2013-11-05 16:50:12" ows_FileRef="1;#Lists/MyJobApplications/1_.000" xmlns:z="#RowsetSchema" />
+        ///     <z:row ows_CompanyName="Siemens" ows_ApplicationDate="2013-11-06 00:00:00" ows_ContactPerson="Brigitte Ederer" ows_Interview="Yes" ows_MetaInfo="2;#" ows__ModerationStatus="0" ows__Level="1" ows_ID="2" ows_UniqueId="2;#{7515C21E-87F8-494B-8D77-2EED77A7965F}" ows_owshiddenversion="1" ows_FSObjType="2;#0" ows_Created="2013-11-05 16:52:09" ows_PermMask="0x7fffffffffffffff" ows_Modified="2013-11-05 16:52:09" ows_FileRef="2;#Lists/MyJobApplications/2_.000" xmlns:z="#RowsetSchema" />
+        /// </rs:data>
         /// </summary>
         public XmlNode XmlListData { get; set; }
 
