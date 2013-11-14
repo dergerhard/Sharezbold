@@ -18,23 +18,61 @@
       <xsd:import schemaLocation="http://sps2013003:12345/FileMigrationService?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
     </xsd:schema>
   </wsdl:types>
+  <wsdl:message name="IFileMigration_GetMaxFileSize_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMaxFileSize" />
+  </wsdl:message>
+  <wsdl:message name="IFileMigration_GetMaxFileSize_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMaxFileSizeResponse" />
+  </wsdl:message>
   <wsdl:message name="IFileMigration_GetMaxFileSizePerExtension_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMaxFileSizePerExtension" />
   </wsdl:message>
   <wsdl:message name="IFileMigration_GetMaxFileSizePerExtension_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMaxFileSizePerExtensionResponse" />
   </wsdl:message>
+  <wsdl:message name="IFileMigration_GetMaxMessageSize_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMaxMessageSize" />
+  </wsdl:message>
+  <wsdl:message name="IFileMigration_GetMaxMessageSize_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMaxMessageSizeResponse" />
+  </wsdl:message>
   <wsdl:portType name="IFileMigration">
+    <wsdl:operation name="GetMaxFileSize">
+      <wsdl:input wsam:Action="http://tempuri.org/IFileMigration/GetMaxFileSize" message="tns:IFileMigration_GetMaxFileSize_InputMessage" />
+      <wsdl:output wsam:Action="http://tempuri.org/IFileMigration/GetMaxFileSizeResponse" message="tns:IFileMigration_GetMaxFileSize_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="GetMaxFileSizePerExtension">
       <wsdl:input wsam:Action="http://tempuri.org/IFileMigration/GetMaxFileSizePerExtension" message="tns:IFileMigration_GetMaxFileSizePerExtension_InputMessage" />
       <wsdl:output wsam:Action="http://tempuri.org/IFileMigration/GetMaxFileSizePerExtensionResponse" message="tns:IFileMigration_GetMaxFileSizePerExtension_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMaxMessageSize">
+      <wsdl:input wsam:Action="http://tempuri.org/IFileMigration/GetMaxMessageSize" message="tns:IFileMigration_GetMaxMessageSize_InputMessage" />
+      <wsdl:output wsam:Action="http://tempuri.org/IFileMigration/GetMaxMessageSizeResponse" message="tns:IFileMigration_GetMaxMessageSize_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="WSHttpBinding_IFileMigration" type="tns:IFileMigration">
     <wsp:PolicyReference URI="#WSHttpBinding_IFileMigration_policy" />
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetMaxFileSize">
+      <soap12:operation soapAction="http://tempuri.org/IFileMigration/GetMaxFileSize" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetMaxFileSizePerExtension">
       <soap12:operation soapAction="http://tempuri.org/IFileMigration/GetMaxFileSizePerExtension" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMaxMessageSize">
+      <soap12:operation soapAction="http://tempuri.org/IFileMigration/GetMaxMessageSize" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

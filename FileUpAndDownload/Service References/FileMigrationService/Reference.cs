@@ -8,27 +8,39 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Sharezbold.FileMigration.FileMigration {
+namespace Sharezbold.FileMigration.FileMigrationService {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="FileMigration.IFileMigration")]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="FileMigrationService.IFileMigration")]
     public interface IFileMigration {
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileMigration/GetMaxFileSize", ReplyAction="http://tempuri.org/IFileMigration/GetMaxFileSizeResponse")]
+        int GetMaxFileSize();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileMigration/GetMaxFileSize", ReplyAction="http://tempuri.org/IFileMigration/GetMaxFileSizeResponse")]
+        System.Threading.Tasks.Task<int> GetMaxFileSizeAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileMigration/GetMaxFileSizePerExtension", ReplyAction="http://tempuri.org/IFileMigration/GetMaxFileSizePerExtensionResponse")]
         System.Collections.Generic.Dictionary<string, int> GetMaxFileSizePerExtension();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileMigration/GetMaxFileSizePerExtension", ReplyAction="http://tempuri.org/IFileMigration/GetMaxFileSizePerExtensionResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<string, int>> GetMaxFileSizePerExtensionAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileMigration/GetMaxMessageSize", ReplyAction="http://tempuri.org/IFileMigration/GetMaxMessageSizeResponse")]
+        int GetMaxMessageSize();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileMigration/GetMaxMessageSize", ReplyAction="http://tempuri.org/IFileMigration/GetMaxMessageSizeResponse")]
+        System.Threading.Tasks.Task<int> GetMaxMessageSizeAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IFileMigrationChannel : Sharezbold.FileMigration.FileMigration.IFileMigration, System.ServiceModel.IClientChannel {
+    public interface IFileMigrationChannel : Sharezbold.FileMigration.FileMigrationService.IFileMigration, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class FileMigrationClient : System.ServiceModel.ClientBase<Sharezbold.FileMigration.FileMigration.IFileMigration>, Sharezbold.FileMigration.FileMigration.IFileMigration {
+    public partial class FileMigrationClient : System.ServiceModel.ClientBase<Sharezbold.FileMigration.FileMigrationService.IFileMigration>, Sharezbold.FileMigration.FileMigrationService.IFileMigration {
         
         public FileMigrationClient() {
         }
@@ -49,12 +61,28 @@ namespace Sharezbold.FileMigration.FileMigration {
                 base(binding, remoteAddress) {
         }
         
+        public int GetMaxFileSize() {
+            return base.Channel.GetMaxFileSize();
+        }
+        
+        public System.Threading.Tasks.Task<int> GetMaxFileSizeAsync() {
+            return base.Channel.GetMaxFileSizeAsync();
+        }
+        
         public System.Collections.Generic.Dictionary<string, int> GetMaxFileSizePerExtension() {
             return base.Channel.GetMaxFileSizePerExtension();
         }
         
         public System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<string, int>> GetMaxFileSizePerExtensionAsync() {
             return base.Channel.GetMaxFileSizePerExtensionAsync();
+        }
+        
+        public int GetMaxMessageSize() {
+            return base.Channel.GetMaxMessageSize();
+        }
+        
+        public System.Threading.Tasks.Task<int> GetMaxMessageSizeAsync() {
+            return base.Channel.GetMaxMessageSizeAsync();
         }
     }
 }
