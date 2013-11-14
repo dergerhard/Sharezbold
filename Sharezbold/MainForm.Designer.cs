@@ -110,6 +110,17 @@ namespace Sharezbold
             this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
             this.buttonFinish = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.flowLayoutPanelWebs = new System.Windows.Forms.FlowLayoutPanel();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.textBoxFileMigrationMaximumFileSize = new System.Windows.Forms.TextBox();
+            this.textBoxFileMigrationWebServiceAddress = new System.Windows.Forms.TextBox();
+            this.textBoxFileMigrationBandwith = new System.Windows.Forms.TextBox();
+            this.textBoxFileMigrationParallelThreads = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.tabControMain.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
@@ -128,6 +139,8 @@ namespace Sharezbold
             this.groupBox7.SuspendLayout();
             this.tabPageMigrationProgress.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.groupBox10.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -215,6 +228,7 @@ namespace Sharezbold
             this.tabControMain.SelectedIndex = 0;
             this.tabControMain.Size = new System.Drawing.Size(1031, 406);
             this.tabControMain.TabIndex = 2;
+            this.tabControMain.Click += new System.EventHandler(this.FileMigrationTabClicked);
             // 
             // tabPageConfiguration
             // 
@@ -872,6 +886,7 @@ namespace Sharezbold
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.groupBox10);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -879,6 +894,109 @@ namespace Sharezbold
             this.tabPage1.TabIndex = 5;
             this.tabPage1.Text = "File Migration";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.Controls.Add(this.textBoxFileMigrationParallelThreads);
+            this.groupBox10.Controls.Add(this.textBoxFileMigrationBandwith);
+            this.groupBox10.Controls.Add(this.textBoxFileMigrationWebServiceAddress);
+            this.groupBox10.Controls.Add(this.textBoxFileMigrationMaximumFileSize);
+            this.groupBox10.Controls.Add(this.label17);
+            this.groupBox10.Controls.Add(this.label16);
+            this.groupBox10.Controls.Add(this.label15);
+            this.groupBox10.Controls.Add(this.label14);
+            this.groupBox10.Controls.Add(this.flowLayoutPanelWebs);
+            this.groupBox10.Controls.Add(this.label12);
+            this.groupBox10.Location = new System.Drawing.Point(25, 19);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(708, 253);
+            this.groupBox10.TabIndex = 0;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Information to File-Migration";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(6, 28);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(88, 13);
+            this.label12.TabIndex = 0;
+            this.label12.Text = "Webs to Migrate:";
+            // 
+            // flowLayoutPanelWebs
+            // 
+            this.flowLayoutPanelWebs.Location = new System.Drawing.Point(18, 44);
+            this.flowLayoutPanelWebs.Name = "flowLayoutPanelWebs";
+            this.flowLayoutPanelWebs.Size = new System.Drawing.Size(243, 203);
+            this.flowLayoutPanelWebs.TabIndex = 1;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(325, 72);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(54, 13);
+            this.label14.TabIndex = 2;
+            this.label14.Text = "Bandwith:";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(325, 44);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(87, 13);
+            this.label15.TabIndex = 3;
+            this.label15.Text = "Service-Address:";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(325, 100);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(90, 13);
+            this.label16.TabIndex = 4;
+            this.label16.Text = "Maximal File-Size:";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(325, 130);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(86, 13);
+            this.label17.TabIndex = 5;
+            this.label17.Text = "Parallel Threads:";
+            // 
+            // textBoxFileMigrationMaximumFileSize
+            // 
+            this.textBoxFileMigrationMaximumFileSize.Enabled = false;
+            this.textBoxFileMigrationMaximumFileSize.Location = new System.Drawing.Point(430, 97);
+            this.textBoxFileMigrationMaximumFileSize.Name = "textBoxFileMigrationMaximumFileSize";
+            this.textBoxFileMigrationMaximumFileSize.Size = new System.Drawing.Size(272, 20);
+            this.textBoxFileMigrationMaximumFileSize.TabIndex = 6;
+            // 
+            // textBoxFileMigrationWebServiceAddress
+            // 
+            this.textBoxFileMigrationWebServiceAddress.Enabled = false;
+            this.textBoxFileMigrationWebServiceAddress.Location = new System.Drawing.Point(430, 41);
+            this.textBoxFileMigrationWebServiceAddress.Name = "textBoxFileMigrationWebServiceAddress";
+            this.textBoxFileMigrationWebServiceAddress.Size = new System.Drawing.Size(272, 20);
+            this.textBoxFileMigrationWebServiceAddress.TabIndex = 7;
+            // 
+            // textBoxFileMigrationBandwith
+            // 
+            this.textBoxFileMigrationBandwith.Enabled = false;
+            this.textBoxFileMigrationBandwith.Location = new System.Drawing.Point(430, 69);
+            this.textBoxFileMigrationBandwith.Name = "textBoxFileMigrationBandwith";
+            this.textBoxFileMigrationBandwith.Size = new System.Drawing.Size(272, 20);
+            this.textBoxFileMigrationBandwith.TabIndex = 8;
+            // 
+            // textBoxFileMigrationParallelThreads
+            // 
+            this.textBoxFileMigrationParallelThreads.Enabled = false;
+            this.textBoxFileMigrationParallelThreads.Location = new System.Drawing.Point(430, 127);
+            this.textBoxFileMigrationParallelThreads.Name = "textBoxFileMigrationParallelThreads";
+            this.textBoxFileMigrationParallelThreads.Size = new System.Drawing.Size(272, 20);
+            this.textBoxFileMigrationParallelThreads.TabIndex = 9;
             // 
             // MainForm
             // 
@@ -915,6 +1033,9 @@ namespace Sharezbold
             this.groupBox7.ResumeLayout(false);
             this.tabPageMigrationProgress.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.groupBox10.ResumeLayout(false);
+            this.groupBox10.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -999,5 +1120,16 @@ namespace Sharezbold
         private System.Windows.Forms.NumericUpDown numericUpDownBandwith;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.GroupBox groupBox10;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelWebs;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox textBoxFileMigrationParallelThreads;
+        private System.Windows.Forms.TextBox textBoxFileMigrationBandwith;
+        private System.Windows.Forms.TextBox textBoxFileMigrationWebServiceAddress;
+        private System.Windows.Forms.TextBox textBoxFileMigrationMaximumFileSize;
     }
 }

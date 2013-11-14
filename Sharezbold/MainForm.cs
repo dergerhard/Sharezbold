@@ -26,6 +26,7 @@ namespace Sharezbold
     using Sharezbold.Settings;
     using Sharezbold.ContentMigration.Data;
     using Sharezbold.Logging;
+    using FileMigration;
 
     /// <summary>
     /// The main form of the program
@@ -96,6 +97,9 @@ namespace Sharezbold
         /// the message logger
         /// </summary>
         private Logger log;
+
+
+        private SharePoint2010And2013Migrator fileMigrator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
@@ -916,7 +920,46 @@ namespace Sharezbold
                 this.currentConfigurationElement.UpdateReadyForMigration();
                 this.listViewMigrationContent.Update();
             }
+        }
 
+        private void FileMigrationTabClicked(object sender, EventArgs e)
+        {
+            // TODO validate values
+            this.source = new ClientContext(this.textBoxFromHost.Text);
+            this.destination = new ClientContext(this.textBoxToHost.Text);
+
+            this.source.Credentials = new NetworkCredential(this.textBoxFromUserName.Text, this.textBoxFromPassword.Text, this.textBoxFromDomain.Text);
+            this.destination.Credentials = new NetworkCredential(this.textBoxToUserName.Text, this.textBoxToPassword.Text, this.textBoxToDomain.Text);
+
+            int bandwith = (int) this.numericUpDownBandwith.Value;
+            this.textBoxFileMigrationBandwith.Text = bandwith + "%";
+            this.textBoxFileMigrationWebServiceAddress.Text = this.textBoxFileMigrationServiceURI.Text;
+
+            this.fileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.source).WithTargetClientContext(destination).CreateMigrator();
+
+            
+            
+            foreach (TreeNode item in this.treeViewContentSelection.Nodes)
+            {
+                IMigratable migratable = (IMigratable)item;
+                if (migratable.GetType() == typeof (SSiteCollection))
+                {
+                    SSiteCollection siteCollection = (SSiteCollection)migratable;
+                    foreach (SSite site in siteCollection.Sites)
+                    {
+                        if (site.Checked)
+                        {
+                            XmlAttribute attr = site.XmlData.Attributes["Url"];
+                            String url = attr.Value;
+                           //// Console.WriteLine("selected url = {0}", url);
+                        }
+                    }
+                    
+                }
+              ////  Console.WriteLine("'{0}' is ready to migrate: {1}; type = {2}", migratable.Name, migratable.ReadyForMigration, migratable.GetType());
+            }
+            
+            Label tempLabel = new Label();
         }
     }
 }
