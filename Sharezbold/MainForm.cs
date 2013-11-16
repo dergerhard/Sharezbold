@@ -125,7 +125,7 @@ namespace Sharezbold
             this.EnableTab(this.tabPageMigrationPreparation, false);
             this.EnableTab(this.tabPageMigrationProgress, false);
 
-            this.log = new Logger(this.listBoxMigrationLog, @"C:\log.txt");
+            this.log = new Logger(this.listBoxMigrationLog, @"C:\temp\log.txt");
             this.log.AddMessage("Program started");
 
         }
@@ -896,14 +896,6 @@ namespace Sharezbold
 
         private void FileMigrationTabClicked(object sender, EventArgs e)
         {
-            // TODO validate values
-            /*
-            this.source = new ClientContext(this.textBoxFromHost.Text);
-            this.destination = new ClientContext(this.textBoxToHost.Text);
-
-            this.source.Credentials = new NetworkCredential(this.textBoxFromUserName.Text, this.textBoxFromPassword.Text, this.textBoxFromDomain.Text);
-            this.destination.Credentials = new NetworkCredential(this.textBoxToUserName.Text, this.textBoxToPassword.Text, this.textBoxToDomain.Text);
-            */
             int bandwith = (int) this.numericUpDownBandwith.Value;
             this.textBoxFileMigrationBandwith.Text = bandwith + "%";
             this.textBoxFileMigrationWebServiceAddress.Text = this.textBoxFileMigrationServiceURI.Text;
@@ -913,32 +905,11 @@ namespace Sharezbold
             TreeNodeCollection treeNodeCollection = this.treeViewContentSelection.Nodes;
             HashSet<string> webUrls = treeNodeCollection.GetSelectedWebUrls();
 
-            foreach (var item in webUrls)
+            foreach (string item in webUrls)
             {
-                
+                Console.WriteLine("add site '{0}'", item);
+                this.textBoxFileMigrationWebs.Text += item + "\n";  
             }
-            /*
-            foreach (TreeNode item in this.treeViewContentSelection.Nodes)
-            {
-                IMigratable migratable = (IMigratable)item;
-                if (migratable.GetType() == typeof (SSiteCollection))
-                {
-                    SSiteCollection siteCollection = (SSiteCollection)migratable;
-                    foreach (SSite site in siteCollection.Sites)
-                    {
-                        if (site.Checked)
-                        {
-                            XmlAttribute attr = site.XmlData.Attributes["Url"];
-                            String url = attr.Value;
-                           //// Console.WriteLine("selected url = {0}", url);
-                        }
-                    }
-                    
-                }
-              ////  Console.WriteLine("'{0}' is ready to migrate: {1}; type = {2}", migratable.Name, migratable.ReadyForMigration, migratable.GetType());
-            }
-            
-            Label tempLabel = new Label();*/
         }
     }
 }
