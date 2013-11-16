@@ -107,6 +107,7 @@ namespace Sharezbold
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.flowLayoutPanelWebs = new System.Windows.Forms.FlowLayoutPanel();
+            this.textBoxFileMigrationWebs = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.tabPageMigrationPreparation = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
@@ -121,7 +122,6 @@ namespace Sharezbold
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
             this.buttonFinish = new System.Windows.Forms.Button();
-            this.textBoxFileMigrationWebs = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.tabControMain.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
@@ -863,6 +863,15 @@ namespace Sharezbold
             this.flowLayoutPanelWebs.Size = new System.Drawing.Size(243, 203);
             this.flowLayoutPanelWebs.TabIndex = 1;
             // 
+            // textBoxFileMigrationWebs
+            // 
+            this.textBoxFileMigrationWebs.Enabled = false;
+            this.textBoxFileMigrationWebs.Location = new System.Drawing.Point(3, 3);
+            this.textBoxFileMigrationWebs.Multiline = true;
+            this.textBoxFileMigrationWebs.Name = "textBoxFileMigrationWebs";
+            this.textBoxFileMigrationWebs.Size = new System.Drawing.Size(240, 200);
+            this.textBoxFileMigrationWebs.TabIndex = 0;
+            // 
             // label12
             // 
             this.label12.AutoSize = true;
@@ -1000,14 +1009,6 @@ namespace Sharezbold
             this.buttonFinish.TabIndex = 2;
             this.buttonFinish.Text = "Finish & Exit";
             this.buttonFinish.UseVisualStyleBackColor = true;
-            // 
-            // textBoxFileMigrationWebs
-            // 
-            this.textBoxFileMigrationWebs.Location = new System.Drawing.Point(3, 3);
-            this.textBoxFileMigrationWebs.Multiline = true;
-            this.textBoxFileMigrationWebs.Name = "textBoxFileMigrationWebs";
-            this.textBoxFileMigrationWebs.Size = new System.Drawing.Size(240, 200);
-            this.textBoxFileMigrationWebs.TabIndex = 0;
             // 
             // MainForm
             // 
