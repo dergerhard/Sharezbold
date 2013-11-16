@@ -465,30 +465,20 @@ namespace Sharezbold
 
             Task<bool> t = Task.Factory.StartNew(() =>
             {
-                bool connectedSourceClientContext = false;
-                this.source = new ClientContext(this.settings.FromHost);
-                this.SetProxy(this.source);
-                var cc = new CredentialCache();
-                cc.Add(new Uri(this.source.Url), "NTLM", new NetworkCredential(this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain));
-                this.source.Credentials = cc;
-
-                try
+                Connector connector = new Connector();
+                ProxySettings proxySettings = null;
+                if (this.checkBoxProxyActivate.Checked)
                 {
-                    this.source.ExecuteQuery();
-                    connectedSourceClientContext = true;
+                    proxySettings = new ProxySettings(this.textBoxProxyUrl.Text.Trim(), this.textBoxProxyUsername.Text.Trim(), this.textBoxProxyPassword.Text.Trim());
                 }
-                catch (Exception)
-                {
-                    connectedSourceClientContext = false;
-                }
-                
-
+                this.source = connector.ConnectToClientContext(this.settings.FromHost, this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain, proxySettings);
+               
                 // TODO: Central Administration HOST
                 // set up web services and loader
                 this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, this.settings.ToHostCA, this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
                 this.contentLoader = new ContentLoader(this.webServices, this.log);
                 
-                return this.webServices.IsSourceLoginPossible && connectedSourceClientContext;
+                return this.webServices.IsSourceLoginPossible && this.source != null;
             });
 
             return await t;
@@ -505,29 +495,20 @@ namespace Sharezbold
 
             Task<bool> t = Task.Factory.StartNew(() =>
             {
-                bool connectedDestinationClientContext = false;
-                this.destination = new ClientContext(this.settings.ToHost);
-                this.SetProxy(this.destination);
-                var cc = new CredentialCache();
-                cc.Add(new Uri(this.destination.Url), "NTLM", new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain));
-                this.destination.Credentials = cc;
-
-                try
+                Connector connector = new Connector();
+                ProxySettings proxySettings = null;
+                if (this.checkBoxProxyActivate.Checked)
                 {
-                    this.source.ExecuteQuery();
-                    connectedDestinationClientContext = true;
+                    proxySettings = new ProxySettings(this.textBoxProxyUrl.Text.Trim(), this.textBoxProxyUsername.Text.Trim(), this.textBoxProxyPassword.Text.Trim());
                 }
-                catch (Exception)
-                {
-                    connectedDestinationClientContext = false;
-                }
+                this.destination = connector.ConnectToClientContext(this.settings.ToHost, this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain, proxySettings);
 
-                return this.webServices.IsDestinationLoginPossible && connectedDestinationClientContext;
+                return this.webServices.IsDestinationLoginPossible && this.destination != null;
             });
 
             return await t;
         }
-
+        /*
         /// <summary>
         /// Sets the proxy for the connection to the server.
         /// </summary>
@@ -546,7 +527,7 @@ namespace Sharezbold
                 };
             }
         }
-
+        */
         /// <summary>
         /// Checks all child nodes recursively
         /// </summary>
