@@ -508,26 +508,7 @@ namespace Sharezbold
 
             return await t;
         }
-        /*
-        /// <summary>
-        /// Sets the proxy for the connection to the server.
-        /// </summary>
-        /// <param name="clientContext">the clientcontext of the server</param>
-        private void SetProxy(ClientContext clientContext)
-        {
-            if (this.checkBoxProxyActivate.Checked)
-            {
-                clientContext.ExecutingWebRequest += (sen, args) =>
-                {
-                    System.Net.WebProxy myProxy = new System.Net.WebProxy();
-                    myProxy.Address = new Uri(this.textBoxProxyUrl.Text.Trim());
-
-                    myProxy.Credentials = new System.Net.NetworkCredential(this.textBoxProxyUsername.Text.Trim(), this.textBoxProxyPassword.Text.Trim());
-                    args.WebRequestExecutor.WebRequest.Proxy = myProxy;
-                };
-            }
-        }
-        */
+      
         /// <summary>
         /// Checks all child nodes recursively
         /// </summary>
