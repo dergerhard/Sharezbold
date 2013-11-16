@@ -27,6 +27,7 @@ namespace Sharezbold
     using Sharezbold.ContentMigration.Data;
     using Sharezbold.Logging;
     using FileMigration;
+    using Extensions;
 
     /// <summary>
     /// The main form of the program
@@ -896,19 +897,27 @@ namespace Sharezbold
         private void FileMigrationTabClicked(object sender, EventArgs e)
         {
             // TODO validate values
+            /*
             this.source = new ClientContext(this.textBoxFromHost.Text);
             this.destination = new ClientContext(this.textBoxToHost.Text);
 
             this.source.Credentials = new NetworkCredential(this.textBoxFromUserName.Text, this.textBoxFromPassword.Text, this.textBoxFromDomain.Text);
             this.destination.Credentials = new NetworkCredential(this.textBoxToUserName.Text, this.textBoxToPassword.Text, this.textBoxToDomain.Text);
-
+            */
             int bandwith = (int) this.numericUpDownBandwith.Value;
             this.textBoxFileMigrationBandwith.Text = bandwith + "%";
             this.textBoxFileMigrationWebServiceAddress.Text = this.textBoxFileMigrationServiceURI.Text;
 
             this.fileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.source).WithTargetClientContext(destination).CreateMigrator();
 
-            
+            TreeNodeCollection treeNodeCollection = this.treeViewContentSelection.Nodes;
+            HashSet<string> webUrls = treeNodeCollection.GetSelectedWebUrls();
+
+            foreach (var item in webUrls)
+            {
+                
+            }
+            /*
             foreach (TreeNode item in this.treeViewContentSelection.Nodes)
             {
                 IMigratable migratable = (IMigratable)item;
@@ -929,7 +938,7 @@ namespace Sharezbold
               ////  Console.WriteLine("'{0}' is ready to migrate: {1}; type = {2}", migratable.Name, migratable.ReadyForMigration, migratable.GetType());
             }
             
-            Label tempLabel = new Label();
+            Label tempLabel = new Label();*/
         }
     }
 }
