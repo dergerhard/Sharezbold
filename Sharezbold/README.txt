@@ -180,6 +180,14 @@ Fehlermeldungen: Werden in der Exception nicht ausgegeben (nur SoapServerExcepti
 -->			Also muss ich im Ausschlussverfahren (was passiert, wenn ich den einen oder den anderen weglasse) nach dem Fehler suchen
 
 
+Seltsame Concurrency fehler, obwohl ich alleine arbeite:
+<ErrorCode>0x81020015</ErrorCode>
+<ErrorText>Save Conflict
+	Your changes conflict with those made concurrently by another user. If you want your changes to be applied, click Back in your Web browser, refresh the page, and resubmit your changes.</ErrorText>
+
+Issues with web services
+http://mqsharepoint.blogspot.co.at/2008/10/working-with-sharepoint-web-services.html
+
 
 Async Programming
 http://msdn.microsoft.com/de-de/library/vstudio/hh191443.aspx
