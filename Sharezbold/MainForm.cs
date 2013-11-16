@@ -502,23 +502,27 @@ namespace Sharezbold
         private async Task<bool> ConnectToDestination()
         {
             this.UIToSettings();
-            /*this.destination = new ClientContext(this.settings.ToHost);
-            this.SetProxy(this.destination);
-            var cc = new CredentialCache();
-            cc.Add(new Uri(this.destination.Url), "NTLM", new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain));
-            this.destination.Credentials = cc;
 
             Task<bool> t = Task.Factory.StartNew(() =>
             {
-                this.destination.ExecuteQuery();
-                return true;
-            });
+                bool connectedDestinationClientContext = false;
+                this.destination = new ClientContext(this.settings.ToHost);
+                this.SetProxy(this.destination);
+                var cc = new CredentialCache();
+                cc.Add(new Uri(this.destination.Url), "NTLM", new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain));
+                this.destination.Credentials = cc;
 
-            return await t;*/
+                try
+                {
+                    this.source.ExecuteQuery();
+                    connectedDestinationClientContext = true;
+                }
+                catch (Exception)
+                {
+                    connectedDestinationClientContext = false;
+                }
 
-            Task<bool> t = Task.Factory.StartNew(() =>
-            {
-                return this.webServices.IsDestinationLoginPossible;
+                return this.webServices.IsDestinationLoginPossible && connectedDestinationClientContext;
             });
 
             return await t;
