@@ -75,6 +75,7 @@
     <Compile Include="SharePoint2010And2013Uploader.cs" />
     <Compile Include="SharePointNotSupportedException.cs" />
     <Compile Include="ValidationException.cs" />
+    <Compile Include="Validator.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

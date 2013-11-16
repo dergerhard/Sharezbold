@@ -35,6 +35,10 @@ namespace Sharezbold.FileMigration
 
         public void MigrateFilesOfWeb(Web sourceWeb, Web targetWeb)
         {
+            // throws ValidationException if sourceWeb or targetWeb does not exists.
+            Validator.ValidateIfWebExists(fileMigrationSpecification.SourceClientContext, sourceWeb);
+            Validator.ValidateIfWebExists(fileMigrationSpecification.SourceClientContext, sourceWeb);
+
             FileCollection files = GetFilesOfSharedDocumentsFolder(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
 
             foreach (File file in files)

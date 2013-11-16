@@ -462,28 +462,23 @@ namespace Sharezbold
         private async Task<bool> ConnectToSource()
         {
             this.UIToSettings();
-            /*this.source = new ClientContext(this.settings.FromHost);
-            this.SetProxy(this.source);
-            var cc = new CredentialCache();
-            cc.Add(new Uri(this.source.Url), "NTLM", new NetworkCredential(this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain));
-            this.source.Credentials = cc;
-            
-            Task<bool> t = Task.Factory.StartNew(() =>
-            {
-                this.source.ExecuteQuery();
-                return true;
-            });
-
-            return await t;*/
 
             Task<bool> t = Task.Factory.StartNew(() =>
             {
+                Connector connector = new Connector();
+                ProxySettings proxySettings = null;
+                if (this.checkBoxProxyActivate.Checked)
+                {
+                    proxySettings = new ProxySettings(this.textBoxProxyUrl.Text.Trim(), this.textBoxProxyUsername.Text.Trim(), this.textBoxProxyPassword.Text.Trim());
+                }
+                this.source = connector.ConnectToClientContext(this.settings.FromHost, this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain, proxySettings);
+               
                 // TODO: Central Administration HOST
                 // set up web services and loader
                 this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, this.settings.ToHostCA, this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
                 this.contentLoader = new ContentLoader(this.webServices, this.log);
                 
-                return this.webServices.IsSourceLoginPossible;
+                return this.webServices.IsSourceLoginPossible && this.source != null;
             });
 
             return await t;
@@ -497,47 +492,23 @@ namespace Sharezbold
         private async Task<bool> ConnectToDestination()
         {
             this.UIToSettings();
-            /*this.destination = new ClientContext(this.settings.ToHost);
-            this.SetProxy(this.destination);
-            var cc = new CredentialCache();
-            cc.Add(new Uri(this.destination.Url), "NTLM", new NetworkCredential(this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain));
-            this.destination.Credentials = cc;
 
             Task<bool> t = Task.Factory.StartNew(() =>
             {
-                this.destination.ExecuteQuery();
-                return true;
-            });
+                Connector connector = new Connector();
+                ProxySettings proxySettings = null;
+                if (this.checkBoxProxyActivate.Checked)
+                {
+                    proxySettings = new ProxySettings(this.textBoxProxyUrl.Text.Trim(), this.textBoxProxyUsername.Text.Trim(), this.textBoxProxyPassword.Text.Trim());
+                }
+                this.destination = connector.ConnectToClientContext(this.settings.ToHost, this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain, proxySettings);
 
-            return await t;*/
-
-            Task<bool> t = Task.Factory.StartNew(() =>
-            {
-                return this.webServices.IsDestinationLoginPossible;
+                return this.webServices.IsDestinationLoginPossible && this.destination != null;
             });
 
             return await t;
         }
-
-        /// <summary>
-        /// Sets the proxy for the connection to the server.
-        /// </summary>
-        /// <param name="clientContext">the clientcontext of the server</param>
-        private void SetProxy(ClientContext clientContext)
-        {
-            if (this.checkBoxProxyActivate.Checked)
-            {
-                clientContext.ExecutingWebRequest += (sen, args) =>
-                {
-                    System.Net.WebProxy myProxy = new System.Net.WebProxy();
-                    myProxy.Address = new Uri(this.textBoxProxyUrl.Text.Trim());
-
-                    myProxy.Credentials = new System.Net.NetworkCredential(this.textBoxProxyUsername.Text.Trim(), this.textBoxProxyPassword.Text.Trim());
-                    args.WebRequestExecutor.WebRequest.Proxy = myProxy;
-                };
-            }
-        }
-
+      
         /// <summary>
         /// Checks all child nodes recursively
         /// </summary>
@@ -937,7 +908,6 @@ namespace Sharezbold
 
             this.fileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.source).WithTargetClientContext(destination).CreateMigrator();
 
-            
             
             foreach (TreeNode item in this.treeViewContentSelection.Nodes)
             {
