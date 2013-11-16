@@ -134,7 +134,7 @@ namespace Sharezbold.ContentMigration
                     //site.AllLists.Add(list);
 
                     if (list.Attributes["Hidden"].InnerText.ToUpper().Equals("FALSE"))
-                    {
+                    { 
                         // load list details with all fields
                         XmlNode listDetails = srcLists.GetList(list.Attributes["Title"].InnerText);
                         SList sList = new SList();
@@ -473,20 +473,48 @@ namespace Sharezbold.ContentMigration
                 }
                 
                 XmlNode viewCollection = this.ws.SrcViews.GetViewCollection(listName);
+                string viewID = "";
+
                 //Console.WriteLine(viewCollection.OuterXml);
                 foreach (XmlNode view in viewCollection)
                 {
                     string viewName = view.Attributes["Name"].InnerText;
                     XmlNode viewDetail = this.ws.SrcViews.GetView(listName, viewName);
 
+                    // prepare elements
                     XmlDocument doc2 = new XmlDocument();
-                    XmlElement viewFields =viewDetail.SelectSingleNode("ViewFields")!= null ? (XmlElement)doc2.ImportNode(viewDetail["ViewFields"], true) : null;
-
+                    XmlElement viewFields;
                     XmlDocument doc3 = new XmlDocument();
-                    XmlElement query = viewDetail.SelectSingleNode("Query")!= null ? (XmlElement)doc3.ImportNode(viewDetail["Query"], true) : null;
-
+                    XmlElement query;
                     XmlDocument doc4 = new XmlDocument();
-                    XmlElement rowLimit = viewDetail.SelectSingleNode("RowLimit")!=null ?  (XmlElement)doc4.ImportNode(viewDetail["RowLimit"], true) : null;
+                    XmlElement rowLimit;
+
+                    try
+                    {
+                        viewFields = (XmlElement)doc2.ImportNode(viewDetail["ViewFields"], true);
+                    }
+                    catch (Exception e)
+                    {
+                        viewFields = doc2.CreateElement("ViewFields");
+                    }
+                    
+                    try
+                    {
+                        query = (XmlElement)doc3.ImportNode(viewDetail["Query"], true);
+                    }
+                    catch (Exception e)
+                    {
+                        query = doc.CreateElement("Query");
+                    }
+
+                    try
+                    {
+                        rowLimit = (XmlElement)doc4.ImportNode(viewDetail["RowLimit"], true);
+                    }
+                    catch (Exception e)
+                    {
+                        rowLimit = doc.CreateElement("RowLimit");
+                    }
                     
                     bool makeViewDefault = false;
                     try
@@ -501,12 +529,22 @@ namespace Sharezbold.ContentMigration
                     // add the view
                     try
                     {
-                        this.ws.DstViews.AddView(listName, view.Attributes["DisplayName"].InnerText, viewFields, query, rowLimit, viewDetail.Attributes["Type"].InnerText, makeViewDefault);
-                        this.log.AddMessage("Migrate lists added view \"" + view.Attributes["DisplayName"].InnerText + "\"");
-                        if (view.Attributes["DisplayName"].InnerText.Equals("All Events"))
+                        //string viewname = view.Attributes["Name"].InnerText.Equals("") ? "blank" : view.Attributes["Name"].InnerText;
+                        string viewname = view.Attributes["DisplayName"].InnerText; // view.Attributes["DisplayName"].InnerText.Equals("") ? "blank" : view.Attributes["DisplayName"].InnerText;
+                        if (!viewname.Equals(""))
+                        {
+                            XmlNode res = this.ws.DstViews.AddView(listName, viewname, viewFields, query, rowLimit, viewDetail.Attributes["Type"].InnerText, makeViewDefault);
+                            if (makeViewDefault)
+                            {
+                                viewID = res.Attributes["Name"].InnerText; // viewname;
+                            }
+
+                            this.log.AddMessage("Migrate lists added view \"" + viewname + "\"");
+                        }
+                            /*if (view.Attributes["DisplayName"].InnerText.Equals("All Events"))
                         {
                             Console.WriteLine("yay");
-                        }
+                        }*/
 
                     }
                     catch (Exception e)
@@ -519,7 +557,7 @@ namespace Sharezbold.ContentMigration
 
                 this.log.Indent = this.log.Indent - 1;
                 this.log.AddMessage("Migrate lists finished");
-                this.MigrateListData(list);
+                this.MigrateListData(list, viewID);
                 return true;
             });
             return await t;
@@ -529,7 +567,7 @@ namespace Sharezbold.ContentMigration
         /// Migrates a list data.
         /// </summary>
         /// <param name="list">the list whichs data will be migrated</param>
-        private bool MigrateListData(SList list)
+        private bool MigrateListData(SList list, string viewID)
         {
             /*
              * 
@@ -557,10 +595,28 @@ namespace Sharezbold.ContentMigration
              *          2. create the elements only with its IDs
              *          3. Update every attribute in own Method for failsafe
              */
+            this.ws.SetListsMigrateTo(list);
             
+            /*
+            XmlNode listColl = this.ws.DstViews.GetViewCollection(list.Name);
 
+            foreach (XmlNode v in listColl)
+            {
+                if (v.Attributes["DisplayName"].InnerText.Equals("."))
+                {
+                    viewID = v.Attributes["Name"].InnerText;
+                }
+            }
+            */
+            //viewID = "blank";
             
             XmlElement listdata = (XmlElement)list.XmlListData;
+            
+            //use DisplayName of List and view
+            XmlNode ndListView = this.ws.DstLists.GetListAndView(list.Name, "");
+            string strListID = ndListView.ChildNodes[0].Attributes["Name"].InnerText;
+            string strViewID = viewID; //this.ws.DstViews.GetView(list.Name, viewID).Attributes["Name"].InnerText; // ndListView.ChildNodes[1].Attributes["Name"].InnerText;
+            
 
             //                                      ID, List<Attribute, AttributeValue>
             var migrationElements = new Dictionary<int, List<KeyValuePair<string, string>>>();
@@ -578,7 +634,7 @@ namespace Sharezbold.ContentMigration
                     // iterate through attributes
                     foreach (XmlAttribute attr in el.Attributes)
                     {
-                        if (attr.Name.StartsWith("ows_") && !attr.Name.Equals("ID"))
+                        if (attr.Name.StartsWith("ows_") && !attr.Name.Equals("ows_ID"))
                         {
                             attrs.Add(new KeyValuePair<string,string>(attr.Name.Substring(4), attr.Value));
                         }
@@ -594,6 +650,7 @@ namespace Sharezbold.ContentMigration
             XmlElement batchElement = doc.CreateElement("Batch");
             batchElement.SetAttribute("OnError", "Continue");
             batchElement.SetAttribute("ListVersion", "1");
+            batchElement.SetAttribute("ViewName", strViewID);
         
             int i=1;
             foreach (var el in migrationElements)
@@ -602,12 +659,21 @@ namespace Sharezbold.ContentMigration
                 var method = doc.CreateElement("Method");
                 method.SetAttribute("ID", i.ToString());
                 method.SetAttribute("Cmd", "New");
-                
+
                 var field = doc.CreateElement("Field");
                 field.SetAttribute("Name", "ID");
                 field.InnerText = el.Key.ToString();
                 method.AppendChild(field);
+                
+                /*var fieldX = doc.CreateElement("Field");
+                fieldX.SetAttribute("Name", "Title");
+                fieldX.InnerText = "some Title";
+                method.AppendChild(fieldX);
+                */
+
                 batchElement.AppendChild(method);
+
+
 
                 i++;
                 //create all following elements
@@ -647,7 +713,7 @@ namespace Sharezbold.ContentMigration
 
             try
             {
-                this.ws.DstLists.UpdateListItems(list.Name, batchElement);
+                this.ws.DstLists.UpdateListItems(strListID, batchElement);
             }
             catch (Exception ex)
             {

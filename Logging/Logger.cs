@@ -41,6 +41,11 @@ namespace Sharezbold.Logging
         private bool writeOnlyToDebug = false;
 
         /// <summary>
+        /// The list box
+        /// </summary>
+        private ListBox dataBindBox = null;
+
+        /// <summary>
         /// Logger constructor for binding with listbox and log-file
         /// </summary>
         /// <param name="dataBind">The listbox object to display the log entries</param>
@@ -48,10 +53,11 @@ namespace Sharezbold.Logging
         public Logger(ListBox dataBind, string logfileurl)
         {
             this.userLog = new List<string>();
+            this.dataBindBox = dataBind;
 
             this.userLogBindingSource = new BindingSource();
             this.userLogBindingSource.DataSource = userLog;
-            dataBind.DataSource = this.userLogBindingSource;
+            this.dataBindBox.DataSource = this.userLogBindingSource;
 
             try
             {
@@ -134,6 +140,7 @@ namespace Sharezbold.Logging
                     lock (userLogBindingSource)
                     {
                         userLogBindingSource.Add(msg);
+                        //dataBindBox.Update();
                     }
                 }
 

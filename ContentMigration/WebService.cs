@@ -147,6 +147,15 @@ namespace Sharezbold.ContentMigration
         }
 
         /// <summary>
+        /// Set the correct url to lists web service
+        /// </summary>
+        /// <param name="list"></param>
+        public void SetListsMigrateTo(SList list)
+        {
+            this.DstLists.Url = list.MigrateTo.XmlData.Attributes["Url"].InnerText + UrlLists;
+        }
+
+        /// <summary>
         /// Tries to log in to source server, is true if server is accessible
         /// </summary>
         public bool IsSourceLoginPossible
