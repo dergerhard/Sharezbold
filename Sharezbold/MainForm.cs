@@ -42,12 +42,12 @@ namespace Sharezbold
         /// <summary>
         /// Source context
         /// </summary>
-        private ClientContext source;
+      //  private ClientContext source;
 
         /// <summary>
         /// Destination context
         /// </summary>
-        private ClientContext destination;
+        // private ClientContext destination;
 
         /// <summary>
         /// used to block the ui, while thread is loading
@@ -90,6 +90,11 @@ namespace Sharezbold
         private List<string> logList;
 
         /// <summary>
+        /// Holds the migration datas.
+        /// </summary>
+        private MigrationData migrationData;
+
+        /// <summary>
         /// Data binding object for logList
         /// </summary>
         //private BindingSource log;
@@ -99,15 +104,14 @@ namespace Sharezbold
         /// </summary>
         private Logger log;
 
-
-        private SharePoint2010And2013Migrator fileMigrator;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
         /// </summary>
         public MainForm()
         {
             this.InitializeComponent();
+
+            this.migrationData = new MigrationData();
 
             // this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
             this.treeViewContentSelection.CheckBoxes = true;
@@ -449,7 +453,7 @@ namespace Sharezbold
         {
             Task<SpTreeNode> t = Task.Factory.StartNew(() =>
                 {
-                    ContentDownloader downloader = new ContentDownloader(this.destination);
+                    ContentDownloader downloader = new ContentDownloader(this.migrationData.TargetClientContext);
                     return downloader.GenerateMigrationTree(false);
                 });
 
@@ -472,14 +476,14 @@ namespace Sharezbold
                 {
                     proxySettings = new ProxySettings(this.textBoxProxyUrl.Text.Trim(), this.textBoxProxyUsername.Text.Trim(), this.textBoxProxyPassword.Text.Trim());
                 }
-                this.source = connector.ConnectToClientContext(this.settings.FromHost, this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain, proxySettings);
+                this.migrationData.SourceClientContext = connector.ConnectToClientContext(this.settings.FromHost, this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain, proxySettings);
                
                 // TODO: Central Administration HOST
                 // set up web services and loader
                 this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, this.settings.ToHostCA, this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
                 this.contentLoader = new ContentLoader(this.webServices, this.log);
-                
-                return this.webServices.IsSourceLoginPossible && this.source != null;
+
+                return this.webServices.IsSourceLoginPossible && this.migrationData.SourceClientContext != null;
             });
 
             return await t;
@@ -502,9 +506,9 @@ namespace Sharezbold
                 {
                     proxySettings = new ProxySettings(this.textBoxProxyUrl.Text.Trim(), this.textBoxProxyUsername.Text.Trim(), this.textBoxProxyPassword.Text.Trim());
                 }
-                this.destination = connector.ConnectToClientContext(this.settings.ToHost, this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain, proxySettings);
+                this.migrationData.TargetClientContext = connector.ConnectToClientContext(this.settings.ToHost, this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain, proxySettings);
 
-                return this.webServices.IsDestinationLoginPossible && this.destination != null;
+                return this.webServices.IsDestinationLoginPossible && this.migrationData.TargetClientContext != null;
             });
 
             return await t;
@@ -705,7 +709,7 @@ namespace Sharezbold
                 return;
             }
 
-            if (this.source == null || this.destination == null)
+            if (this.migrationData.SourceClientContext == null || this.migrationData.TargetClientContext == null)
             {
                 this.tabPageConfiguration.Show();
                 this.tabControMain.SelectedTab = this.tabPageConfiguration;
@@ -717,7 +721,7 @@ namespace Sharezbold
             this.tabPageMigrationProgress.Show();
             this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
 
-            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.source, this.destination, this);
+            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext, this);
             bool finished = await migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
 
             if (finished)
@@ -915,12 +919,12 @@ namespace Sharezbold
             this.textBoxFileMigrationParallelThreads.Text = numberOfThreads.ToString();
             this.textBoxFileMigrationWebServiceAddress.Text = this.textBoxFileMigrationServiceURI.Text;
 
-            this.fileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.source).WithTargetClientContext(destination).CreateMigrator();
+            this.migrationData.FileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.migrationData.SourceClientContext).WithTargetClientContext(this.migrationData.TargetClientContext).CreateMigrator();
 
             TreeNodeCollection treeNodeCollection = this.treeViewContentSelection.Nodes;
-            HashSet<string> webUrls = treeNodeCollection.GetSelectedWebUrls();
+            this.migrationData.WebUrlsToMigrate = treeNodeCollection.GetSelectedWebUrls();
 
-            foreach (string item in webUrls)
+            foreach (string item in this.migrationData.WebUrlsToMigrate)
             {
                 Console.WriteLine("add site '{0}'", item);
                 this.textBoxFileMigrationWebs.Text += item + "\n";  
