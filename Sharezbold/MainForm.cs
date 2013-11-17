@@ -471,7 +471,7 @@ namespace Sharezbold
                 // TODO: Central Administration HOST
                 // set up web services and loader
                 this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, this.settings.ToHostCA, this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
-                this.contentLoader = new ContentLoader(this.webServices, this.log);
+                this.contentLoader = new ContentLoader(this.webServices, this.migrationData, this.log);
 
                 return this.webServices.IsSourceLoginPossible && this.migrationData.SourceClientContext != null;
             });
@@ -918,6 +918,32 @@ namespace Sharezbold
             {
                 Console.WriteLine("add site '{0}'", item);
                 this.textBoxFileMigrationWebs.Text += item + "\n";  
+            }
+        }
+
+        private void ButtonTestMigrationClicked(object o, EventArgs e)
+        {
+            foreach (string item in this.migrationData.WebUrlsToMigrate)
+            {
+                Web targetWeb;
+                Web sourceWeb;
+
+                string relativeUrl = item.Substring("http://".Length);
+
+                if (relativeUrl.IndexOf("/") > 0)
+                {
+                    relativeUrl = item.Substring(relativeUrl.IndexOf("/"));
+
+                    sourceWeb = this.migrationData.SourceClientContext.Site.OpenWeb(relativeUrl);
+                    targetWeb = this.migrationData.TargetClientContext.Site.OpenWeb(relativeUrl);
+                }
+                else
+                {
+                    sourceWeb = this.migrationData.SourceClientContext.Web;
+                    targetWeb = this.migrationData.TargetClientContext.Web;
+                }
+
+                this.migrationData.FileMigrator.MigrateFilesOfWeb(sourceWeb, targetWeb);
             }
         }
     }

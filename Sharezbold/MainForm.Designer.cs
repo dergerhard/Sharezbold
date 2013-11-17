@@ -46,6 +46,8 @@ namespace Sharezbold
             this.tabPageConfiguration = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.numericUpDownNumberOfThreads = new System.Windows.Forms.NumericUpDown();
+            this.label18 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.numericUpDownBandwith = new System.Windows.Forms.NumericUpDown();
             this.textBoxFileMigrationServiceURI = new System.Windows.Forms.TextBox();
@@ -122,13 +124,13 @@ namespace Sharezbold
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
             this.buttonFinish = new System.Windows.Forms.Button();
-            this.label18 = new System.Windows.Forms.Label();
-            this.numericUpDownNumberOfThreads = new System.Windows.Forms.NumericUpDown();
+            this.buttonTestMigration = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tabControMain.SuspendLayout();
             this.tabPageConfiguration.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumberOfThreads)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBandwith)).BeginInit();
             this.groupBoxProxySettings.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -145,7 +147,6 @@ namespace Sharezbold
             this.groupBox7.SuspendLayout();
             this.tabPageMigrationProgress.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumberOfThreads)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -276,6 +277,37 @@ namespace Sharezbold
             this.groupBox9.TabIndex = 5;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Miscellaneous";
+            // 
+            // numericUpDownNumberOfThreads
+            // 
+            this.numericUpDownNumberOfThreads.Location = new System.Drawing.Point(181, 115);
+            this.numericUpDownNumberOfThreads.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownNumberOfThreads.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownNumberOfThreads.Name = "numericUpDownNumberOfThreads";
+            this.numericUpDownNumberOfThreads.Size = new System.Drawing.Size(56, 20);
+            this.numericUpDownNumberOfThreads.TabIndex = 12;
+            this.numericUpDownNumberOfThreads.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(22, 117);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(101, 13);
+            this.label18.TabIndex = 11;
+            this.label18.Text = "Number of Threads:";
             // 
             // label11
             // 
@@ -781,6 +813,7 @@ namespace Sharezbold
             // 
             // groupBox10
             // 
+            this.groupBox10.Controls.Add(this.buttonTestMigration);
             this.groupBox10.Controls.Add(this.textBoxFileMigrationParallelThreads);
             this.groupBox10.Controls.Add(this.textBoxFileMigrationBandwith);
             this.groupBox10.Controls.Add(this.textBoxFileMigrationWebServiceAddress);
@@ -1021,36 +1054,15 @@ namespace Sharezbold
             this.buttonFinish.Text = "Finish & Exit";
             this.buttonFinish.UseVisualStyleBackColor = true;
             // 
-            // label18
+            // buttonTestMigration
             // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(22, 117);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(101, 13);
-            this.label18.TabIndex = 11;
-            this.label18.Text = "Number of Threads:";
-            // 
-            // numericUpDownNumberOfThreads
-            // 
-            this.numericUpDownNumberOfThreads.Location = new System.Drawing.Point(181, 115);
-            this.numericUpDownNumberOfThreads.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericUpDownNumberOfThreads.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDownNumberOfThreads.Name = "numericUpDownNumberOfThreads";
-            this.numericUpDownNumberOfThreads.Size = new System.Drawing.Size(56, 20);
-            this.numericUpDownNumberOfThreads.TabIndex = 12;
-            this.numericUpDownNumberOfThreads.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.buttonTestMigration.Location = new System.Drawing.Point(552, 214);
+            this.buttonTestMigration.Name = "buttonTestMigration";
+            this.buttonTestMigration.Size = new System.Drawing.Size(104, 23);
+            this.buttonTestMigration.TabIndex = 10;
+            this.buttonTestMigration.Text = "Migration Test Button";
+            this.buttonTestMigration.UseVisualStyleBackColor = true;
+            this.buttonTestMigration.Click += new System.EventHandler(this.ButtonTestMigrationClicked);
             // 
             // MainForm
             // 
@@ -1069,6 +1081,7 @@ namespace Sharezbold
             this.groupBox3.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumberOfThreads)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBandwith)).EndInit();
             this.groupBoxProxySettings.ResumeLayout(false);
             this.groupBoxProxySettings.PerformLayout();
@@ -1092,7 +1105,6 @@ namespace Sharezbold
             this.groupBox7.ResumeLayout(false);
             this.tabPageMigrationProgress.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumberOfThreads)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1191,5 +1203,6 @@ namespace Sharezbold
         private System.Windows.Forms.TextBox textBoxFileMigrationWebs;
         private System.Windows.Forms.NumericUpDown numericUpDownNumberOfThreads;
         private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Button buttonTestMigration;
     }
 }
