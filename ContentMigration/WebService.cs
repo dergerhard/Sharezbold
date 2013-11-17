@@ -155,6 +155,16 @@ namespace Sharezbold.ContentMigration
             this.DstLists.Url = list.MigrateTo.XmlData.Attributes["Url"].InnerText + UrlLists;
         }
 
+        public void SetWebsMigrateTo(string url)
+        {
+            this.DstWebs.Url = url + UrlWebs;
+        }
+
+        public void SetWebsMigrateFrom(string url)
+        {
+            this.SrcWebs.Url = url + UrlWebs;
+        }
+
         /// <summary>
         /// Tries to log in to source server, is true if server is accessible
         /// </summary>

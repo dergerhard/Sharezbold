@@ -131,12 +131,13 @@ namespace Sharezbold.ContentMigration
                 // lists to migrate: Hidden="False"
                 foreach (XmlNode list in lc.ChildNodes)
                 {
-                    //site.AllLists.Add(list);
-
-                    if (list.Attributes["Hidden"].InnerText.ToUpper().Equals("FALSE"))
+                    
+                    // if BaseType==1 --> its a document library
+                    if (list.Attributes["Hidden"].InnerText.ToUpper().Equals("FALSE") && !list.Attributes["BaseType"].InnerText.Equals("1"))
                     { 
                         // load list details with all fields
                         XmlNode listDetails = srcLists.GetList(list.Attributes["Title"].InnerText);
+                        Console.WriteLine(list.Attributes["Title"].InnerText + ", BaseType=" + listDetails.Attributes["BaseType"].InnerText);
                         SList sList = new SList();
                         sList.ParentObject = site;
                         sList.XmlList = listDetails;
@@ -144,7 +145,33 @@ namespace Sharezbold.ContentMigration
                         // load list data
                         if (loadListData)
                         {
-                            XmlNode ndListItems = srcLists.GetListItems(list.Attributes["Title"].InnerText, null, null, null, null, null, null);
+                            // attention: GetListItems only returns the elements of the default view, if you do not specify the viewfields you want
+
+                            XmlDocument xmlDoc = new System.Xml.XmlDocument();
+                            XmlElement ndViewFields = xmlDoc.CreateElement("ViewFields");
+
+                            XmlElement field;
+                            foreach (XmlElement f in sList.XmlList["Fields"])
+                            {
+                                field = xmlDoc.CreateElement("FieldRef");
+                                field.SetAttribute("Name", f.Attributes["Name"].InnerText);
+                                ndViewFields.AppendChild(field);
+                            }
+                            /*
+                            //ndViewFields.InnerXml = "<ViewFields><FieldRef Name='ID' /><FieldRef Name='Title' /><FieldRef Name='Body' /></ViewFields>";
+                            XmlElement field = xmlDoc.CreateElement("FieldRef");
+                            field.SetAttribute("Name", "ID");
+                            ndViewFields.AppendChild(field);
+
+                            field = xmlDoc.CreateElement("FieldRef");
+                            field.SetAttribute("Name", "Title");
+                            ndViewFields.AppendChild(field);
+
+                            field = xmlDoc.CreateElement("FieldRef");
+                            field.SetAttribute("Name", "Body");
+                            ndViewFields.AppendChild(field);
+                            */
+                            XmlNode ndListItems = srcLists.GetListItems(list.Attributes["Title"].InnerText, null, null, ndViewFields, null, null, null);
                             sList.XmlListData = ndListItems;
                         }
                         site.AddList(sList, false);
@@ -210,7 +237,8 @@ namespace Sharezbold.ContentMigration
             {
                 if (site.Migrate && keepGoing)
                 {
-                    keepGoing = await this.MigrateSiteAsync(site, this.DestinationSiteCollection);
+                    //keepGoing = await this.MigrateSiteAsync(site, this.DestinationSiteCollection);
+                    keepGoing = this.MigrateSite(site, this.DestinationSiteCollection);
                 }
 
                 //migrate its lists and views
@@ -271,6 +299,100 @@ namespace Sharezbold.ContentMigration
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dstSC"></param>
+        /// <returns></returns>
+        public bool MigrateSite(SSite src, SSiteCollection dstSC)
+        {
+            try
+            {
+                /// mirate the site f:
+                ///   - if it is not the site collection site (its a conventional subsite)
+                ///   - if it is the site collection site and the site collection is not migrated (then the contents are migrated to a conventional site)
+                if (!src.IsSiteCollectionSite || (src.IsSiteCollectionSite && !this.SourceSiteCollection.Migrate))
+                {
+                    this.log.AddMessage("Migrating site \"" + src.Name + "\" started");
+
+                    string url = Regex.Replace(src.XmlData.Attributes["Title"].InnerText, @"[^A-Za-z0-9_\.~]+", "-");
+
+                    //find a fitting url
+                    int i = 1;
+                    string newUrl = url;
+                    while (destinationSiteUrls.FindAll(delegate(string s) { return s.EndsWith(newUrl); }).Count > 0)
+                    {
+                        newUrl = url + i.ToString();
+                        i++;
+                    }
+                    url = newUrl;
+
+                    string title = src.XmlData.Attributes["Title"].InnerText;
+                    string description = src.XmlData.Attributes["Description"].InnerText;
+                    string templateName = this.GetSiteTemplate(src.XmlData.Attributes["Url"].InnerText);
+                    uint language = this.GetLanguage(this.SourceSiteCollection);
+                    bool languageSpecified = true;
+                    uint locale = this.GetLocale();
+                    bool localeSpecified = true;
+                    uint collationLocale = locale;
+                    bool collationLocaleSpecified = true;
+                    bool uniquePermissions = true;
+                    bool uniquePermissionsSpecified = true;
+                    bool anonymous = true;
+                    bool anonymousSpecified = true;
+                    bool presence = true;
+                    bool presenceSpecified = true;
+
+                    try
+                    {
+                        this.ws.DstSites.CreateWeb(url, title, description, templateName, language, languageSpecified, locale, localeSpecified, collationLocale, collationLocaleSpecified, uniquePermissions, uniquePermissionsSpecified, anonymous, anonymousSpecified, presence, presenceSpecified);
+                    }
+                    catch (Exception e)
+                    {
+                        // there is always an error... no matter what you do (XML error, altough I couldn't have made one here)
+                        // has to be ignored
+                        //this.log.AddMessage("Site migration of site \"" + src.Name + "\" FAILED. Check if a site with the same name already exists! Error message: " + e.Message);
+                        //return false;
+                    }
+
+
+                    try
+                    {
+                        XmlNode webs = this.ws.DstWebs.GetWebCollection();
+                        foreach (XmlNode web in webs)
+                        {
+                            if (web.Attributes["Url"].InnerText.EndsWith(url))
+                            {
+                                url = web.Attributes["Url"].InnerText;
+                            }
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                    }
+
+                    try
+                    {
+                        this.MigrateSiteColumnsAsync(src.XmlData.Attributes["Url"].InnerText, url);
+                    }
+                    catch (Exception e)
+                    { }
+
+                    //this.log.AddMessage("Migrating site \"" + src.Name + "\" finished");
+                }
+                //return true;
+            }
+            catch (Exception e)
+            {
+                // here only a http error could occurr
+                this.log.AddMessage("Migrating site \"" + src.Name + "\" error: " + e.Message);
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Migrate a site
         /// </summary>
         /// <param name="src">source site to migrate</param>
@@ -279,75 +401,7 @@ namespace Sharezbold.ContentMigration
         {
             Task<bool> t = Task.Factory.StartNew(() =>
             {
-                try
-                {
-                    /// mirate the site f:
-                    ///   - if it is not the site collection site (its a conventional subsite)
-                    ///   - if it is the site collection site and the site collection is not migrated (then the contents are migrated to a conventional site)
-                    if (!src.IsSiteCollectionSite || (src.IsSiteCollectionSite && !this.SourceSiteCollection.Migrate))
-                    {
-                        this.log.AddMessage("Migrating site \"" + src.Name + "\" started");
-
-                        string url = Regex.Replace(src.XmlData.Attributes["Title"].InnerText, @"[^A-Za-z0-9_\.~]+", "-");
-
-                        //find a fitting url
-                        int i = 1;
-                        string newUrl = url;
-                        while (destinationSiteUrls.FindAll(delegate(string s) { return s.EndsWith(newUrl); }).Count > 0)
-                        {
-                            newUrl = url + i.ToString();
-                            i++;
-                        }
-                        url = newUrl;
-                        
-                        string title = src.XmlData.Attributes["Title"].InnerText;
-                        string description = src.XmlData.Attributes["Description"].InnerText;
-                        string templateName = this.GetSiteTemplate(src.XmlData.Attributes["Url"].InnerText);
-                        uint language = this.GetLanguage(this.SourceSiteCollection);
-                        bool languageSpecified = true;
-                        uint locale = this.GetLocale();
-                        bool localeSpecified = true;
-                        uint collationLocale = locale;
-                        bool collationLocaleSpecified = true;
-                        bool uniquePermissions = true;
-                        bool uniquePermissionsSpecified = true;
-                        bool anonymous = true;
-                        bool anonymousSpecified = true;
-                        bool presence = true;
-                        bool presenceSpecified = true;
-
-                        try
-                        {
-                            this.ws.DstSites.CreateWeb(url, title, description, templateName, language, languageSpecified, locale, localeSpecified, collationLocale, collationLocaleSpecified, uniquePermissions, uniquePermissionsSpecified, anonymous, anonymousSpecified, presence, presenceSpecified);
-                        }
-                        catch (Exception e)
-                        {
-                            // there is always an error... no matter what you do (XML error, altough I couldn't have made one here)
-                            // has to be ignored
-                            //this.log.AddMessage("Site migration of site \"" + src.Name + "\" FAILED. Check if a site with the same name already exists! Error message: " + e.Message);
-                            //return false;
-                        }
-
-                        try
-                        {
-                            //definately runtime error TODO
-                            this.MigrateSiteColumnsAsync(src.XmlData.Attributes["Url"].InnerText, url);
-                        }
-                        catch (Exception e)
-                        { }
-                        //}
-
-                        this.log.AddMessage("Migrating site \"" + src.Name + "\" finished");
-
-                    }
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    // here only a http error could occurr
-                    this.log.AddMessage("Migrating site \"" + src.Name + "\" error: " + e.Message);
-                    return false;
-                }
+                return this.MigrateSite(src, dstSC);
             });
             return await t;
         }
@@ -478,61 +532,62 @@ namespace Sharezbold.ContentMigration
                 //Console.WriteLine(viewCollection.OuterXml);
                 foreach (XmlNode view in viewCollection)
                 {
-                    string viewName = view.Attributes["Name"].InnerText;
-                    XmlNode viewDetail = this.ws.SrcViews.GetView(listName, viewName);
-
-                    // prepare elements
-                    XmlDocument doc2 = new XmlDocument();
-                    XmlElement viewFields;
-                    XmlDocument doc3 = new XmlDocument();
-                    XmlElement query;
-                    XmlDocument doc4 = new XmlDocument();
-                    XmlElement rowLimit;
-
-                    try
+                    if (!view.Attributes["DisplayName"].InnerText.Equals(""))
                     {
-                        viewFields = (XmlElement)doc2.ImportNode(viewDetail["ViewFields"], true);
-                    }
-                    catch (Exception e)
-                    {
-                        viewFields = doc2.CreateElement("ViewFields");
-                    }
+                        string viewName = view.Attributes["Name"].InnerText;
                     
-                    try
-                    {
-                        query = (XmlElement)doc3.ImportNode(viewDetail["Query"], true);
-                    }
-                    catch (Exception e)
-                    {
-                        query = doc.CreateElement("Query");
-                    }
+                        XmlNode viewDetail = this.ws.SrcViews.GetView(listName, viewName);
 
-                    try
-                    {
-                        rowLimit = (XmlElement)doc4.ImportNode(viewDetail["RowLimit"], true);
-                    }
-                    catch (Exception e)
-                    {
-                        rowLimit = doc.CreateElement("RowLimit");
-                    }
-                    
-                    bool makeViewDefault = false;
-                    try
-                    {
-                        makeViewDefault = viewDetail.Attributes["DefaultView"].InnerText.ToUpper().Equals("TRUE") ? true : false;
-                    }
-                    catch (Exception e)
-                    {
-                        this.log.AddMessage("\"DefaultView\" attribute missing. Continuing.", true);
-                    }
+                        // prepare elements
+                        XmlDocument doc2 = new XmlDocument();
+                        XmlElement viewFields;
+                        XmlDocument doc3 = new XmlDocument();
+                        XmlElement query;
+                        XmlDocument doc4 = new XmlDocument();
+                        XmlElement rowLimit;
 
-                    // add the view
-                    try
-                    {
-                        //string viewname = view.Attributes["Name"].InnerText.Equals("") ? "blank" : view.Attributes["Name"].InnerText;
-                        string viewname = view.Attributes["DisplayName"].InnerText; // view.Attributes["DisplayName"].InnerText.Equals("") ? "blank" : view.Attributes["DisplayName"].InnerText;
-                        if (!viewname.Equals(""))
+                        try
                         {
+                            viewFields = (XmlElement)doc2.ImportNode(viewDetail["ViewFields"], true);
+                        }
+                        catch (Exception e)
+                        {
+                            viewFields = doc2.CreateElement("ViewFields");
+                        }
+
+                        try
+                        {
+                            query = (XmlElement)doc3.ImportNode(viewDetail["Query"], true);
+                        }
+                        catch (Exception e)
+                        {
+                            query = doc.CreateElement("Query");
+                        }
+
+                        try
+                        {
+                            rowLimit = (XmlElement)doc4.ImportNode(viewDetail["RowLimit"], true);
+                        }
+                        catch (Exception e)
+                        {
+                            rowLimit = doc.CreateElement("RowLimit");
+                        }
+
+                        bool makeViewDefault = false;
+                        try
+                        {
+                            makeViewDefault = viewDetail.Attributes["DefaultView"].InnerText.ToUpper().Equals("TRUE") ? true : false;
+                        }
+                        catch (Exception e)
+                        {
+                            //TODO: uncomment again this.log.AddMessage("\"DefaultView\" attribute missing. Continuing.", true);
+                        }
+
+                        // add the view
+                        try
+                        {
+                            string viewname = view.Attributes["DisplayName"].InnerText;
+
                             XmlNode res = this.ws.DstViews.AddView(listName, viewname, viewFields, query, rowLimit, viewDetail.Attributes["Type"].InnerText, makeViewDefault);
                             if (makeViewDefault)
                             {
@@ -540,23 +595,19 @@ namespace Sharezbold.ContentMigration
                             }
 
                             this.log.AddMessage("Migrate lists added view \"" + viewname + "\"");
+
                         }
-                            /*if (view.Attributes["DisplayName"].InnerText.Equals("All Events"))
+                        catch (Exception e)
                         {
-                            Console.WriteLine("yay");
-                        }*/
+                            this.log.AddMessage("Migrate lists add view error at \"" + view.Attributes["DisplayName"].InnerText + "\": " + e.Message);
+                        }
+                    }
+                    //this.ws.DstViews.Url = viewUrlBuffer;
+                    this.ws.DstLists.Url = urlBuffer;
 
-                    }
-                    catch (Exception e)
-                    {
-                        this.log.AddMessage("Migrate lists add view error at \"" + view.Attributes["DisplayName"].InnerText + "\": " + e.Message);
-                    }
+                    this.log.Indent = this.log.Indent - 1;
+                    this.log.AddMessage("Migrate lists finished");
                 }
-                //this.ws.DstViews.Url = viewUrlBuffer;
-                this.ws.DstLists.Url = urlBuffer;
-
-                this.log.Indent = this.log.Indent - 1;
-                this.log.AddMessage("Migrate lists finished");
                 this.MigrateListData(list, viewID);
                 return true;
             });
@@ -594,40 +645,30 @@ namespace Sharezbold.ContentMigration
              *          1. get the ids and all information
              *          2. create the elements only with its IDs
              *          3. Update every attribute in own Method for failsafe
+             *          
+             *          create ONE element with name and title
+             * 
              */
             this.ws.SetListsMigrateTo(list);
-            
-            /*
-            XmlNode listColl = this.ws.DstViews.GetViewCollection(list.Name);
-
-            foreach (XmlNode v in listColl)
-            {
-                if (v.Attributes["DisplayName"].InnerText.Equals("."))
-                {
-                    viewID = v.Attributes["Name"].InnerText;
-                }
-            }
-            */
-            //viewID = "blank";
-            
-            XmlElement listdata = (XmlElement)list.XmlListData;
-            
+                        
             //use DisplayName of List and view
             XmlNode ndListView = this.ws.DstLists.GetListAndView(list.Name, "");
             string strListID = ndListView.ChildNodes[0].Attributes["Name"].InnerText;
-            string strViewID = viewID; //this.ws.DstViews.GetView(list.Name, viewID).Attributes["Name"].InnerText; // ndListView.ChildNodes[1].Attributes["Name"].InnerText;
-            
+            string strViewID = viewID; 
 
             //                                      ID, List<Attribute, AttributeValue>
-            var migrationElements = new Dictionary<int, List<KeyValuePair<string, string>>>();
+            var migrationElements = new Dictionary<int, Dictionary<string, string>>();
 
+            // get the items from the list
+            XmlElement listdata = (XmlElement)list.XmlListData;
+            
             //iterate through z:row-nodes
             foreach (XmlLinkedNode row in listdata["rs:data"])
             {
                 if (row.GetType() == typeof(XmlElement))
                 {
                     int id = int.Parse(row.Attributes["ows_ID"].InnerText);
-                    var attrs = new List<KeyValuePair<string, string>>();
+                    var attrs = new Dictionary<string, string>();
 
                     XmlElement el = (XmlElement)row;
                     
@@ -636,28 +677,27 @@ namespace Sharezbold.ContentMigration
                     {
                         if (attr.Name.StartsWith("ows_") && !attr.Name.Equals("ows_ID"))
                         {
-                            attrs.Add(new KeyValuePair<string,string>(attr.Name.Substring(4), attr.Value));
+                            attrs[attr.Name.Substring(4)] = attr.Value;
                         }
                     }
-                    migrationElements.Add(id, attrs);
+                    migrationElements[id] = attrs;
                 }
             }
 
 
-            //generate batch
-            // set up batch node
-            XmlDocument doc = new XmlDocument();
-            XmlElement batchElement = doc.CreateElement("Batch");
-            batchElement.SetAttribute("OnError", "Continue");
-            batchElement.SetAttribute("ListVersion", "1");
-            batchElement.SetAttribute("ViewName", strViewID);
-        
-            int i=1;
+            // 1. create the element without any information
+            // 2. create all the element information in isolated "methods" in one batch to prevent one error from blocking the transfer
             foreach (var el in migrationElements)
             {
-                //create new element with id
+                XmlDocument doc = new XmlDocument();
+                XmlElement batchElement = doc.CreateElement("Batch");
+                batchElement.SetAttribute("OnError", "Continue");
+                batchElement.SetAttribute("ListVersion", "1");
+                batchElement.SetAttribute("ViewName", strViewID);
+        
+                //create new element with id and title
                 var method = doc.CreateElement("Method");
-                method.SetAttribute("ID", i.ToString());
+                method.SetAttribute("ID", "1");
                 method.SetAttribute("Cmd", "New");
 
                 var field = doc.CreateElement("Field");
@@ -665,62 +705,69 @@ namespace Sharezbold.ContentMigration
                 field.InnerText = el.Key.ToString();
                 method.AppendChild(field);
                 
-                /*var fieldX = doc.CreateElement("Field");
-                fieldX.SetAttribute("Name", "Title");
-                fieldX.InnerText = "some Title";
-                method.AppendChild(fieldX);
+                /*
+                var fieldTitle = doc.CreateElement("Field");
+                fieldTitle.SetAttribute("Name", "Title");
+                fieldTitle.InnerText = el.Value["Title"];
+                method.AppendChild(fieldTitle);
                 */
-
                 batchElement.AppendChild(method);
 
-
-
-                i++;
-                //create all following elements
-                foreach (var attribute in el.Value)
+                // create the new element without any other properties and retreive its ID
+                try
                 {
-                    if (!attribute.Key.Equals("ID"))
+                    XmlNode res = this.ws.DstLists.UpdateListItems(strListID, batchElement);
+                    // get the new ID
+                    string newID = res["Result"]["z:row"].Attributes["ows_ID"].InnerText;
+
+                    doc = new XmlDocument();
+                    batchElement = doc.CreateElement("Batch");
+                    batchElement.SetAttribute("OnError", "Continue");
+                    batchElement.SetAttribute("ListVersion", "1");
+                    batchElement.SetAttribute("ViewName", strViewID);
+
+                    int i = 1;
+                    //create all following elements
+                    foreach (var attribute in el.Value)
                     {
-                        var method2 = doc.CreateElement("Method");
-                        method2.SetAttribute("ID", i.ToString());
-                        method2.SetAttribute("Cmd", "Update");
+                        if (!attribute.Key.Equals("ID"))
+                        {
+                            var method2 = doc.CreateElement("Method");
+                            method2.SetAttribute("ID", i.ToString());
+                            method2.SetAttribute("Cmd", "Update");
 
-                        var field2 = doc.CreateElement("Field");
-                        field2.SetAttribute("Name", "ID");
-                        field2.InnerText = el.Key.ToString();
-                        method2.AppendChild(field2);
+                            var field2 = doc.CreateElement("Field");
+                            field2.SetAttribute("Name", "ID");
+                            field2.InnerText = newID;
+                            method2.AppendChild(field2);
 
-                        var field3 = doc.CreateElement("Field");
-                        field3.SetAttribute("Name", attribute.Key);
-                        field3.InnerText = attribute.Value;
-                        method2.AppendChild(field3);
+                            var field3 = doc.CreateElement("Field");
+                            field3.SetAttribute("Name", attribute.Key);
+                            field3.InnerText = attribute.Value;
+                            method2.AppendChild(field3);
 
-                        batchElement.AppendChild(method2);
-                        i++;
+                            batchElement.AppendChild(method2);
+                            i++;
+                        }
                     }
+
+                    try
+                    {
+                        this.ws.DstLists.UpdateListItems(strListID, batchElement);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.log.AddMessage("Error while transfering list data. Error message: " + ex.Message);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.log.AddMessage("Error while transfering list data. Error message: " + ex.Message);
                 }
 
             }
-            /*
-                            Console.WriteLine(attr.Name.Substring(4) + ": " + attr.Value);
-                            var field = doc.CreateElement("Field");
-                            field.SetAttribute("Name", attr.Name.Substring(4));
-                            field.InnerText = attr.Value.Replace("1;#", "");
-                            method.AppendChild(field);*/
 
-                                //batchElement.AppendChild(method);
-
-
-            try
-            {
-                this.ws.DstLists.UpdateListItems(strListID, batchElement);
-            }
-            catch (Exception ex)
-            {
-                this.log.AddMessage("Error while transfering list data. Error message: " + ex.Message);
-            }
-
-
+          
             /*
             // set up batch node
             XmlDocument doc = new XmlDocument();
@@ -780,9 +827,9 @@ namespace Sharezbold.ContentMigration
         /// </summary>
         /// <param name="src">source site to migrate</param>
         /// <param name="dst">destination site to migrate</param>
-        public async Task<bool> MigrateSiteColumnsAsync(SSite src, SSite dst)
+        public void MigrateSiteColumnsAsync(SSite src, SSite dst)
         {
-            return await this.MigrateSiteColumnsAsync(src.XmlData.Attributes["Url"].InnerText, dst.XmlData.Attributes["Url"].InnerText);
+            this.MigrateSiteColumnsAsync(src.XmlData.Attributes["Url"].InnerText, dst.XmlData.Attributes["Url"].InnerText);
         }
 
 
@@ -792,115 +839,102 @@ namespace Sharezbold.ContentMigration
         /// </summary>
         /// <param name="src">source site to migrate</param>
         /// <param name="dst">destination site to migrate</param>
-        public async Task<bool> MigrateSiteColumnsAsync(string src, string dst)
+        public void MigrateSiteColumnsAsync(string src, string dst)
         {
-            Task<bool> t = Task.Factory.StartNew(() =>
+            this.ws.SetWebsMigrateFrom(src);
+            this.ws.SetWebsMigrateTo(dst);
+
+            try
             {
-                string websSrcUrlBuffer = this.ws.SrcWebs.Url;
-                string websDstUrlBuffer = this.ws.DstWebs.Url;
+                this.log.AddMessage("Migrating site columns started");
 
-                try
+                XmlNode srcColumsXml = this.ws.SrcWebs.GetColumns();
+                XmlNode dstColumnsXml = this.ws.DstWebs.GetColumns();
+
+                //convert to xdoc
+                XDocument srcDoc = XDocument.Parse(srcColumsXml.OuterXml);
+                XDocument dstDoc = XDocument.Parse(dstColumnsXml.OuterXml);
+
+                /* COLUMNS
+                 * create dest dictionary
+                 * for all src elements
+                 *      if dest contains src
+                 *          compare:
+                 *            == --> do nothing (same content type)
+                 *            != --> add to update list (something changed, so migrate)
+                 *      else
+                 *          --> add to create list (because its new)
+                 */
+
+                // create dst dictionary
+                Dictionary<string, XElement> dstColumns = new Dictionary<string, XElement>();
+                foreach (XElement el in dstDoc.Root.Elements())
                 {
-                    this.log.AddMessage("Migrating site columns started");
-                    
-                    this.ws.SrcWebs.Url = src;
-                    this.ws.DstWebs.Url = dst;
+                    dstColumns.Add(el.Attribute("ID").Value, el);
+                }
 
-                    XmlNode srcColumsXml = this.ws.SrcWebs.GetColumns();
-                    XmlNode dstColumnsXml = this.ws.DstWebs.GetColumns();
+                List<XElement> createColumns = new List<XElement>();
 
-                    //convert to xdoc
-                    XDocument srcDoc = XDocument.Parse(srcColumsXml.OuterXml);
-                    XDocument dstDoc = XDocument.Parse(dstColumnsXml.OuterXml);
+                XNodeEqualityComparer comparer = new XNodeEqualityComparer();
 
-                    /* COLUMNS
-                     * create dest dictionary
-                     * for all src elements
-                     *      if dest contains src
-                     *          compare:
-                     *            == --> do nothing (same content type)
-                     *            != --> add to update list (something changed, so migrate)
-                     *      else
-                     *          --> add to create list (because its new)
-                     */
-
-                    // create dst dictionary
-                    Dictionary<string, XElement> dstColumns = new Dictionary<string, XElement>();
-                    foreach (XElement el in dstDoc.Root.Elements())
+                foreach (XElement el in srcDoc.Root.Elements())
+                {
+                    if (dstColumns.ContainsKey(el.Attribute("ID").Value))
                     {
-                        dstColumns.Add(el.Attribute("ID").Value, el);
-                    }
-
-                    List<XElement> createColumns = new List<XElement>();
-
-                    XNodeEqualityComparer comparer = new XNodeEqualityComparer();
-
-                    foreach (XElement el in srcDoc.Root.Elements())
-                    {
-                        if (dstColumns.ContainsKey(el.Attribute("ID").Value))
+                        /*if (comparer.GetHashCode(el) != comparer.GetHashCode(dstColumns[el.Attribute("ID").Value]))
                         {
-                            /*if (comparer.GetHashCode(el) != comparer.GetHashCode(dstColumns[el.Attribute("ID").Value]))
-                            {
-                                updateColumns.Add(el);
-                            }*/
-                        }
-                        else
-                        {
-                            createColumns.Add(el);
-                        }
+                            updateColumns.Add(el);
+                        }*/
                     }
-
-                    // now columns that have to be updated or created are identified
-                    // time to create or update them
-                    int id = 1;
-                    /*string updateStr = "";
-                    foreach (XElement el in updateColumns)
+                    else
                     {
-                        //updateStr += el.ToString();
-                        updateStr += "<Method ID=\"" + id++ + "\" Cmd=\"Update\">" + el.ToString() + "</Method>";
+                        createColumns.Add(el);
                     }
-                    XmlDocument updateDoc = new XmlDocument();
-                    updateDoc.LoadXml("<Fields>" + updateStr + "</Fields>");
-                    XmlNode updateNode = updateDoc.DocumentElement;
-                    */
-
-                    this.log.AddMessage("Migriting site columns: preparing " + createColumns.Count + " columns for migration");
-
-                    string createStr = "";
-                    foreach (XElement el in createColumns)
-                    {
-                        createStr += "<Method ID=\"" + id++ + "\" Cmd=\"New\">" + el.ToString() + "</Method>";
-                    }
-                    XmlDocument createDoc = new XmlDocument();
-                    createDoc.LoadXml("<Fields>" + createStr + "</Fields>");
-                    XmlNode createNode = createDoc.DocumentElement;
-
-                    //xmldocument object
-                    XmlDocument xDoc = new XmlDocument();
-                    //Fields to be added
-                    XmlElement newFields = xDoc.CreateElement("Fields");
-                    //Fields to be edited
-                    //XmlElement updateFields = xDoc.CreateElement("Fields");
-
-                    newFields.InnerXml = createStr; //"<Method ID=\"1\">"+createStr+"</Method>";
-                    //updateFields.InnerXml = updateStr; //"<Method ID=\"2\">"+updateStr+"</Method>";
-
-                    //XmlNode returnValue = dstWebs.UpdateColumns(newFields, updateFields, null);
-                    XmlNode returnValue = this.ws.DstWebs.UpdateColumns(newFields, null, null);
                 }
-                catch (Exception e)
+
+                // now columns that have to be updated or created are identified
+                // time to create or update them
+                int id = 1;
+                /*string updateStr = "";
+                foreach (XElement el in updateColumns)
                 {
-                    this.log.AddMessage("Migrating site columns error: " + e.Message);
+                    //updateStr += el.ToString();
+                    updateStr += "<Method ID=\"" + id++ + "\" Cmd=\"Update\">" + el.ToString() + "</Method>";
                 }
-                finally
-                {
-                    this.ws.SrcWebs.Url = websSrcUrlBuffer;
-                    this.ws.DstWebs.Url = websDstUrlBuffer;
-                }
-                return true;
+                XmlDocument updateDoc = new XmlDocument();
+                updateDoc.LoadXml("<Fields>" + updateStr + "</Fields>");
+                XmlNode updateNode = updateDoc.DocumentElement;
+                */
 
-            });
-            return await t;
+                this.log.AddMessage("Migriting site columns: preparing " + createColumns.Count + " columns for migration");
+
+                string createStr = "";
+                foreach (XElement el in createColumns)
+                {
+                    createStr += "<Method ID=\"" + id++ + "\" Cmd=\"New\">" + el.ToString() + "</Method>";
+                }
+                XmlDocument createDoc = new XmlDocument();
+                createDoc.LoadXml("<Fields>" + createStr + "</Fields>");
+                XmlNode createNode = createDoc.DocumentElement;
+
+                //xmldocument object
+                XmlDocument xDoc = new XmlDocument();
+                //Fields to be added
+                XmlElement newFields = xDoc.CreateElement("Fields");
+                //Fields to be edited
+                //XmlElement updateFields = xDoc.CreateElement("Fields");
+
+                newFields.InnerXml = createStr; //"<Method ID=\"1\">"+createStr+"</Method>";
+                //updateFields.InnerXml = updateStr; //"<Method ID=\"2\">"+updateStr+"</Method>";
+
+                //XmlNode returnValue = dstWebs.UpdateColumns(newFields, updateFields, null);
+                XmlNode returnValue = this.ws.DstWebs.UpdateColumns(newFields, null, null);
+            }
+            catch (Exception e)
+            {
+                this.log.AddMessage("Migrating site columns error: " + e.Message);
+            }
+
         }
 
 
