@@ -908,6 +908,7 @@ namespace Sharezbold
 
         private void FileMigrationTabClicked(object sender, EventArgs e)
         {
+            this.textBoxFileMigrationWebs.Text = "";
             int bandwith = (int) this.numericUpDownBandwith.Value;
             int numberOfThreads = (int)this.numericUpDownNumberOfThreads.Value;
             this.textBoxFileMigrationBandwith.Text = bandwith + " %";
