@@ -897,7 +897,9 @@ namespace Sharezbold
         private void FileMigrationTabClicked(object sender, EventArgs e)
         {
             int bandwith = (int) this.numericUpDownBandwith.Value;
-            this.textBoxFileMigrationBandwith.Text = bandwith + "%";
+            int numberOfThreads = (int)this.numericUpDownNumberOfThreads.Value;
+            this.textBoxFileMigrationBandwith.Text = bandwith + " %";
+            this.textBoxFileMigrationParallelThreads.Text = numberOfThreads.ToString();
             this.textBoxFileMigrationWebServiceAddress.Text = this.textBoxFileMigrationServiceURI.Text;
 
             this.fileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.source).WithTargetClientContext(destination).CreateMigrator();
