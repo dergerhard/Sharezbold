@@ -21,6 +21,9 @@ namespace Sharezbold.ContentMigration
     using System.Text.RegularExpressions;
     using System.Diagnostics;
     using Sharezbold.Logging;
+    using ElementsMigration;
+    using Extensions;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// Is responsible for downloading/uploading data from the source to the destinaiton server
@@ -36,15 +39,23 @@ namespace Sharezbold.ContentMigration
         /// the logger object
         /// </summary>
         private Logger log = null;
+
+        /// <summary>
+        /// Datas for migration.
+        /// </summary>
+        private MigrationData migrationData;
         
         /// <summary>
         /// Default constructor, takes the initialized web service class
         /// </summary>
         /// <param name="service">Web service access class</param>
+        /// <param name="migrationData">datas for migration</param>
         /// <param name="log">The logger class</param>
-        public ContentLoader(WebService service, Logger log = null)
+        public ContentLoader(WebService service, MigrationData migrationData, Logger log = null)
         {
             this.ws = service;
+            this.migrationData = migrationData;
+
             if (log == null)
             {
                 this.log = new Logger();
@@ -221,6 +232,32 @@ namespace Sharezbold.ContentMigration
              *  6. Transfer files
              */
 
+            Sharepoint2013Migrator migrator = new Sharepoint2013Migrator(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext);
+            
+            try
+            {
+                migrator.MigrateGroup();
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                migrator.MigrateUser();
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                migrator.MigratePermissionlevels();
+            }
+            catch (Exception)
+            {
+            }
+
             this.log.AddMessage("Migration started");
 
             // specifies whether to go on with the migration
@@ -295,6 +332,18 @@ namespace Sharezbold.ContentMigration
              *      list of sites
              * 3. All lists without source site
              */
+
+            //// file migration:
+            foreach (string item in this.migrationData.WebUrlsToMigrate)
+            {
+                Dictionary<Web, Web> sourceTargetWebs = item.GetRelativeUrlOfWeb(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext);
+
+                foreach (var entry in sourceTargetWebs)
+                {
+                    this.migrationData.FileMigrator.MigrateFilesOfWeb(entry.Key, entry.Value);    
+                }
+                
+            }
             return keepGoing;
         }
 

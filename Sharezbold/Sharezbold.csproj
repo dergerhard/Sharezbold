@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Connector.cs" />
     <Compile Include="ElementsMigrationWorker.cs" />
+    <Compile Include="Extensions\TreeNodeExtension.cs" />
     <Compile Include="LoginFailedException.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

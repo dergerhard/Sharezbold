@@ -41,10 +41,53 @@ namespace Sharezbold.FileMigration
 
             FileCollection files = GetFilesOfSharedDocumentsFolder(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
 
-            foreach (File file in files)
+            // List<FileCollection> allFiles = GetAllFilesOfWeb(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
+            /*
+            foreach (FileCollection files in allFiles)
+            {*/
+                foreach (File file in files)
+                {
+                    new FileMigrator().MigrateFile(file, this.fileMigrationSpecification, targetWeb);
+                }    
+           // }
+        }
+
+        private List<FileCollection> GetAllFilesOfWeb(ClientContext clientContext, Web web)
+        {
+            List<FileCollection> files = new List<FileCollection>();
+
+            Folder rootFolder = web.RootFolder;
+            clientContext.Load(rootFolder);
+            clientContext.ExecuteQuery();
+
+            files = GetFilesOfAllFolder(clientContext, rootFolder, files);
+
+            return files;
+        }
+
+        private List<FileCollection> GetFilesOfAllFolder(ClientContext clientContext, Folder folder, List<FileCollection> files)
+        {
+            FolderCollection folders = folder.Folders;
+            clientContext.Load(folders);
+            clientContext.ExecuteQuery();
+
+            if (folders.Count == 0)
             {
-                new FileMigrator().MigrateFile(file, this.fileMigrationSpecification, targetWeb);
+                FileCollection currentFiles = folder.Files;
+                clientContext.Load(currentFiles);
+                clientContext.ExecuteQuery();
+
+                files.Add(currentFiles);
             }
+            else
+            {
+                foreach (Folder f in folders)
+                {
+                    files = GetFilesOfAllFolder(clientContext, f, files);
+                }
+            }
+
+            return files;
         }
 
         private FileCollection GetFilesOfSharedDocumentsFolder(ClientContext clientContext, Web web)
