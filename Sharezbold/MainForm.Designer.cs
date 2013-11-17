@@ -287,6 +287,11 @@ namespace Sharezbold
             this.numericUpDownBandwith.Name = "numericUpDownBandwith";
             this.numericUpDownBandwith.Size = new System.Drawing.Size(56, 20);
             this.numericUpDownBandwith.TabIndex = 9;
+            this.numericUpDownBandwith.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             // 
             // textBoxFileMigrationServiceURI
             // 
