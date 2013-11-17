@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\StringExtension.cs" />
+    <Compile Include="MigrationData.cs" />
     <Compile Include="old\ContentDownloader.cs" />
     <Compile Include="ContentLoader.cs" />
     <Compile Include="old\ContentMigrator.cs" />
@@ -268,9 +270,17 @@
     <None Include="Web References\ViewsWS\Views.disco" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FileUpAndDownload\FileMigration.csproj">
+      <Project>{27a175e5-7eda-4359-bb4a-f093dfeccc90}</Project>
+      <Name>FileMigration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Logging\Logging.csproj">
       <Project>{81c78423-d627-4da9-8d2d-77f5f43c6eff}</Project>
       <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TypeMigration\TypeMigration.csproj">
+      <Project>{5765b89b-3dd6-4e68-b030-36a3412ea68a}</Project>
+      <Name>TypeMigration</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
