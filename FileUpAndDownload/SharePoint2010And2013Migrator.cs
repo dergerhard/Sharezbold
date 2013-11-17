@@ -39,17 +39,17 @@ namespace Sharezbold.FileMigration
             Validator.ValidateIfWebExists(fileMigrationSpecification.SourceClientContext, sourceWeb);
             Validator.ValidateIfWebExists(fileMigrationSpecification.SourceClientContext, sourceWeb);
 
-            // FileCollection files = GetFilesOfSharedDocumentsFolder(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
+            FileCollection files = GetFilesOfSharedDocumentsFolder(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
 
-            List<FileCollection> allFiles = GetAllFilesOfWeb(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
-
+            // List<FileCollection> allFiles = GetAllFilesOfWeb(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
+            /*
             foreach (FileCollection files in allFiles)
-            {
+            {*/
                 foreach (File file in files)
                 {
                     new FileMigrator().MigrateFile(file, this.fileMigrationSpecification, targetWeb);
                 }    
-            }
+           // }
         }
 
         private List<FileCollection> GetAllFilesOfWeb(ClientContext clientContext, Web web)
