@@ -894,6 +894,18 @@ namespace Sharezbold
             }
         }
 
+        private void LabelMigratedSiteCollectionClicked(object sender, EventArgs e)
+        {
+            if (this.checkBoxSiteCollectionMigration.Checked)
+            {
+                this.checkBoxSiteCollectionMigration.Checked = false;
+            }
+            else
+            {
+                this.checkBoxSiteCollectionMigration.Checked = true;
+            }
+        }
+
         private void FileMigrationTabClicked(object sender, EventArgs e)
         {
             int bandwith = (int) this.numericUpDownBandwith.Value;

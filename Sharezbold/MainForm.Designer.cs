@@ -51,7 +51,7 @@ namespace Sharezbold
             this.textBoxFileMigrationServiceURI = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.checkBoxSiteCollectionMigration = new System.Windows.Forms.CheckBox();
-            this.label13 = new System.Windows.Forms.Label();
+            this.labelMigrateSiteCollection = new System.Windows.Forms.Label();
             this.groupBoxProxySettings = new System.Windows.Forms.GroupBox();
             this.checkBoxProxyActivate = new System.Windows.Forms.CheckBox();
             this.textBoxProxyPassword = new System.Windows.Forms.TextBox();
@@ -269,7 +269,7 @@ namespace Sharezbold
             this.groupBox9.Controls.Add(this.textBoxFileMigrationServiceURI);
             this.groupBox9.Controls.Add(this.label10);
             this.groupBox9.Controls.Add(this.checkBoxSiteCollectionMigration);
-            this.groupBox9.Controls.Add(this.label13);
+            this.groupBox9.Controls.Add(this.labelMigrateSiteCollection);
             this.groupBox9.Location = new System.Drawing.Point(459, 186);
             this.groupBox9.Name = "groupBox9";
             this.groupBox9.Size = new System.Drawing.Size(436, 170);
@@ -323,14 +323,15 @@ namespace Sharezbold
             this.checkBoxSiteCollectionMigration.TabIndex = 7;
             this.checkBoxSiteCollectionMigration.UseVisualStyleBackColor = true;
             // 
-            // label13
+            // labelMigrateSiteCollection
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(46, 39);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(159, 13);
-            this.label13.TabIndex = 0;
-            this.label13.Text = "A Site Collection will be migrated";
+            this.labelMigrateSiteCollection.AutoSize = true;
+            this.labelMigrateSiteCollection.Location = new System.Drawing.Point(46, 39);
+            this.labelMigrateSiteCollection.Name = "labelMigrateSiteCollection";
+            this.labelMigrateSiteCollection.Size = new System.Drawing.Size(159, 13);
+            this.labelMigrateSiteCollection.TabIndex = 0;
+            this.labelMigrateSiteCollection.Text = "A Site Collection will be migrated";
+            this.labelMigrateSiteCollection.Click += new System.EventHandler(this.LabelMigratedSiteCollectionClicked);
             // 
             // groupBoxProxySettings
             // 
@@ -1170,7 +1171,7 @@ namespace Sharezbold
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.GroupBox groupBox9;
         private System.Windows.Forms.CheckBox checkBoxSiteCollectionMigration;
-        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label labelMigrateSiteCollection;
         private System.Windows.Forms.TextBox textBoxFileMigrationServiceURI;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.NumericUpDown numericUpDownBandwith;
