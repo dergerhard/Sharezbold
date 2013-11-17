@@ -40,16 +40,6 @@ namespace Sharezbold
         private MigrationSettings settings;
 
         /// <summary>
-        /// Source context
-        /// </summary>
-      //  private ClientContext source;
-
-        /// <summary>
-        /// Destination context
-        /// </summary>
-        // private ClientContext destination;
-
-        /// <summary>
         /// used to block the ui, while thread is loading
         /// </summary>
         private PleaseWaitForm waitForm = new PleaseWaitForm();
