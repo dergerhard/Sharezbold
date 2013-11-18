@@ -1,16 +1,25 @@
-﻿
+﻿//-----------------------------------------------------------------------
+// <copyright file="FileMigrationService.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 namespace Sharezbold.FileMigration.Service
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Contract;
     using Microsoft.SharePoint.Administration;
+    using System;
+    using System.Collections.Generic;
 
+    /// <summary>
+    /// Logic of the webservice for FileMigration.
+    /// </summary>
     public class FileMigrationService : IFileMigration
     {
+        /// <summary>
+        /// Returns the max file size per extension as dictionary.
+        /// </summary>
+        /// <returns>max file size per extension</returns>
         public IDictionary<string, int> GetMaxFileSizePerExtension()
         {
             Console.WriteLine("Called GetMaxFileSizePerExtension()");
@@ -32,6 +41,10 @@ namespace Sharezbold.FileMigration.Service
             return maxFileSizes;
         }
 
+        /// <summary>
+        /// Gets the maximal file size.
+        /// </summary>
+        /// <returns>max file size</returns>
         public int GetMaxFileSize()
         {
             Console.WriteLine("Called GetMaxFileSizePerExtension()");
@@ -50,6 +63,10 @@ namespace Sharezbold.FileMigration.Service
             return maxFileSize;
         }
 
+        /// <summary>
+        /// Returns the max message size.
+        /// </summary>
+        /// <returns>max message size</returns>
         public int GetMaxMessageSize()
         {
             Console.WriteLine("Called GetMaxMessageSize()");
