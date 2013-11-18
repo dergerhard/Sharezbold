@@ -168,7 +168,7 @@ namespace Sharezbold
                 this.EnableTab(this.tabPageMigrationPreparation, false);
                 this.EnableTab(this.tabPageMigrationProgress, true);
                 this.buttonFinish.Enabled = false;
-                bool result = await this.contentLoader.MigrateAllAsync();
+                bool result = await this.MigrateAll();
                 MessageBox.Show("Migration process finished " + (result?"successfully":"with Errors. Please read the log!"), "Info");
                 this.buttonFinish.Enabled = true;
             }
@@ -176,6 +176,13 @@ namespace Sharezbold
             {
                 MessageBox.Show("You have to configure all elements that should be migrated before you can start!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+
+        private async Task<bool> MigrateAll()
+        {
+
+            return await this.contentLoader.MigrateAllAsync(); 
         }
 
         /// <summary>
