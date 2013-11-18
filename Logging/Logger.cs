@@ -108,7 +108,7 @@ namespace Sharezbold.Logging
         /// <param name="message">the message</param>
         /// <param name="onlyLogFile">if true, it is only written to the log file</param>
         /// <returns></returns>
-        public async Task<bool> AddMessageAsync(string message, bool onlyLogFile = false)
+        /*public async Task<bool> AddMessageAsync(string message, bool onlyLogFile = false)
         {
             Task<bool> t = Task.Factory.StartNew(() =>
                 {
@@ -117,7 +117,7 @@ namespace Sharezbold.Logging
                 });
 
             return await t;
-        }
+        }*/
 
         /// <summary>
         /// Writes a message to the log and syncs it with the list box. If default constructor was used, the message is displayed in the console
@@ -126,30 +126,46 @@ namespace Sharezbold.Logging
         /// <param name="onlyLogFile">if true, it is only written to the log file</param>
         public void AddMessage(string message, bool onlyLogFile = false)
         {
-            string tabs = new String('\t', (int)this.indent);
-            string msg = DateTime.Now.ToString("HH:mm:ss") + " " + tabs + message;
+            if (!message.Equals(""))
+            {
+                string tabs = new String('\t', (int)this.indent);
+                string msg = DateTime.Now.ToString("HH:mm:ss") + " " + tabs + message;
 
-            if (this.writeOnlyToDebug)
-            {
-                Debug.WriteLine(msg);
-            }
-            else
-            {
-                if (onlyLogFile == false)
+                //string msg = DateTime.Now.ToString("HH:mm:ss") + " " + message;
+
+                if (this.writeOnlyToDebug)
                 {
-                    lock (userLogBindingSource)
-                    {
-                        userLogBindingSource.Add(msg);
-                        //dataBindBox.Update();
-                    }
+                    Debug.WriteLine(msg);
                 }
-
-                lock (logfile)
+                else
                 {
-                    logfile.WriteLine(msg);
-                    logfile.Flush();
+                    if (onlyLogFile == false)
+                    {
+                        lock (userLogBindingSource)
+                        {
+                            userLogBindingSource.Add(msg);
+                            dataBindBox.SetSelected(dataBindBox.Items.Count - 1, true);
+                            //dataBindBox.Update();
+                        }
+                    }
+
+                    lock (logfile)
+                    {
+                        logfile.WriteLine(msg);
+                        logfile.Flush();
+                    }
                 }
             }
         }
+
+        /*
+        public async Task AddMessage(string message, bool onlyLogFile = false)
+        {
+            var t = Task.Factory.StartNew(() =>
+                {
+                    this.AddMessage
+                });
+            return await t;
+        }*/
     }
 }
