@@ -44,6 +44,12 @@ namespace Sharezbold.FileMigration
             return this;
         }
 
+        public FileMigrationBuilder WithNumberOfThreads(int number)
+        {
+            this.specification.NumberOfThreads = number;
+            return this;
+        }
+
         public SharePoint2010And2013Migrator CreateMigrator()
         {
             this.specification.Validate();

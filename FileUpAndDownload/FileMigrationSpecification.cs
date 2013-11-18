@@ -16,6 +16,7 @@ namespace Sharezbold.FileMigration
             this.TargetClientContext = null;
             this.ServiceAddress = null;
             this.Bandwith = 100;
+            this.NumberOfThreads = 1;
             this.BlockedFileExtensions = null;
             this.MaxFileSize = int.MaxValue;
         }
@@ -24,6 +25,7 @@ namespace Sharezbold.FileMigration
         internal ClientContext TargetClientContext { get; set; }
         internal Uri ServiceAddress { get; set; }
         internal int Bandwith { get; set; }
+        internal int NumberOfThreads { get; set; }
         internal int MaxFileSize { get; set; }
         internal List<string> BlockedFileExtensions { get; set; }
 

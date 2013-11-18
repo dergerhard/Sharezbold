@@ -12,6 +12,7 @@ namespace Sharezbold.FileMigration
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Description;
+    using System.Threading;
     using Microsoft.SharePoint.Client;
 
     /// <summary>
@@ -20,6 +21,9 @@ namespace Sharezbold.FileMigration
     public class SharePoint2010And2013Migrator
     {
         private FileMigrationSpecification fileMigrationSpecification;
+
+        private File currentFile;
+        private Web currentTargetWeb;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SharePoint2010And2013Migrator"/> class.
@@ -38,18 +42,29 @@ namespace Sharezbold.FileMigration
             // throws ValidationException if sourceWeb or targetWeb does not exists.
             Validator.ValidateIfWebExists(fileMigrationSpecification.SourceClientContext, sourceWeb);
             Validator.ValidateIfWebExists(fileMigrationSpecification.SourceClientContext, sourceWeb);
+            
+            this.currentTargetWeb = targetWeb;
 
             FileCollection files = GetFilesOfSharedDocumentsFolder(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
 
+            ThreadPool.SetMaxThreads(this.fileMigrationSpecification.NumberOfThreads, this.fileMigrationSpecification.NumberOfThreads);
             // List<FileCollection> allFiles = GetAllFilesOfWeb(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
             /*
             foreach (FileCollection files in allFiles)
             {*/
                 foreach (File file in files)
                 {
-                    new FileMigrator().MigrateFile(file, this.fileMigrationSpecification, targetWeb);
+                    this.currentFile = file;
+                    
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(MigrationThreadProcess));
+                    
                 }    
            // }
+        }
+
+        private void MigrationThreadProcess(Object stateInfo)
+        {
+            new FileMigrator().MigrateFile(this.currentFile, this.fileMigrationSpecification, this.currentTargetWeb);
         }
 
         private List<FileCollection> GetAllFilesOfWeb(ClientContext clientContext, Web web)
@@ -138,7 +153,7 @@ namespace Sharezbold.FileMigration
                 FileMigrationService.IFileMigration fileMigrationService = client.ChannelFactory.CreateChannel();
 
                 Console.WriteLine("Setting the max file size.");
-                this.fileMigrationSpecification.MaxFileSize = fileMigrationService.GetMaxMessageSize();
+                this.fileMigrationSpecification.MaxFileSize = fileMigrationService.GetMaxFileSize();
             }
             catch (Exception)
             {
