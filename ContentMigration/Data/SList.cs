@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ContentDownloader.cs" company="FH Wiener Neustadt">
+// <copyright file="SList.cs" company="FH Wiener Neustadt">
 //     Copyright (c) FH Wiener Neustadt. All rights reserved.
 // </copyright>
 // <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
@@ -50,7 +50,30 @@ namespace Sharezbold.ContentMigration.Data
         private bool migrate;
 
         /// <summary>
-        /// Defines wheter to migrate the site collection or not
+        /// data storage object for MigrateTo
+        /// </summary>
+        private SSite migrateTo = null;
+
+        /// <summary>
+        /// The migrate to url
+        /// </summary>
+        private string migrateToUrl = string.Empty;
+
+        /// <summary>
+        /// Storage object for XmlList
+        /// </summary>
+        private XmlNode xmlList;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public SList()
+        {
+            this.migrateTo = null;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the object should be migrated
         /// </summary>
         public bool Migrate
         {
@@ -66,33 +89,25 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// data storage object for MigrateTo
-        /// </summary>
-        private SSite migrateTo = null;
-
-        /// <summary>
-        /// distination site to where we migrate
+        /// Gets or sets distination site where we migrate to
         /// </summary>
         public SSite MigrateTo
         {
             get
             {
-                return migrateTo;
+                return this.migrateTo;
             }
             set
             {
                 if (this.ParentObject != null && !this.ParentObject.Migrate)
                 {
-                    migrateTo = value;
+                    this.migrateTo = value;
                 }
             }
         }
 
-
-        private string migrateToUrl = "";
-
         /// <summary>
-        /// The Url where to migrate the list. By default the url of the MigrateTo site. In case the original source parent site is migrated, the url is overwritten by this.migrateToUrl (newly created url at destination)
+        /// Gets or sets the Url where to migrate the list. By default the url of the MigrateTo site. In case the original source parent site is migrated, the url is overwritten by this.migrateToUrl (newly created url at destination)
         /// </summary>
         public string MigrateToUrl
         {
@@ -114,7 +129,7 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// Defines whether an object is ready for migration
+        /// Gets or sets a value indicating whether an object is ready for migration
         /// </summary>
         public bool ReadyForMigration
         {
@@ -130,7 +145,6 @@ namespace Sharezbold.ContentMigration.Data
                     return true;
                 }
                 return false;
-
             }
 
             set
@@ -140,7 +154,7 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// Gaters the name of the object
+        /// Gets the name of the object
         /// </summary>
         public new string Name
         {
@@ -151,17 +165,12 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// Represents the parent object
+        /// Gets or sets the parent object
         /// </summary>
         public IMigratable ParentObject { get; set; }
 
         /// <summary>
-        /// Storage object for XmlList
-        /// </summary>
-        private XmlNode xmlList;
-
-        /// <summary>
-        /// Represents the list description in SOAP
+        /// Gets or sets the list description in SOAP
         /// </summary>
         public XmlNode XmlList 
         {
@@ -175,13 +184,13 @@ namespace Sharezbold.ContentMigration.Data
                 this.xmlList = value;
                 if (this.xmlList != null)
                 {
-                    this.Text = xmlList.Attributes["Title"].InnerText;
+                    this.Text = this.xmlList.Attributes["Title"].InnerText;
                 }
             }
         }
 
         /// <summary>
-        /// Represents the list data
+        /// Gets or sets the list data
         /// Data example:
         /// <rs:data ItemCount="2" xmlns:rs="urn:schemas-microsoft-com:rowset">
         ///     <z:row ows_CompanyName="IBM" ows_ApplicationDate="2013-11-04 00:00:00" ows_ContactPerson="John Doe" ows_Interview="Yes" ows_MetaInfo="1;#" ows__ModerationStatus="0" ows__Level="1" ows_ID="1" ows_UniqueId="1;#{C99A189F-FCC5-4FF5-8DC5-298B9DA1C579}" ows_owshiddenversion="1" ows_FSObjType="1;#0" ows_Created="2013-11-05 16:50:12" ows_PermMask="0x7fffffffffffffff" ows_Modified="2013-11-05 16:50:12" ows_FileRef="1;#Lists/MyJobApplications/1_.000" xmlns:z="#RowsetSchema" />
@@ -189,13 +198,5 @@ namespace Sharezbold.ContentMigration.Data
         /// </rs:data>
         /// </summary>
         public XmlNode XmlListData { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public SList()
-        {
-            this.migrateTo = null;
-        }
     }
 }

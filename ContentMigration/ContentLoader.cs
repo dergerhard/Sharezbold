@@ -45,22 +45,12 @@ namespace Sharezbold.ContentMigration
         /// Data for migration.
         /// </summary>
         private MigrationData migrationData;
-        
-        /// <summary>
-        /// Gets or sets the source site collection
-        /// </summary>
-        public SSiteCollection SourceSiteCollection { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the destination site collection
-        /// </summary>
-        public SSiteCollection DestinationSiteCollection { get; private set; }
 
         /// <summary>
         /// A list with the destination site URLs - for checking if a new url is valid
         /// </summary>
         private List<string> destinationSiteUrls = new List<string>();
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="ContentLoader" /> class.  Default constructor, takes the initialized web service class
         /// </summary>
@@ -83,6 +73,16 @@ namespace Sharezbold.ContentMigration
         }
 
         /// <summary>
+        /// Gets the source site collection
+        /// </summary>
+        public SSiteCollection SourceSiteCollection { get; private set; }
+
+        /// <summary>
+        /// Gets the destination site collection
+        /// </summary>
+        public SSiteCollection DestinationSiteCollection { get; private set; }
+
+        /// <summary>
         /// Loads the source site collection and stores it
         /// </summary>
         /// <returns>the source site collection</returns>
@@ -100,107 +100,6 @@ namespace Sharezbold.ContentMigration
         {
             this.DestinationSiteCollection = this.LoadSharepointTree(this.ws.DstWebs, this.ws.DstLists, false);
             return this.DestinationSiteCollection;
-        }
-
-        /// <summary>
-        /// Loads the site collection of a Sharepoint server
-        /// </summary>
-        /// <param name="srcWebs">webs web service</param>
-        /// <param name="srcLists">lists web service</param>
-        /// <param name="loadListData">load data items or not</param>
-        /// <returns>A Sharepoint site collection tree</returns>
-        private SSiteCollection LoadSharepointTree(WebsWS.Webs srcWebs, ListsWS.Lists srcLists, bool loadListData)
-        {
-            SSiteCollection siteCollection = new SSiteCollection();
-
-            // get all webs names (first is the site collection)
-            XmlNode allSrcWebs = srcWebs.GetAllSubWebCollection();
-            
-            // result<List>: <Web Title="Fucking site collection" Url="http://ss13-css-009:31920" xmlns="http://schemas.microsoft.com/sharepoint/soap/" />
-            Dictionary<string, string> webs = new Dictionary<string, string>();
-            foreach (XmlNode web in allSrcWebs)
-            {
-                webs.Add(web.Attributes["Url"].InnerText, web.Attributes["Title"].InnerText);
-            }
-
-            bool firstRun = true;
-            string srcListsUrlBuffer = srcLists.Url;
-            var allSrcWebsXml = new List<XmlNode>();
-            
-            foreach (KeyValuePair<string, string> web in webs)
-            {
-                // load details on each web
-                XmlNode w = srcWebs.GetWeb(web.Key);
-                allSrcWebsXml.Add(w);
-                SSite site = new SSite();
-                site.ParentObject = siteCollection;
-                site.XmlData = w;
-
-                string url = w.Attributes["Url"].InnerText + WebService.UrlLists;
-                
-                // only do this, if destination site is being loaded
-                if (!loadListData)
-                {
-                    destinationSiteUrls.Add(w.Attributes["Url"].InnerText);
-                }
-                 
-                // get all lists
-                srcLists.Url = url;
-                XmlNode lc = srcLists.GetListCollection();
-
-                // lists to migrate: Hidden="False"
-                foreach (XmlNode list in lc.ChildNodes)
-                {
-                    // if BaseType==1 --> its a document library
-                    if (list.Attributes["Hidden"].InnerText.ToUpper().Equals("FALSE") && !list.Attributes["BaseType"].InnerText.Equals("1"))
-                    { 
-                        // load list details with all fields
-                        XmlNode listDetails = srcLists.GetList(list.Attributes["Title"].InnerText);
-                        Console.WriteLine(list.Attributes["Title"].InnerText + ", BaseType=" + listDetails.Attributes["BaseType"].InnerText);
-                        SList sList = new SList();
-                        sList.ParentObject = site;
-                        sList.XmlList = listDetails;
-
-                        // load list data
-                        if (loadListData)
-                        {
-                            // attention: GetListItems only returns the elements of the default view, if you do not specify the viewfields you want
-                            XmlDocument xmlDoc = new System.Xml.XmlDocument();
-                            XmlElement ndViewFields = xmlDoc.CreateElement("ViewFields");
-
-                            XmlElement field;
-                            foreach (XmlElement f in sList.XmlList["Fields"])
-                            {
-                                field = xmlDoc.CreateElement("FieldRef");
-                                field.SetAttribute("Name", f.Attributes["Name"].InnerText);
-                                ndViewFields.AppendChild(field);
-                            }
-
-                            XmlNode ndListItems = srcLists.GetListItems(list.Attributes["Title"].InnerText, null, null, ndViewFields, null, null, null);
-                            sList.XmlListData = ndListItems;
-                        }
-
-                        site.AddList(sList, false);
-                        Console.WriteLine("\t\t" + list.Attributes["Title"].InnerText);
-                    }
-                }
-
-                if (firstRun)
-                {
-                    site.IsSiteCollectionSite = true;
-                    firstRun = false;
-                }
-                else
-                {
-                    site.IsSiteCollectionSite = false;
-                }
-
-                siteCollection.AddSite(site, false);
-            }
-            srcLists.Url = srcListsUrlBuffer;
-            siteCollection.XmlData = allSrcWebsXml;
-
-            return siteCollection;
         }
 
         /// <summary>
@@ -244,24 +143,23 @@ namespace Sharezbold.ContentMigration
             {
                 if (site.Migrate && keepGoing)
                 {
-                    //keepGoing = await this.MigrateSiteAsync(site, this.DestinationSiteCollection);
+                    // keepGoing = await this.MigrateSiteAsync(site, this.DestinationSiteCollection);
                     keepGoing = await this.MigrateSiteAsync(site, this.DestinationSiteCollection);
                 }
 
-                //migrate its lists and views
+                // migrate its lists and views
                 if (keepGoing)
                 {
                     foreach (SList list in site.Lists)
                     {
                         if (list.Migrate)
                         {
-                            await this.MigrateListAndViewsAsync(list);
                             // lists are independent parts - no need to write its results to "keepGoing"
+                            // list data is migrated withing MigrateListAndViews
+                            await this.MigrateListAndViewsAsync(list);
                         }
                     }
                 }
-
-                // TODO: migrate list data
             }
 
             if (!keepGoing)
@@ -272,39 +170,10 @@ namespace Sharezbold.ContentMigration
             {
                 this.log.AddMessage("Migration finished");
             }
-             
-            // migrate site columns
-            // TODO: implement for all sites
-            /*
-            Task<bool> taskSiteColumns = Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    log.Items.Add("Starting Site Columns migration");
-                    this.MigrateSiteColumns();
-                    log.Items.Add("Site Columns migration finished");
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    log.Items.Add("Error (Site Column Migration): " + e.Message);
-                    return false;
-                }
-            });
-            await taskSiteColumns;
-             * */
-            
-
-            /*
-             * 1. Site collection to migrate?
-             *      --> migrate site collection
-             * 2. Sites to migrate
-             *      list of sites
-             * 3. All lists without source site
-             */
-
-            //// file migration:
-            if (keepGoing && false)  // remove false.... ;) only to block it for testing
+ 
+            // file migration:
+            // remove false.... ;) only to block it for testing
+            if (keepGoing && false)  
             {
                 foreach (string item in this.migrationData.WebUrlsToMigrate)
                 {
@@ -314,9 +183,9 @@ namespace Sharezbold.ContentMigration
                     {
                         this.migrationData.FileMigrator.MigrateFilesOfWeb(entry.Key, entry.Value);
                     }
-
                 }
             }
+
             return keepGoing;
         }
 
@@ -337,14 +206,15 @@ namespace Sharezbold.ContentMigration
 
                 string url = Regex.Replace(src.XmlData.Attributes["Title"].InnerText, @"[^A-Za-z0-9_\.~]+", "-");
 
-                //find a fitting url
+                // find a fitting url
                 int i = 1;
                 string newUrl = url;
-                while (destinationSiteUrls.FindAll(delegate(string s) { return s.EndsWith(newUrl); }).Count > 0)
+                while (this.destinationSiteUrls.FindAll(delegate(string s) { return s.EndsWith(newUrl); }).Count > 0)
                 {
                     newUrl = url + i.ToString();
                     i++;
                 }
+
                 url = newUrl;
 
                 string title = src.XmlData.Attributes["Title"].InnerText;
@@ -362,7 +232,6 @@ namespace Sharezbold.ContentMigration
                 bool anonymousSpecified = true;
                 bool presence = true;
                 bool presenceSpecified = true;
-
 
                 Task<bool> createWeb = Task.Factory.StartNew(() =>
                 {
@@ -412,8 +281,10 @@ namespace Sharezbold.ContentMigration
 
                     await this.MigrateSiteColumnsAsync(src.XmlData.Attributes["Url"].InnerText, url); 
                 }
+
                 return true;
             }
+
             return false;
         }
 
@@ -422,7 +293,7 @@ namespace Sharezbold.ContentMigration
         /// </summary>
         /// <param name="list">The list to migrate</param>
         /// <returns>If successful or not</returns>
-        public async Task<bool> MigrateListAndViewsAsync(SList list)
+        private async Task<bool> MigrateListAndViewsAsync(SList list)
         {
             this.log.AddMessage("Migrate lists starting migration of list \"" + list.Name + "\"");
             this.log.Indent = this.log.Indent + 1;
@@ -455,7 +326,7 @@ namespace Sharezbold.ContentMigration
                 this.log.AddMessage(res);
             }
             
-            //add list from source
+            // add list from source
             Task<KeyValuePair<string, bool>> addList = Task.Factory.StartNew(() =>
             {
                 try
@@ -466,29 +337,26 @@ namespace Sharezbold.ContentMigration
                 }
                 catch (Exception e)
                 {
-                    //if this occurrs, the list already exists - altought this should not be possible as it is deleted before, it still happens
-                
+                    // if this occurrs, the list already exists - altought this should not be possible as it is deleted before, it still happens
                     return new KeyValuePair<string, bool>("Adding the list \"" + listName + "\" failed. Error: " + e.Message, true);
                 }
             });
 
             var response = await addList;
             this.log.AddMessage(response.Key, response.Value);
-
                 
             // copy list properties
             XmlDocument doc = new XmlDocument();
             foreach (XmlAttribute attr in l.Attributes)
             {
-
                 XmlElement listProperties = doc.CreateElement("List");
                 listProperties.SetAttribute(attr.Name, attr.Value);
                 Task<string> updateList = Task.Factory.StartNew(() => 
                 {
                     try
                     {
-                        this.ws.DstLists.UpdateList(listName, listProperties, null, null, null, "");
-                        return "";
+                        this.ws.DstLists.UpdateList(listName, listProperties, null, null, null, string.Empty);
+                        return string.Empty;
                     }
                     catch (Exception e)
                     {
@@ -497,17 +365,17 @@ namespace Sharezbold.ContentMigration
                 });
 
                 res = await updateList;
-                if (res.Equals(""))
+                if (res.Equals(string.Empty))
                 {
-                    this.log.AddMessage("Added list property \""+ attr.Name +"\"", true);
+                    this.log.AddMessage("Added list property \"" + attr.Name + "\"", true);
                 }
                 else
                 {
                     this.log.AddMessage(res, true);
                 }
             }
-            this.log.AddMessage("List properties added");
 
+            this.log.AddMessage("List properties added");
             int i = 1;
             
             foreach (XmlNode field in l["Fields"])
@@ -527,8 +395,8 @@ namespace Sharezbold.ContentMigration
                     {
                         try
                         {
-                            this.ws.DstLists.UpdateList(listName, null, fields, fields, null, "");
-                            return "";
+                            this.ws.DstLists.UpdateList(listName, null, fields, fields, null, string.Empty);
+                            return string.Empty;
                         }
                         catch (Exception e)
                         {
@@ -541,6 +409,7 @@ namespace Sharezbold.ContentMigration
                     i++;
                 }
             }
+
             this.log.AddMessage("Fields added");
 
             // migrate the views
@@ -554,12 +423,12 @@ namespace Sharezbold.ContentMigration
                 try
                 {
                     viewsToDelete = this.ws.DstViews.GetViewCollection(listName);
-                    return "";
+                    return string.Empty;
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
-                    return "";
+                    return string.Empty;
                 }
             });
 
@@ -574,7 +443,7 @@ namespace Sharezbold.ContentMigration
                         try
                         {
                             this.ws.DstViews.DeleteView(listName, view.Attributes["Name"].InnerText);
-                            return "";
+                            return string.Empty;
                         }
                         catch (Exception e)
                         {
@@ -582,7 +451,7 @@ namespace Sharezbold.ContentMigration
                         }
                     });
 
-                    this.log.AddMessage(await deleteView , true);
+                    this.log.AddMessage(await deleteView, true);
                 }
             }
 
@@ -600,13 +469,11 @@ namespace Sharezbold.ContentMigration
             });
 
             XmlNode viewCollection = await viewColl;
-            
-            string viewID = "";
+            string viewID = string.Empty;
 
-            //Console.WriteLine(viewCollection.OuterXml);
             foreach (XmlNode view in viewCollection)
             {
-                if (!view.Attributes["DisplayName"].InnerText.Equals(""))
+                if (!view.Attributes["DisplayName"].InnerText.Equals(string.Empty))
                 {
                     string viewName = view.Attributes["Name"].InnerText;
 
@@ -622,7 +489,6 @@ namespace Sharezbold.ContentMigration
                             return (new XmlDocument()).CreateElement("null");
                         }
                     });
-
 
                     XmlNode viewDetail = await viewDet;
 
@@ -672,7 +538,6 @@ namespace Sharezbold.ContentMigration
                     catch (Exception e)
                     {
                         Debug.WriteLine(e.Message);
-                        //TODO: uncomment again this.log.AddMessage("\"DefaultView\" attribute missing. Continuing.", true);
                     }
 
                     // add the view
@@ -687,6 +552,7 @@ namespace Sharezbold.ContentMigration
                             {
                                 viewID = resp.Attributes["Name"].InnerText; // viewname;
                             }
+
                             return "Migrate lists added view \"" + viewname + "\"";
                         }
                         catch (Exception e)
@@ -751,26 +617,25 @@ namespace Sharezbold.ContentMigration
             {
                 try
                 {
-                    XmlNode ndListView = this.ws.DstLists.GetListAndView(list.Name, "");
+                    XmlNode ndListView = this.ws.DstLists.GetListAndView(list.Name, string.Empty);
                     return ndListView.ChildNodes[0].Attributes["Name"].InnerText;
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
-                    return "";
+                    return string.Empty;
                 }
             });
 
             string strListID = await listID;
             string strViewID = viewID;
 
-            //                                      ID, List<Attribute, AttributeValue>
             var migrationElements = new Dictionary<int, Dictionary<string, string>>();
 
             // get the items from the list
             XmlElement listdata = (XmlElement)list.XmlListData;
             
-            //iterate through z:row-nodes
+            // iterate through z:row-nodes
             foreach (XmlLinkedNode row in listdata["rs:data"])
             {
                 if (row.GetType() == typeof(XmlElement))
@@ -788,10 +653,10 @@ namespace Sharezbold.ContentMigration
                             attrs[attr.Name.Substring(4)] = attr.Value;
                         }
                     }
+
                     migrationElements[id] = attrs;
                 }
             }
-
 
             // 1. create the element without any information
             // 2. create all the element information in isolated "methods" in one batch to prevent one error from blocking the transfer
@@ -804,7 +669,7 @@ namespace Sharezbold.ContentMigration
                 batchElement.SetAttribute("ListVersion", "1");
                 batchElement.SetAttribute("ViewName", strViewID);
         
-                //create new element with id and title
+                // create new element with id and title
                 var method = doc.CreateElement("Method");
                 method.SetAttribute("ID", "1");
                 method.SetAttribute("Cmd", "New");
@@ -816,9 +681,6 @@ namespace Sharezbold.ContentMigration
                 
                 batchElement.AppendChild(method);
 
-                //##############################################
-                
-                
                 Task<KeyValuePair<bool, XmlNode>> createNewListItem = Task.Factory.StartNew(() =>
                 {
                     try
@@ -847,7 +709,8 @@ namespace Sharezbold.ContentMigration
                     batchElement.SetAttribute("ViewName", strViewID);
 
                     int i = 1;
-                    //create all following elements
+                    
+                    // create all following elements
                     foreach (var attribute in el.Value)
                     {
                         if (!attribute.Key.Equals("ID"))
@@ -878,7 +741,7 @@ namespace Sharezbold.ContentMigration
                             // updating the new item with all other fields
                             // it is done that way to isolate each field update
                             this.ws.DstLists.UpdateListItems(strListID, batchElement);
-                            return "";
+                            return string.Empty;
                         }
                         catch (Exception e)
                         {
@@ -888,10 +751,114 @@ namespace Sharezbold.ContentMigration
 
                     this.log.AddMessage(await updateNewItem, true);
                 }
+
                 elementCount++;
             }
+
             this.log.AddMessage("Migrated " + elementCount.ToString() + " items to destination");
             return true;
+        }
+
+        /// <summary>
+        /// Loads the site collection of a Sharepoint server
+        /// </summary>
+        /// <param name="srcWebs">webs web service</param>
+        /// <param name="srcLists">lists web service</param>
+        /// <param name="loadListData">load data items or not</param>
+        /// <returns>A Sharepoint site collection tree</returns>
+        private SSiteCollection LoadSharepointTree(WebsWS.Webs srcWebs, ListsWS.Lists srcLists, bool loadListData)
+        {
+            SSiteCollection siteCollection = new SSiteCollection();
+
+            // get all webs names (first is the site collection)
+            XmlNode allSrcWebs = srcWebs.GetAllSubWebCollection();
+
+            // result<List>: <Web Title="Fucking site collection" Url="http://ss13-css-009:31920" xmlns="http://schemas.microsoft.com/sharepoint/soap/" />
+            Dictionary<string, string> webs = new Dictionary<string, string>();
+            foreach (XmlNode web in allSrcWebs)
+            {
+                webs.Add(web.Attributes["Url"].InnerText, web.Attributes["Title"].InnerText);
+            }
+
+            bool firstRun = true;
+            string srcListsUrlBuffer = srcLists.Url;
+            var allSrcWebsXml = new List<XmlNode>();
+
+            foreach (KeyValuePair<string, string> web in webs)
+            {
+                // load details on each web
+                XmlNode w = srcWebs.GetWeb(web.Key);
+                allSrcWebsXml.Add(w);
+                SSite site = new SSite();
+                site.ParentObject = siteCollection;
+                site.XmlData = w;
+
+                string url = w.Attributes["Url"].InnerText + WebService.UrlLists;
+
+                // only do this, if destination site is being loaded
+                if (!loadListData)
+                {
+                    this.destinationSiteUrls.Add(w.Attributes["Url"].InnerText);
+                }
+
+                // get all lists
+                srcLists.Url = url;
+                XmlNode lc = srcLists.GetListCollection();
+
+                // lists to migrate: Hidden="False"
+                foreach (XmlNode list in lc.ChildNodes)
+                {
+                    // if BaseType==1 --> its a document library
+                    if (list.Attributes["Hidden"].InnerText.ToUpper().Equals("FALSE") && !list.Attributes["BaseType"].InnerText.Equals("1"))
+                    {
+                        // load list details with all fields
+                        XmlNode listDetails = srcLists.GetList(list.Attributes["Title"].InnerText);
+                        Console.WriteLine(list.Attributes["Title"].InnerText + ", BaseType=" + listDetails.Attributes["BaseType"].InnerText);
+                        SList shareList = new SList();
+                        shareList.ParentObject = site;
+                        shareList.XmlList = listDetails;
+
+                        // load list data
+                        if (loadListData)
+                        {
+                            // attention: GetListItems only returns the elements of the default view, if you do not specify the viewfields you want
+                            XmlDocument xmlDoc = new System.Xml.XmlDocument();
+                            XmlElement viewFields = xmlDoc.CreateElement("ViewFields");
+
+                            XmlElement field;
+                            foreach (XmlElement f in shareList.XmlList["Fields"])
+                            {
+                                field = xmlDoc.CreateElement("FieldRef");
+                                field.SetAttribute("Name", f.Attributes["Name"].InnerText);
+                                viewFields.AppendChild(field);
+                            }
+
+                            XmlNode listItems = srcLists.GetListItems(list.Attributes["Title"].InnerText, null, null, viewFields, null, null, null);
+                            shareList.XmlListData = listItems;
+                        }
+
+                        site.AddList(shareList, false);
+                        Console.WriteLine("\t\t" + list.Attributes["Title"].InnerText);
+                    }
+                }
+
+                if (firstRun)
+                {
+                    site.IsSiteCollectionSite = true;
+                    firstRun = false;
+                }
+                else
+                {
+                    site.IsSiteCollectionSite = false;
+                }
+
+                siteCollection.AddSite(site, false);
+            }
+
+            srcLists.Url = srcListsUrlBuffer;
+            siteCollection.XmlData = allSrcWebsXml;
+
+            return siteCollection;
         }
 
         /// <summary>
@@ -901,7 +868,7 @@ namespace Sharezbold.ContentMigration
         /// <param name="src">source site to migrate</param>
         /// <param name="dst">destination site to migrate</param>
         /// <returns>If successful or not</returns>
-        public async Task<bool> MigrateSiteColumnsAsync(string src, string dst)
+        private async Task<bool> MigrateSiteColumnsAsync(string src, string dst)
         {
             this.ws.SetWebsMigrateFrom(src);
             this.ws.SetWebsMigrateTo(dst);
@@ -914,7 +881,7 @@ namespace Sharezbold.ContentMigration
             Task<XmlNode> getDstCols = Task.Factory.StartNew(() => { return this.ws.DstWebs.GetColumns(); });
             XmlNode dstColumnsXml = await getDstCols;
 
-            //convert to xdoc
+            // convert to xdoc
             XDocument srcDoc = XDocument.Parse(srcColumsXml.OuterXml);
             XDocument dstDoc = XDocument.Parse(dstColumnsXml.OuterXml);
 
@@ -954,31 +921,29 @@ namespace Sharezbold.ContentMigration
 
             this.log.AddMessage("Migriting site columns: preparing " + createColumns.Count + " columns for migration");
 
-            string createStr = "";
+            string createStr = string.Empty;
             foreach (XElement el in createColumns)
             {
                 createStr += "<Method ID=\"" + id++ + "\" Cmd=\"New\">" + el.ToString() + "</Method>";
             }
+
             XmlDocument createDoc = new XmlDocument();
             createDoc.LoadXml("<Fields>" + createStr + "</Fields>");
             XmlNode createNode = createDoc.DocumentElement;
 
-            //xmldocument object
-            XmlDocument xDoc = new XmlDocument();
-            //Fields to be added
-            XmlElement newFields = xDoc.CreateElement("Fields");
-            //Fields to be edited
-            //XmlElement updateFields = xDoc.CreateElement("Fields");
+            XmlDocument xmlDoc = new XmlDocument();
 
-            newFields.InnerXml = createStr; //"<Method ID=\"1\">"+createStr+"</Method>";
-            //updateFields.InnerXml = updateStr; //"<Method ID=\"2\">"+updateStr+"</Method>";
+            // Fields to be added
+            XmlElement newFields = xmlDoc.CreateElement("Fields");
+            
+            newFields.InnerXml = createStr; 
 
             Task<string> updateColumns = Task.Factory.StartNew(() =>
             {
                 try
                 {
                     this.ws.DstWebs.UpdateColumns(newFields, null, null);
-                    return "";
+                    return string.Empty;
                 }
                 catch (Exception e)
                 {
@@ -995,13 +960,14 @@ namespace Sharezbold.ContentMigration
         /// </summary>
         /// <param name="url">The URL to the site</param>
         /// <returns>The site template name</returns>
-        public string GetSiteTemplate(string url="")
+        private string GetSiteTemplate(string url = "")
         {
             // get HTML site
-            if (url.Equals(""))
+            if (url.Equals(string.Empty))
             {
                 url = this.ws.SrcUrl;
             }
+
             WebRequest request = WebRequest.Create(url);
             request.Credentials = this.ws.SrcCredentials;
             request.PreAuthenticate = true;
@@ -1011,8 +977,8 @@ namespace Sharezbold.ContentMigration
             string responseFromServer = reader.ReadToEnd();
             dataStream.Close();
 
-            //lets play "find the template"....
-            //SP2010 & 2013: var g_wsaSiteTemplateId = 'STS#1';
+            // lets play "find the template"....
+            // SP2010 & 2013: var g_wsaSiteTemplateId = 'STS#1';
             int startHere = responseFromServer.IndexOf("g_wsaSiteTemplateId");
             string hereSomewhere = responseFromServer.Substring(startHere, 100);
             string[] parts = hereSomewhere.Split('\'');
@@ -1025,7 +991,7 @@ namespace Sharezbold.ContentMigration
         /// </summary>
         /// <param name="sc">the site collection to look for</param>
         /// <returns>the language code</returns>
-        public uint GetLanguage(SSiteCollection sc)
+        private uint GetLanguage(SSiteCollection sc)
         {
             return Convert.ToUInt32(sc.XmlData.ElementAt(0).Attributes["Language"].InnerText);
         }
@@ -1034,38 +1000,39 @@ namespace Sharezbold.ContentMigration
         /// Migrates a site collection
         /// </summary>
         /// <returns>If successful or not</returns>
-        public async Task<bool> MigrateSiteCollectionAsync()
+        private async Task<bool> MigrateSiteCollectionAsync()
         {
-            XmlNode scXml = this.SourceSiteCollection.XmlData.ElementAt(0);
-            this.log.AddMessage("Migrating site collection \"" + scXml.Attributes["Title"] + "\"");
-            string url = scXml.Attributes["Url"].InnerText;
+            XmlNode sourceXml = this.SourceSiteCollection.XmlData.ElementAt(0);
+            this.log.AddMessage("Migrating site collection \"" + sourceXml.Attributes["Title"] + "\"");
+            string url = sourceXml.Attributes["Url"].InnerText;
 
             Task<string> t = Task.Factory.StartNew(() =>
             {
                 try
                 {
-                    this.ws.DstAdmin.CreateSite(ws.DstUrl,
-                        scXml.Attributes["Title"].InnerText,
-                        scXml.Attributes["Description"].InnerText,
+                    this.ws.DstAdmin.CreateSite(
+                        ws.DstUrl,
+                        sourceXml.Attributes["Title"].InnerText,
+                        sourceXml.Attributes["Description"].InnerText,
                         (int)this.GetLanguage(this.SourceSiteCollection),
                         this.GetSiteTemplate(),
                         ws.DstDomain + "\\" + ws.DstUser,
                         ws.DstUser,
-                        "",
-                        "",
-                        "");
-                    return "";
+                        string.Empty,
+                        string.Empty,
+                        string.Empty);
+                    return string.Empty;
                 }
                 catch (Exception e)
                 {
-                    return "Error migrating site collection \"" + scXml.Attributes["Title"] + "\". Message: " + e.Message;
+                    return "Error migrating site collection \"" + sourceXml.Attributes["Title"] + "\". Message: " + e.Message;
                 }
             });
 
             string response = await t;
-            if (response.Equals(""))
+            if (response.Equals(string.Empty))
             {
-                this.log.AddMessage("Migrating site collection \"" + scXml.Attributes["Title"] + "\" finished");
+                this.log.AddMessage("Migrating site collection \"" + sourceXml.Attributes["Title"] + "\" finished");
             }
             else
             {
@@ -1086,7 +1053,6 @@ namespace Sharezbold.ContentMigration
                 try
                 {
                     XmlNode lc = this.ws.SrcLists.GetListCollection();
-                    //Console.WriteLine(lc.ChildNodes[0].Attributes["Name"].InnerText);
                     XmlNode list = this.ws.SrcLists.GetList(lc.ChildNodes[0].Attributes["Name"].InnerText);
                     return Convert.ToUInt32(list["RegionalSettings"]["Locale"].InnerText);
                 }
@@ -1103,12 +1069,12 @@ namespace Sharezbold.ContentMigration
         /// <summary>
         /// Retrieves the site template
         /// </summary>
-        public async void GetSiteTemplates()
+        private async void GetSiteTemplates()
         {
-             //get site templates
-            string strDisplay = "";
+            // get site templates
+            string strDisplay = string.Empty;
             SitesWS.Template[] templates;
-            ws.SrcSites.GetSiteTemplates((uint)(await this.GetLocale()), out templates);
+            this.ws.SrcSites.GetSiteTemplates((uint)(await this.GetLocale()), out templates);
 
             foreach (SitesWS.Template template in templates)
             {

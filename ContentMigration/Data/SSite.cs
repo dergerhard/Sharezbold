@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ContentDownloader.cs" company="FH Wiener Neustadt">
+// <copyright file="SSite.cs" company="FH Wiener Neustadt">
 //     Copyright (c) FH Wiener Neustadt. All rights reserved.
 // </copyright>
 // <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
@@ -20,9 +20,30 @@ namespace Sharezbold.ContentMigration.Data
         /// Data storage object for migrate
         /// </summary>
         private bool migrate;
+ 
+        /// <summary>
+        /// storage object for XmlData
+        /// </summary>
+        private XmlNode xmlData;
 
         /// <summary>
-        /// Defines wheter to migrate the site collection or not
+        /// Data storage object for Lists
+        /// </summary>
+        private List<SList> lists;
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public SSite()
+            : base(string.Empty)
+        {
+            this.lists = new List<SList>();
+            this.AllLists = new List<XmlNode>();
+            this.IsSiteCollectionSite = false;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the element should be migrated
         /// </summary>
         public bool Migrate
         {
@@ -38,7 +59,7 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// Defines whether an object is ready for migration
+        /// Gets or sets a value indicating whether an object is ready for migration
         /// </summary>
         public bool ReadyForMigration
         {
@@ -53,7 +74,7 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// Gaters the name of the object
+        /// Gets the name of the object
         /// </summary>
         public new string Name
         {
@@ -62,14 +83,9 @@ namespace Sharezbold.ContentMigration.Data
                 return this.Text;
             }
         }
-         
-        /// <summary>
-        /// storage object for XmlData
-        /// </summary>
-        private XmlNode xmlData;
 
         /// <summary>
-        /// Represents the SOAP xml data
+        /// Gets or sets the SOAP xml data
         /// SOAP data format example:
         /// <Web Title="Fucking site collection" 
         ///         Url="http://ss13-css-009:31920"
@@ -86,30 +102,25 @@ namespace Sharezbold.ContentMigration.Data
         {
             get
             {
-                return xmlData;
+                return this.xmlData;
             }
             set
             {
                 this.xmlData = value;
                 if (this.xmlData != null)
                 {
-                    this.Text = xmlData.Attributes["Title"].InnerText;
+                    this.Text = this.xmlData.Attributes["Title"].InnerText;
                 }
             }
         }
 
         /// <summary>
-        /// Defines whether the site is the site collection or not
+        /// Gets or sets a value indicating whether the site is the site collection or not
         /// </summary>
         public bool IsSiteCollectionSite { get; set; }
 
         /// <summary>
-        /// Data storage object for Lists
-        /// </summary>
-        private List<SList> lists;
-
-        /// <summary>
-        /// Represents all visible lists (only visible lists will be migrated)
+        /// Gets all visible lists (only visible lists will be migrated)
         /// List dependencies are:
         ///     BaseType="1"
         ///     FeatureId="00bfea71-e717-4e80-aa17-d0c71b360101"
@@ -127,6 +138,16 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
+        /// Gets or sets all lists
+        /// </summary>
+        public List<XmlNode> AllLists { get; set; }
+
+        /// <summary>
+        /// Gets or sets  the parent object
+        /// </summary>
+        public IMigratable ParentObject { get; set; }
+
+        /// <summary>
         /// Adds the list to the visible Lists and creates a tree node
         /// </summary>
         /// <param name="list">the list object</param>
@@ -136,26 +157,6 @@ namespace Sharezbold.ContentMigration.Data
             list.Migrate = migrate;
             this.lists.Add(list);
             this.Nodes.Add(list);
-        }
-
-        /// <summary>
-        /// Represents all lists
-        /// </summary>
-        public List<XmlNode> AllLists { get; set; }
-
-        /// <summary>
-        /// Represents the parent object
-        /// </summary>
-        public IMigratable ParentObject { get; set; }
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public SSite() : base("")
-        {
-            this.lists = new List<SList>();
-            this.AllLists = new List<XmlNode>();
-            this.IsSiteCollectionSite = false;
         }
     }
 }

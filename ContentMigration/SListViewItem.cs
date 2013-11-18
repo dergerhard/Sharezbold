@@ -25,8 +25,7 @@ namespace Sharezbold.ContentMigration
         /// Represents a list view item with a migration object
         /// </summary>
         /// <param name="migrationObject">Represents the migration object</param>
-        public SListViewItem(IMigratable  migrationObject)
-            : base(migrationObject.Name, migrationObject.ReadyForMigration ? 1 : 0)
+        public SListViewItem(IMigratable migrationObject) : base(migrationObject.Name, migrationObject.ReadyForMigration ? 1 : 0)
         {
             this.MigrationObject = migrationObject;
 
