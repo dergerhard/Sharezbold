@@ -1,15 +1,17 @@
-﻿
+﻿//-----------------------------------------------------------------------
+// <copyright file="HostService.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 namespace Sharezbold.FileMigration.Host
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.ServiceModel;
     using System.ServiceModel.Description;
     using System.Threading.Tasks;
-    using Service;
     using Contract;
+    using Service;
 
     internal class HostService
     {

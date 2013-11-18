@@ -1,13 +1,11 @@
-﻿
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="StringValidator.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 namespace Sharezbold.FileMigration.Host.Extensions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
     internal static class StringValidator
     {
         internal static void IsNullOrEmpty(this string str)
