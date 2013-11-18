@@ -84,18 +84,5 @@ namespace Sharezbold.FileMigration.Service
 
             return maxMessageSize;
         }
-
-
-        // TODO: implement it
-        public void BlockedFileExtension()
-        {
-            Console.WriteLine("Called BlockedFileExtension()");
-            SPWebApplication webApplication = new SPWebApplication();
-            System.Collections.ObjectModel.Collection<string> blocked = webApplication.BlockedFileExtensions;
-            foreach (string entry in blocked)
-            {
-                Console.WriteLine("blocked entry is {0}", entry);
-            }
-        }
     }
 }
