@@ -27,7 +27,14 @@ namespace Sharezbold.ElementsMigration.Extension
 
             foreach (var user in users)
             {
-                names.Add(user.LoginName);
+                string username = user.LoginName;
+                if (username.Contains(@"\"))
+                {
+                    username = username.Substring(username.IndexOf(@"\") + 1);
+                }
+
+                username.Trim('\\');
+                names.Add(username);
             }
 
             return names;

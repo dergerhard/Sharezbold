@@ -52,7 +52,8 @@ namespace Sharezbold.ElementsMigration
 
             foreach (var sourceUser in sourceUserCollection)
             {
-                if (!targetUserNames.Contains(sourceUser.LoginName))
+
+                if (!targetUserNames.Contains(GetTheUsername(sourceUser.LoginName)))
                 {
                     Console.WriteLine("Import user '{0}'", sourceUser.LoginName);
                     Logger.AddMessage("import user '" + sourceUser.LoginName + "'");
@@ -62,6 +63,18 @@ namespace Sharezbold.ElementsMigration
                     creationObject.Title = sourceUser.Title;
 
                     User targetUser = targetUserCollection.Add(creationObject);
+
+                    try
+                    {
+                        TargetClientContext.ExecuteQuery();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Exception during importing the SiteUsers.", e);
+                        Logger.AddMessage("Exception during importing the Users. Error = " + e.Message);
+                        throw new ElementsMigrationException("Exception during importing the SiteUsers.", e);
+                    }
+
                     targetUser.IsSiteAdmin = sourceUser.IsSiteAdmin;
                     targetUser.Tag = sourceUser.Tag;
                 }
@@ -143,6 +156,23 @@ namespace Sharezbold.ElementsMigration
             }
 
             return userCollection;
+        }
+
+        /// <summary>
+        /// Returns the username without the domain.
+        /// </summary>
+        /// <param name="loginname">the full loginname</param>
+        /// <returns>username without domain</returns>
+        private string GetTheUsername(string loginname)
+        {
+            string username = loginname;
+            if (username.Contains(@"\"))
+            {
+                username = username.Substring(username.IndexOf(@"\") + 1);
+                username.Trim('\\');
+            }
+
+            return username;
         }
     }
 }

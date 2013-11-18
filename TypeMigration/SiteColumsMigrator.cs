@@ -63,14 +63,58 @@ namespace Sharezbold.ElementsMigration
                     targetField.FieldTypeKind = sourceField.FieldTypeKind;
                     //// TODO getGroup: targetField.Group = sourceField.Group;
                     targetField.Hidden = sourceField.Hidden;
-                    targetField.Indexed = sourceField.Indexed;
-                    targetField.ReadOnlyField = sourceField.ReadOnlyField;
-                    targetField.Required = sourceField.Required;
-                    targetField.StaticName = sourceField.StaticName;
-                    targetField.Tag = sourceField.Tag;
-                    targetField.TypeAsString = sourceField.TypeAsString;
-                    targetField.ValidationFormula = sourceField.ValidationFormula;
-                    targetField.ValidationMessage = sourceField.ValidationMessage;
+                    try
+                    {
+                        targetField.Indexed = sourceField.Indexed;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+                    try
+                    {
+                        targetField.ReadOnlyField = sourceField.ReadOnlyField;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+                    try
+                    {
+                        targetField.Required = sourceField.Required;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+                    try
+                    {
+                        targetField.StaticName = sourceField.StaticName;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+
+                    try
+                    {
+                        targetField.Tag = sourceField.Tag;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+
+                    try
+                    {
+                        targetField.TypeAsString = sourceField.TypeAsString;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+
+                    try
+                    {
+                        targetField.ValidationFormula = sourceField.ValidationFormula;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+
+                    try
+                    {
+                        targetField.ValidationMessage = sourceField.ValidationMessage;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
                 }
                 else
                 {

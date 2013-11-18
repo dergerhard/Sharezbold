@@ -82,7 +82,7 @@ namespace Sharezbold
         /// <returns>true when migration finished</returns>
         internal bool StartMigration(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
         {
-            IElementsMigrator migrator = new Sharepoint2010Migrator(this.sourceClientContext, this.targetClientContext, null);
+            IElementsMigrator migrator = new Sharepoint2010Migrator(this.sourceClientContext, this.targetClientContext, this.logger);
             MigrationDelegation migrate = null;
 
             if (migrateContentTypes)

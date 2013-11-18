@@ -115,7 +115,7 @@ namespace Sharezbold
 
             // disable all tabs other than the first one
             this.EnableTab(this.tabPageContentSelection, false);
-            this.EnableTab(this.tabPageMigrationElements, false);
+            this.EnableTab(this.tabPageMigrationElements, true); //// set it true for testing
             this.EnableTab(this.tabPageMigrationPreparation, false);
             this.EnableTab(this.tabPageMigrationProgress, false);
 
