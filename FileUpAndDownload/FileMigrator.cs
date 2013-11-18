@@ -6,6 +6,7 @@ namespace Sharezbold.FileMigration
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
 
@@ -20,11 +21,30 @@ namespace Sharezbold.FileMigration
             try
             {                
                 MigrationFile migrationFile = downloader.DownloadDocument(file);
+                Thread.Sleep(GetWaitingTime(specification.Bandwith));
                 uploader.UploadDocument(migrationFile, targetWeb);
             }
             catch (OperationCanceledException e)
             {
                 Console.WriteLine("Exception: {0}", e.Message);
+            }
+        }
+
+        internal int GetWaitingTime(int bandwith)
+        {
+            if (bandwith == 0)
+            {
+                bandwith = 1;
+            }
+
+            if (bandwith == 100)
+            {
+                return 0;
+            }
+            else
+            {
+                int baseValue = 1000;
+                return baseValue - ((100 - bandwith * 10));
             }
         }
     }
