@@ -916,7 +916,7 @@ namespace Sharezbold
             this.textBoxFileMigrationParallelThreads.Text = numberOfThreads.ToString();
             this.textBoxFileMigrationWebServiceAddress.Text = this.textBoxFileMigrationServiceURI.Text;
 
-            this.migrationData.FileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.migrationData.SourceClientContext).WithTargetClientContext(this.migrationData.TargetClientContext).CreateMigrator();
+            this.migrationData.FileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithNumberOfThreads(numberOfThreads).WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.migrationData.SourceClientContext).WithTargetClientContext(this.migrationData.TargetClientContext).CreateMigrator();
 
             TreeNodeCollection treeNodeCollection = this.treeViewContentSelection.Nodes;
             this.migrationData.WebUrlsToMigrate = treeNodeCollection.GetSelectedWebUrls();
