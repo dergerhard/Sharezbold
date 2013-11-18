@@ -11,6 +11,7 @@ namespace Sharezbold.ElementsMigration
     using System.Collections.Generic;
     using Extension;
     using Microsoft.SharePoint.Client;
+    using Logging;
 
     /// <summary>
     /// This class is responsible to migrate the Groups.
@@ -22,8 +23,8 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">clientcontext of source SharePoint</param>
         /// <param name="targetClientContext">clientcontext of target SharePoint</param>
-        internal UserGroupMigrator(ClientContext sourceClientContext, ClientContext targetClientContext)
-            : base(sourceClientContext, targetClientContext)
+        internal UserGroupMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger)
+            : base(sourceClientContext, targetClientContext, logger)
         {
         }
 
@@ -41,7 +42,7 @@ namespace Sharezbold.ElementsMigration
         private void ImportNewGroups()
         {
             Console.WriteLine("Import new groups...");
-            Log.AddLast("import new Groups...");
+            Logger.AddMessage("import new Groups...");
             GroupCollection groupCollectionOnSourceServer = this.GetAllGroups(this.SourceClientContext);
             GroupCollection groupCollectoinOnTargetServer = this.GetAllGroups(this.TargetClientContext);
 
@@ -52,7 +53,7 @@ namespace Sharezbold.ElementsMigration
                 if (!titlesOfGroupsOnTargetServer.Contains(sourceGroup.Title))
                 {
                     Console.WriteLine("import group '{0}'", sourceGroup.Title);
-                    Log.AddLast("import group '" + sourceGroup.Title + "'");
+                    Logger.AddMessage("import group '" + sourceGroup.Title + "'");
                     GroupCreationInformation groupCreationInformation = new GroupCreationInformation();
                     groupCreationInformation.Description = sourceGroup.Description;
                     groupCreationInformation.Title = sourceGroup.Title;
@@ -65,7 +66,7 @@ namespace Sharezbold.ElementsMigration
                 else
                 {
                     Console.WriteLine("don't have to migrate group with title '{0}'", sourceGroup.Title);
-                    Log.AddLast("don't have to import group '" + sourceGroup.Title + "'");
+                    Logger.AddMessage("don't have to import group '" + sourceGroup.Title + "'");
                 }
             }
 
@@ -76,7 +77,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during importing new SiteGroups.", e);
-                Log.AddLast("Exception during importing new SiteGroups. Error = " + e.Message);
+                Logger.AddMessage("Exception during importing new SiteGroups. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during importing new SiteGroups.", e);
             }
         }
@@ -100,7 +101,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during fetching the SiteGroups.", e);
-                Log.AddLast("Exception during fetching the SiteGroups. Error = " + e.Message);
+                Logger.AddMessage("Exception during fetching the SiteGroups. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during fetching the SiteGroups.", e);
             }
 

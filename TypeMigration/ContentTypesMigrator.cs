@@ -11,6 +11,7 @@ namespace Sharezbold.ElementsMigration
     using System.Collections.Generic;
     using Extension;
     using Microsoft.SharePoint.Client;
+    using Logging;
 
     /// <summary>
     /// This class migrates the ContentType from the source SharePoint to the target SharePoint.
@@ -27,8 +28,8 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">clientContext of the source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of the target SharePoint</param>
-        public ContentTypesMigrator(ClientContext sourceClientContext, ClientContext targetClientContext)
-            : base(sourceClientContext, targetClientContext)
+        public ContentTypesMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger)
+            : base(sourceClientContext, targetClientContext, logger)
         {
             this.contentTypesToAdapt = new HashSet<string>();
         }
@@ -49,7 +50,7 @@ namespace Sharezbold.ElementsMigration
         private void ImportNewContentTypes()
         {
             Console.WriteLine("import new ContentTypes...");
-            Log.AddLast("import new ContentTypes...");
+            Logger.AddMessage("import new ContentTypes...");
 
             ContentTypeCollection contentTypeCollectionSourceServer = this.GetAllContentTypes(SourceClientContext);
             ContentTypeCollection contentTypeCollectionTargetServer = this.GetAllContentTypes(TargetClientContext);
@@ -61,14 +62,14 @@ namespace Sharezbold.ElementsMigration
                 if (!namesOfContentTypesOnTargetServer.Contains(contentType.Name))
                 {
                     Console.WriteLine("import contentType = {0}", contentType.Name);
-                    Log.AddLast("import ContentType = '" + contentType.Name + "'");
+                    Logger.AddMessage("import ContentType = '" + contentType.Name + "'");
 
                     this.CreateContentType(contentTypeCollectionSourceServer, contentTypeCollectionTargetServer, contentType);
                 }
                 else
                 {
                     Console.WriteLine("don't have to migrate '{0}'", contentType.Name);
-                    Log.AddLast("Don't have to migrate '" + contentType.Name + "'");
+                    Logger.AddMessage("Don't have to migrate '" + contentType.Name + "'");
                 }
             }
 
@@ -79,7 +80,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during importing new ContentTypes.", e);
-                Log.AddLast("Exception during importing new ContentTypes. Error = " + e.Message);
+                Logger.AddMessage("Exception during importing new ContentTypes. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during importing new ContentTypes.", e);
             }
         }
@@ -94,7 +95,7 @@ namespace Sharezbold.ElementsMigration
         private Microsoft.SharePoint.Client.ContentType AddParent(ContentTypeCollection sourceContentTypeCollection, ContentTypeCollection targetContentTypeCollection, Microsoft.SharePoint.Client.ContentType parentContentType)
         {
             Console.WriteLine("add parent ContentType...");
-            Log.AddLast("adding parent ContentType...");
+            Logger.AddMessage("adding parent ContentType...");
             if (parentContentType == null || parentContentType.Name == null)
             {
                 return null;
@@ -107,7 +108,7 @@ namespace Sharezbold.ElementsMigration
             catch (ElementsMigrationException e)
             {
                 Console.WriteLine("have to create parent content type. " + e.Message);
-                Log.AddLast("have to create parent ContentType");
+                Logger.AddMessage("have to create parent ContentType");
             }
 
             this.CreateContentType(sourceContentTypeCollection, targetContentTypeCollection, parentContentType);
@@ -163,7 +164,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during fetching the ContentTypes.", e);
-                Log.AddLast("Exception during fetching the ContentTypes. Error = " + e.Message);
+                Logger.AddMessage("Exception during fetching the ContentTypes. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during fetching the ContentTypes.", e);
             }
 

@@ -11,6 +11,7 @@ namespace Sharezbold.ElementsMigration
     using System.Collections.Generic;
     using Extension;
     using Microsoft.SharePoint.Client;
+    using Logging;
 
     /// <summary>
     /// This class migrates the RoleDefintion from the source SharePoint to the target SharePoint.
@@ -22,7 +23,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">clientContext of the source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of the target SharePoint</param>
-        internal RoleMigrator(ClientContext sourceClientContext, ClientContext targetClientContext) : base(sourceClientContext, targetClientContext)
+        internal RoleMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger) : base(sourceClientContext, targetClientContext, logger)
         {
         }
 
@@ -42,7 +43,7 @@ namespace Sharezbold.ElementsMigration
         private void ImportNewRoleDefinitions()
         {
             Console.WriteLine("import new RoleDefinitions...");
-            Log.AddLast("import new RoleDefinitions...");
+            Logger.AddMessage("import new RoleDefinitions...");
             RoleDefinitionCollection sourceRoleDefinitionCollection = this.GetAllRollDefinitions(SourceClientContext);
             RoleDefinitionCollection targetRoleDefinitionCollection = this.GetAllRollDefinitions(TargetClientContext);
 
@@ -53,7 +54,7 @@ namespace Sharezbold.ElementsMigration
                 if (!targetRoleDefinitionNames.Contains(sourceRoleDefinition.Name))
                 {
                     Console.WriteLine("import roleDefinition '{0}'", sourceRoleDefinition.Name);
-                    Log.AddLast("import RoleDefinition '" + sourceRoleDefinition.Name + "'");
+                    Logger.AddMessage("import RoleDefinition '" + sourceRoleDefinition.Name + "'");
 
                     RoleDefinitionCreationInformation creationObject = new RoleDefinitionCreationInformation();
                     creationObject.BasePermissions = sourceRoleDefinition.BasePermissions;
@@ -67,7 +68,7 @@ namespace Sharezbold.ElementsMigration
                 else
                 {
                     Console.WriteLine("don't have to import '{0}'", sourceRoleDefinition.Name);
-                    Log.AddLast("don't have to import '" + sourceRoleDefinition.Name + "'");
+                    Logger.AddMessage("don't have to import '" + sourceRoleDefinition.Name + "'");
                 }
             }
 
@@ -78,7 +79,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during importing new RoleDefinition.", e);
-                Log.AddLast("Exception during importing new RoleDefinition. Error = " + e.Message);
+                Logger.AddMessage("Exception during importing new RoleDefinition. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during importing new RoleDefinition.", e);
             }
         }
@@ -102,7 +103,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during fetching the RoleDefinitons.", e);
-                Log.AddLast("Exception during fetching the RoleDefinitons. Error = " + e.Message);
+                Logger.AddMessage("Exception during fetching the RoleDefinitons. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during fetching the RoleDefinitons.", e);
             }
 

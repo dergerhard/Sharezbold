@@ -10,6 +10,7 @@ namespace Sharezbold.ElementsMigration
     using System;
     using System.Collections.Generic;
     using Microsoft.SharePoint.Client;
+    using Logging;
 
     /// <summary>
     /// Migrator for Sharepoint 2010 to Sharepoint 2013 and Sharepoint 2013 to Sharepoint 2010.
@@ -26,16 +27,16 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of the source SharePoint (2010/2013)</param>
         /// <param name="targetClientContext">ClientContext of the target SharePoint (2013)</param>
-        public Sharepoint2013Migrator(ClientContext sourceClientContext, ClientContext targetClientContext)
+        public Sharepoint2013Migrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger)
         {
             this.migrators = new LinkedList<KeyValuePair<MigrationType, AbstractMigrator>>();
 
-            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_CONTENT_TYPES, new ContentTypesMigrator(sourceClientContext, targetClientContext)));
-            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_GROUP, new UserGroupMigrator(sourceClientContext, targetClientContext)));
-            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_PERMISSION, new RoleMigrator(sourceClientContext, targetClientContext)));
-            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2013_USER, new Sharepoint2013UserMigrator(sourceClientContext, targetClientContext)));
-            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_SITE_COLUMNS, new SiteColumsMigrator(sourceClientContext, targetClientContext)));
-            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_WORKFLOW, new WorkflowMigrator(sourceClientContext, targetClientContext)));
+            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_CONTENT_TYPES, new ContentTypesMigrator(sourceClientContext, targetClientContext, logger)));
+            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_GROUP, new UserGroupMigrator(sourceClientContext, targetClientContext, logger)));
+            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_PERMISSION, new RoleMigrator(sourceClientContext, targetClientContext, logger)));
+            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2013_USER, new Sharepoint2013UserMigrator(sourceClientContext, targetClientContext, logger)));
+            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_SITE_COLUMNS, new SiteColumsMigrator(sourceClientContext, targetClientContext, logger)));
+            this.migrators.AddFirst(new KeyValuePair<MigrationType, AbstractMigrator>(MigrationType.SHAREPOINT2010_2013_WORKFLOW, new WorkflowMigrator(sourceClientContext, targetClientContext, logger)));
         }
 
         /// <summary>
@@ -43,7 +44,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        public LinkedList<string> MigrateContentTypes()
+        public void MigrateContentTypes()
         {
             AbstractMigrator contentTypeMigrator = null;
 
@@ -57,7 +58,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             contentTypeMigrator.Migrate();
-            return contentTypeMigrator.Log;
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        public LinkedList<string> MigrateUser()
+        public void MigrateUser()
         {
             AbstractMigrator userMigrator = null;
 
@@ -79,7 +79,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             userMigrator.Migrate();
-            return userMigrator.Log;
         }
 
         /// <summary>
@@ -87,7 +86,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        public LinkedList<string> MigrateGroup()
+        public void MigrateGroup()
         {
             AbstractMigrator groupMigrator = null;
 
@@ -101,7 +100,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             groupMigrator.Migrate();
-            return groupMigrator.Log;
         }
 
         /// <summary>
@@ -109,7 +107,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        public LinkedList<string> MigratePermissionlevels()
+        public void MigratePermissionlevels()
         {
             AbstractMigrator roleMigrator = null;
 
@@ -123,7 +121,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             roleMigrator.Migrate();
-            return roleMigrator.Log;
         }
 
         /// <summary>
@@ -131,7 +128,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        public LinkedList<string> MigrateSiteColumns()
+        public void MigrateSiteColumns()
         {
             AbstractMigrator siteColumsMigrator = null;
 
@@ -145,7 +142,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             siteColumsMigrator.Migrate();
-            return siteColumsMigrator.Log;
         }
 
         /// <summary>
@@ -153,7 +149,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        public LinkedList<string> MigrateWorkflow()
+        public void MigrateWorkflow()
         {
             AbstractMigrator workflowMigrator = null;
 
@@ -167,7 +163,6 @@ namespace Sharezbold.ElementsMigration
             }
 
             workflowMigrator.Migrate();
-            return workflowMigrator.Log;
         }
     }
 }

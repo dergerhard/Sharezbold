@@ -12,6 +12,7 @@ namespace Sharezbold.ElementsMigration
     using System.Linq;
     using Extension;
     using Microsoft.SharePoint.Client;
+    using Logging;
 
     /// <summary>
     /// This class migrates the fields (SiteColumn).
@@ -23,7 +24,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
-        internal SiteColumsMigrator(ClientContext sourceClientContext, ClientContext targetClientContext) : base(sourceClientContext, targetClientContext)
+        internal SiteColumsMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger) : base(sourceClientContext, targetClientContext, logger)
         {
         }
 
@@ -43,7 +44,7 @@ namespace Sharezbold.ElementsMigration
         private void ImportNewField()
         {
             Console.WriteLine("import new fields");
-            Log.AddLast("import new SiteColumns");
+            Logger.AddMessage("import new SiteColumns");
             FieldCollection sourceFieldCollection = this.GetAllFields(SourceClientContext);
             FieldCollection targetFieldCollection = this.GetAllFields(TargetClientContext);
 
@@ -53,7 +54,7 @@ namespace Sharezbold.ElementsMigration
             {
                 if (!targetFieldTitles.Contains(sourceField.Title))
                 {
-                    Log.AddLast("import new field = '" + sourceField.Title + "'");
+                    Logger.AddMessage("import new field = '" + sourceField.Title + "'");
                     string newField = "<Field DisplayName='" + sourceField.Title + "' Type='" + sourceField.TypeAsString + "' />";
                     Field targetField = targetFieldCollection.AddFieldAsXml(newField, true, AddFieldOptions.DefaultValue);
                     targetField.Description = sourceField.Description;
@@ -62,19 +63,63 @@ namespace Sharezbold.ElementsMigration
                     targetField.FieldTypeKind = sourceField.FieldTypeKind;
                     //// TODO getGroup: targetField.Group = sourceField.Group;
                     targetField.Hidden = sourceField.Hidden;
-                    targetField.Indexed = sourceField.Indexed;
-                    targetField.ReadOnlyField = sourceField.ReadOnlyField;
-                    targetField.Required = sourceField.Required;
-                    targetField.StaticName = sourceField.StaticName;
-                    targetField.Tag = sourceField.Tag;
-                    targetField.TypeAsString = sourceField.TypeAsString;
-                    targetField.ValidationFormula = sourceField.ValidationFormula;
-                    targetField.ValidationMessage = sourceField.ValidationMessage;
+                    try
+                    {
+                        targetField.Indexed = sourceField.Indexed;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+                    try
+                    {
+                        targetField.ReadOnlyField = sourceField.ReadOnlyField;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+                    try
+                    {
+                        targetField.Required = sourceField.Required;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+                    try
+                    {
+                        targetField.StaticName = sourceField.StaticName;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+
+                    try
+                    {
+                        targetField.Tag = sourceField.Tag;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+
+                    try
+                    {
+                        targetField.TypeAsString = sourceField.TypeAsString;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+
+                    try
+                    {
+                        targetField.ValidationFormula = sourceField.ValidationFormula;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
+
+                    try
+                    {
+                        targetField.ValidationMessage = sourceField.ValidationMessage;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    { }
                 }
                 else
                 {
                     Console.WriteLine("don't have to import '{0}'", sourceField.Title);
-                    Log.AddLast("don't have to import '" + sourceField.Title + "'");
+                    Logger.AddMessage("don't have to import '" + sourceField.Title + "'");
                 }
             }
 
@@ -85,7 +130,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during importing new Fields.", e);
-                Log.AddLast("Exception during importing new Fields. Error = " + e.Message);
+                Logger.AddMessage("Exception during importing new Fields. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during importing new Fields.", e);
             }
         }
@@ -109,7 +154,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during fetching new Field.", e);
-                Log.AddLast("Exception during fetching new Field. Error = " + e.Message);
+                Logger.AddMessage("Exception during fetching new Field. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during fetching new Field.", e);
             }
 

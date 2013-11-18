@@ -13,6 +13,7 @@ namespace Sharezbold.ElementsMigration
     using Extension;
     using Microsoft.SharePoint.Client;
     using Microsoft.SharePoint.Client.Workflow;
+    using Logging;
 
     /// <summary>
     /// Migrates the workflows from SharePoint 2010 and 2013 to SharePoint 2013.
@@ -24,8 +25,8 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
-        internal WorkflowMigrator(ClientContext sourceClientContext, ClientContext targetClientContext)
-            : base(sourceClientContext, targetClientContext)
+        internal WorkflowMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger)
+            : base(sourceClientContext, targetClientContext, logger)
         {
         }
 
@@ -50,7 +51,7 @@ namespace Sharezbold.ElementsMigration
 
             if (sourceWorkflowAssociations.Count == 0)
             {
-                Log.AddLast("no workflows to migrate...");
+                Logger.AddMessage("no workflows to migrate...");
                 return;
             }
 
@@ -61,7 +62,7 @@ namespace Sharezbold.ElementsMigration
                 if (!targetWorkflowNames.Contains(sourceWorkflowAssociation.Name))
                 {
                     Console.WriteLine("import new workflow '{0}'", sourceWorkflowAssociation.Name);
-                    Log.AddLast("import new workflow '" + sourceWorkflowAssociation.Name + "'");
+                    Logger.AddMessage("import new workflow '" + sourceWorkflowAssociation.Name + "'");
 
                     WorkflowAssociationCreationInformation creationObject = new WorkflowAssociationCreationInformation();
                     creationObject.Name = sourceWorkflowAssociation.Name;
@@ -80,7 +81,7 @@ namespace Sharezbold.ElementsMigration
                 else
                 {
                     Console.WriteLine("don't have to migrate workflow '{0}'", sourceWorkflowAssociation.Name);
-                    Log.AddLast("don't have to migrate workflow '" + sourceWorkflowAssociation.Name + "'");
+                    Logger.AddMessage("don't have to migrate workflow '" + sourceWorkflowAssociation.Name + "'");
                 }
             }
 
@@ -91,7 +92,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during importing new Workflows.", e);
-                Log.AddLast("Exception during importing new Workflows. Error = " + e.Message);
+                Logger.AddMessage("Exception during importing new Workflows. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during importing new Workflows.", e);
             }
         }
@@ -139,8 +140,8 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during fetching the history of the Workflow.", e);
-                Log.AddLast("Exception during fetching the history of the Workflow. Error = " + e.Message);
-                Log.AddLast("using null history-list now...");
+                Logger.AddMessage("Exception during fetching the history of the Workflow. Error = " + e.Message);
+                Logger.AddMessage("using null history-list now...");
 
                 return null;
             }
@@ -166,8 +167,8 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during fetching the tasks of the Workflow.", e);
-                Log.AddLast("Exception during fetching the tasks of the Workflow. Error = " + e.Message);
-                Log.AddLast("using null task-list now...");
+                Logger.AddMessage("Exception during fetching the tasks of the Workflow. Error = " + e.Message);
+                Logger.AddMessage("using null task-list now...");
 
                 return null;
             }
@@ -192,7 +193,7 @@ namespace Sharezbold.ElementsMigration
 
                 if (targetWorkflowTemplateCollection == null || targetWorkflowTemplateCollection.Count == 0)
                 {
-                    Log.AddLast("No templates for Workflow found!");
+                    Logger.AddMessage("No templates for Workflow found!");
                     throw new ElementsMigrationException("No templates for Workflow found!");
                 }
 
@@ -213,13 +214,13 @@ namespace Sharezbold.ElementsMigration
                     }
                 }
 
-                Log.AddLast("No templates for Workflow found!");
+                Logger.AddMessage("No templates for Workflow found!");
                 throw new ElementsMigrationException("No templates for Workflow found!");
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception during fetching the template of the Workflow.", e);
-                Log.AddLast("Exception during fetching the template of the Workflow. Error = " + e.Message);
+                Logger.AddMessage("Exception during fetching the template of the Workflow. Error = " + e.Message);
 
                 throw new ElementsMigrationException("Exception during fetching the WorkflowTemplates.", e);
             }

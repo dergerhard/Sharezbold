@@ -7,6 +7,7 @@ namespace Sharezbold.FileMigration
     using System.Text;
     using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
+    using Logging;
 
     internal class FileMigrationSpecification
     {
@@ -19,6 +20,7 @@ namespace Sharezbold.FileMigration
             this.NumberOfThreads = 1;
             this.BlockedFileExtensions = null;
             this.MaxFileSize = int.MaxValue;
+            this.Logger = null;
         }
 
         internal ClientContext SourceClientContext { get; set; }
@@ -28,6 +30,7 @@ namespace Sharezbold.FileMigration
         internal int NumberOfThreads { get; set; }
         internal int MaxFileSize { get; set; }
         internal List<string> BlockedFileExtensions { get; set; }
+        internal Logger Logger { get; set; }
 
         internal void Validate()
         {

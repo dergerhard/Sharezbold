@@ -115,23 +115,13 @@ namespace Sharezbold
 
             // disable all tabs other than the first one
             this.EnableTab(this.tabPageContentSelection, false);
-            this.EnableTab(this.tabPageMigrationElements, false);
+            this.EnableTab(this.tabPageMigrationElements, true); //// set it true for testing
             this.EnableTab(this.tabPageMigrationPreparation, false);
             this.EnableTab(this.tabPageMigrationProgress, false);
 
             this.log = new Logger(this.listBoxMigrationLog, @"C:\temp\log.txt");
             this.log.AddMessage("Program started");
 
-        }
-                
-        /// <summary>
-        /// Updates the log
-        /// </summary>
-        /// <param name="logItem">the message</param>
-        /// <param name="onlyLogFile">if true, message is only written to the file</param>
-        internal void UpdateProgressLog(string logItem, bool onlyLogFile=false)
-        {
-            this.log.AddMessage(logItem, onlyLogFile);
         }
 
         /// <summary>
@@ -154,7 +144,7 @@ namespace Sharezbold
             bool readyForMigration = true;
             foreach (ListViewItem lvi in listViewMigrationContent.Items)
             {
-                
+
                 if ((lvi is SListViewItem) && (!((SListViewItem)lvi).MigrationObject.ReadyForMigration))
                 {
                     readyForMigration = false;
@@ -169,7 +159,7 @@ namespace Sharezbold
                 this.EnableTab(this.tabPageMigrationProgress, true);
                 this.buttonFinish.Enabled = false;
                 bool result = await this.MigrateAll();
-                MessageBox.Show("Migration process finished " + (result?"successfully":"with Errors. Please read the log!"), "Info");
+                MessageBox.Show("Migration process finished " + (result ? "successfully" : "with Errors. Please read the log!"), "Info");
                 this.buttonFinish.Enabled = true;
             }
             else
@@ -185,7 +175,7 @@ namespace Sharezbold
         private async Task<bool> MigrateAll()
         {
 
-            return await this.contentLoader.MigrateAllAsync(); 
+            return await this.contentLoader.MigrateAllAsync();
         }
 
         /// <summary>
@@ -337,7 +327,7 @@ namespace Sharezbold
                 this.waitForm.Show();
                 this.EnableTab(this.tabPageConfiguration, false);
                 this.EnableTab(this.tabPageContentSelection, true);
-                
+
                 // load trees and move on to the next form
                 await this.ApplyConfigurationAndLoadSourceTreeAsync();
                 this.treeViewContentSelection.Nodes.Add(this.sourceSiteCollection);
@@ -406,6 +396,17 @@ namespace Sharezbold
                     this.log.AddMessage(txt2);
                     await this.ConnectToDestination();
                 }
+                else
+                {
+                    Connector connector = new Connector();
+                    ProxySettings proxySettings = null;
+                    if (this.checkBoxProxyActivate.Checked)
+                    {
+                        proxySettings = new ProxySettings(this.textBoxProxyUrl.Text.Trim(), this.textBoxProxyUsername.Text.Trim(), this.textBoxProxyPassword.Text.Trim());
+                    }
+                    this.migrationData.TargetClientContext = connector.ConnectToClientContext(this.settings.ToHost, this.settings.ToUserName, this.settings.ToPassword, this.settings.ToDomain, proxySettings);
+                    this.migrationData.SourceClientContext = connector.ConnectToClientContext(this.settings.FromHost, this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain, proxySettings);
+                }
             }
             catch (Exception ex)
             {
@@ -426,7 +427,7 @@ namespace Sharezbold
             });
 
             this.sourceSiteCollection = await t;
-            
+
             // make sure, the site collection is checked, if it will be migrated
             if (this.settings.SiteCollectionMigration)
             {
@@ -444,7 +445,7 @@ namespace Sharezbold
 
             return true;
         }
-  
+
         /// <summary>
         /// Loads the tree where you can migrate to.
         /// </summary>
@@ -459,7 +460,7 @@ namespace Sharezbold
 
             return await t;
         }*/
-        
+
         /// <summary>
         /// Connects to the source, provides context.
         /// </summary>
@@ -477,7 +478,7 @@ namespace Sharezbold
                     proxySettings = new ProxySettings(this.textBoxProxyUrl.Text.Trim(), this.textBoxProxyUsername.Text.Trim(), this.textBoxProxyPassword.Text.Trim());
                 }
                 this.migrationData.SourceClientContext = connector.ConnectToClientContext(this.settings.FromHost, this.settings.FromUserName, this.settings.FromPassword, this.settings.FromDomain, proxySettings);
-               
+
                 // TODO: Central Administration HOST
                 // set up web services and loader
                 this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, this.settings.ToHostCA, this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
@@ -513,7 +514,7 @@ namespace Sharezbold
 
             return await t;
         }
-      
+
         /// <summary>
         /// Checks all child nodes recursively
         /// </summary>
@@ -721,12 +722,12 @@ namespace Sharezbold
             this.tabPageMigrationProgress.Show();
             this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
 
-            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext, this);
+            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext, this.log);
             bool finished = await migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
 
             if (finished)
             {
-                this.UpdateProgressLog("*************** ELEMENTS MIGRATION FINISHED *******************");
+                this.log.AddMessage("*************** ELEMENTS MIGRATION FINISHED *******************");
             }
         }
 
@@ -870,7 +871,7 @@ namespace Sharezbold
                     //find the site:
                     SList list = (SList)this.currentConfigurationElement.MigrationObject;
                     string listBoxText = this.listBoxMigrateTo.SelectedItem.ToString();
-                    
+
                     if (listBoxText.StartsWith(fromSourceServer))
                     {
                         listBoxText = listBoxText.Remove(0, fromSourceServer.Length);
@@ -914,13 +915,22 @@ namespace Sharezbold
         private void FileMigrationTabClicked(object sender, EventArgs e)
         {
             this.textBoxFileMigrationWebs.Text = "";
-            int bandwith = (int) this.numericUpDownBandwith.Value;
+            int bandwith = (int)this.numericUpDownBandwith.Value;
             int numberOfThreads = (int)this.numericUpDownNumberOfThreads.Value;
+
+            try
+            {
+                this.migrationData.FileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithNumberOfThreads(numberOfThreads).WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationServiceURI.Text)).WithSourceClientContext(this.migrationData.SourceClientContext).WithTargetClientContext(this.migrationData.TargetClientContext).WithLogger(this.log).CreateMigrator();
+            }
+            catch (FileMigrationException exception)
+            {
+                MessageBox.Show(exception.Message, "File-Migration-Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             this.textBoxFileMigrationBandwith.Text = bandwith + " %";
             this.textBoxFileMigrationParallelThreads.Text = numberOfThreads.ToString();
             this.textBoxFileMigrationWebServiceAddress.Text = this.textBoxFileMigrationServiceURI.Text;
-
-            this.migrationData.FileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithNumberOfThreads(numberOfThreads).WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.migrationData.SourceClientContext).WithTargetClientContext(this.migrationData.TargetClientContext).CreateMigrator();
 
             TreeNodeCollection treeNodeCollection = this.treeViewContentSelection.Nodes;
             this.migrationData.WebUrlsToMigrate = treeNodeCollection.GetSelectedWebUrls();
@@ -928,7 +938,7 @@ namespace Sharezbold
             foreach (string item in this.migrationData.WebUrlsToMigrate)
             {
                 Console.WriteLine("add site '{0}'", item);
-                this.textBoxFileMigrationWebs.Text += item + "\n";  
+                this.textBoxFileMigrationWebs.Text += item + "\n";
             }
         }
 
