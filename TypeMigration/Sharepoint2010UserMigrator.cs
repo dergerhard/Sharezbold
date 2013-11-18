@@ -11,6 +11,7 @@ namespace Sharezbold.ElementsMigration
     using System.Collections.Generic;
     using Extension;
     using Microsoft.SharePoint.Client;
+    using Logging;
 
     /// <summary>
     /// Migrates the SiteUser from the source SharePoint to the target SharePoint.
@@ -22,8 +23,8 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
-        internal Sharepoint2010UserMigrator(ClientContext sourceClientContext, ClientContext targetClientContext)
-            : base(sourceClientContext, targetClientContext)
+        internal Sharepoint2010UserMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger)
+            : base(sourceClientContext, targetClientContext, logger)
         {
         }
 
@@ -43,7 +44,7 @@ namespace Sharezbold.ElementsMigration
         private void ImportNewUsers()
         {
             Console.WriteLine("import new Users...");
-            Log.AddLast("import new Users...");
+            Logger.AddMessage("import new Users...");
             UserCollection sourceUserCollection = this.GetAllUser(SourceClientContext);
             UserCollection targetUserCollection = this.GetAllUser(TargetClientContext);
 
@@ -54,7 +55,7 @@ namespace Sharezbold.ElementsMigration
                 if (!targetUserNames.Contains(sourceUser.LoginName))
                 {
                     Console.WriteLine("Import user '{0}'", sourceUser.LoginName);
-                    Log.AddLast("import user '" + sourceUser.LoginName + "'");
+                    Logger.AddMessage("import user '" + sourceUser.LoginName + "'");
                     UserCreationInformation creationObject = new UserCreationInformation();
                     creationObject.Email = sourceUser.Email;
                     creationObject.LoginName = sourceUser.LoginName;
@@ -67,7 +68,7 @@ namespace Sharezbold.ElementsMigration
                 else
                 {
                     Console.WriteLine("user '{0}' is already on target server. nothing to import.", sourceUser.LoginName);
-                    Log.AddLast("don't have to import user '" + sourceUser.LoginName + "'");
+                    Logger.AddMessage("don't have to import user '" + sourceUser.LoginName + "'");
                 }
             }
 
@@ -78,7 +79,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during importing the SiteUsers.", e);
-                Log.AddLast("Exception during importing the Users. Error = " + e.Message);
+                Logger.AddMessage("Exception during importing the Users. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during importing the SiteUsers.", e);
             }
         }
@@ -103,7 +104,7 @@ namespace Sharezbold.ElementsMigration
             catch (Exception e)
             {
                 Console.WriteLine("Exception during fetching the Groups.", e);
-                Log.AddLast("Exception during fetching the Group. Error = " + e.Message);
+                Logger.AddMessage("Exception during fetching the Group. Error = " + e.Message);
                 throw new ElementsMigrationException("Exception during fetching the Groups.", e);
             }
 
@@ -119,7 +120,7 @@ namespace Sharezbold.ElementsMigration
                 catch (Exception e)
                 {
                     Console.WriteLine("Exception during fetching the Users.", e);
-                    Log.AddLast("Exception during fetching the users. Error = " + e.Message);
+                    Logger.AddMessage("Exception during fetching the users. Error = " + e.Message);
                     throw new ElementsMigrationException("Exception during fetching the Users.", e);
                 }
 

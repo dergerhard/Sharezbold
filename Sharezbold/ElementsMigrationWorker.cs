@@ -14,6 +14,7 @@ namespace Sharezbold
     using System.Windows.Forms;
     using ElementsMigration;
     using Microsoft.SharePoint.Client;
+    using Logging;
 
     /// <summary>
     /// This class is the interface to the DLL "TypeMigration" and migrates the elements TypeContent, User, Group, Permission, Workflow and SiteColumns. 
@@ -32,22 +33,19 @@ namespace Sharezbold
         /// </summary>
         private ClientContext targetClientContext;
 
-        /// <summary>
-        /// Reference to the MainForm (UI).
-        /// </summary>
-        private MainForm mainForm;
+        private Logger logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ElementsMigrationWorker"/> class.
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
-        /// <param name="mainForm">instance of the main-form</param>
-        internal ElementsMigrationWorker(ClientContext sourceClientContext, ClientContext targetClientContext, MainForm mainForm)
+        /// <param name="logger">instance of the logger</param>
+        internal ElementsMigrationWorker(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger)
         {
             this.sourceClientContext = sourceClientContext;
             this.targetClientContext = targetClientContext;
-            this.mainForm = mainForm;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -55,7 +53,7 @@ namespace Sharezbold
         /// </summary>
         /// <returns>log-output as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">if migration fails</exception>
-        private delegate LinkedList<string> MigrationDelegation();
+        private delegate void MigrationDelegation();
 
         /// <summary>
         /// Migrates the elements in a thread.
@@ -84,7 +82,7 @@ namespace Sharezbold
         /// <returns>true when migration finished</returns>
         internal bool StartMigration(bool migrateContentTypes, bool migrateUser, bool migrateGroup, bool migrateSiteColumns, bool migratePermission, bool migrateWorkflows)
         {
-            IElementsMigrator migrator = new Sharepoint2010Migrator(this.sourceClientContext, this.targetClientContext);
+            IElementsMigrator migrator = new Sharepoint2010Migrator(this.sourceClientContext, this.targetClientContext, null);
             MigrationDelegation migrate = null;
 
             if (migrateContentTypes)
@@ -135,23 +133,18 @@ namespace Sharezbold
         {
             try
             {
-                this.mainForm.UpdateProgressLog("=============== START MIGRATION OF " + migrationType + " =================== \n\r");
-                LinkedList<string> log = method();
-
-                foreach (var logEntry in log)
-                {
-                    this.mainForm.UpdateProgressLog(logEntry);
-                }
+                this.logger.AddMessage("=============== START MIGRATION OF " + migrationType + " =================== \n\r");
+                method();
             }
             catch (ElementsMigrationException e)
             {
-                this.mainForm.UpdateProgressLog("ERROR during migrating " + migrationType + "\n\r");
-                this.mainForm.UpdateProgressLog(e.Message + "\n\r");
+                this.logger.AddMessage("ERROR during migrating " + migrationType + "\n\r");
+                this.logger.AddMessage(e.Message + "\n\r");
                 Console.WriteLine("ERROR during migrating {0}", migrationType);
                 Console.WriteLine(e);
             }
 
-            this.mainForm.UpdateProgressLog("=============== FINISHED MIGRATION OF " + migrationType + " =================== \n\r");
+            this.logger.AddMessage("=============== FINISHED MIGRATION OF " + migrationType + " =================== \n\r");
         }
     }
 }

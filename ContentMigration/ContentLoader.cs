@@ -231,33 +231,7 @@ namespace Sharezbold.ContentMigration
              *  
              *  6. Transfer files
              */
-
-            Sharepoint2013Migrator migrator = new Sharepoint2013Migrator(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext);
             
-            try
-            {
-                migrator.MigrateGroup();
-            }
-            catch (Exception)
-            {
-            }
-
-            try
-            {
-                migrator.MigrateUser();
-            }
-            catch (Exception)
-            {
-            }
-
-            try
-            {
-                migrator.MigratePermissionlevels();
-            }
-            catch (Exception)
-            {
-            }
-
             this.log.AddMessage("Migration started");
 
             // specifies whether to go on with the migration

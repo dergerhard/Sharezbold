@@ -123,16 +123,6 @@ namespace Sharezbold
             this.log.AddMessage("Program started");
 
         }
-                
-        /// <summary>
-        /// Updates the log
-        /// </summary>
-        /// <param name="logItem">the message</param>
-        /// <param name="onlyLogFile">if true, message is only written to the file</param>
-        internal void UpdateProgressLog(string logItem, bool onlyLogFile=false)
-        {
-            this.log.AddMessage(logItem, onlyLogFile);
-        }
 
         /// <summary>
         /// Exit the application
@@ -718,12 +708,12 @@ namespace Sharezbold
             this.tabPageMigrationProgress.Show();
             this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
 
-            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext, this);
+            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext, this.log);
             bool finished = await migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
 
             if (finished)
             {
-                this.UpdateProgressLog("*************** ELEMENTS MIGRATION FINISHED *******************");
+                this.log.AddMessage("*************** ELEMENTS MIGRATION FINISHED *******************");
             }
         }
 

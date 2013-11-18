@@ -19,41 +19,41 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        LinkedList<string> MigrateContentTypes();
+        void MigrateContentTypes();
 
         /// <summary>
         /// Migrates the SiteColumns.
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        LinkedList<string> MigrateSiteColumns();
+        void MigrateSiteColumns();
 
         /// <summary>
         /// Migrates the User.
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        LinkedList<string> MigrateUser();
+        void MigrateUser();
 
         /// <summary>
         /// Migrates the Group.
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        LinkedList<string> MigrateGroup();
+        void MigrateGroup();
 
         /// <summary>
         /// Migrates the PermissionLevels (Role).
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        LinkedList<string> MigratePermissionlevels();
+        void MigratePermissionlevels();
 
         /// <summary>
         /// Migrates the Workflow.
         /// </summary>
         /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
-        LinkedList<string> MigrateWorkflow();
+        void MigrateWorkflow();
     }
 }
