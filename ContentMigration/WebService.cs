@@ -166,7 +166,7 @@ namespace Sharezbold.ContentMigration
         }
 
         /// <summary>
-        /// Tries to log in to source server, is true if server is accessible
+        /// Gets a value indicating whether the server is accessible or not
         /// </summary>
         public bool IsSourceLoginPossible
         {

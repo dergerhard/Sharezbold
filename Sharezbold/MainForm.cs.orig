@@ -75,6 +75,11 @@ namespace Sharezbold
         private ContentLoader contentLoader;
 
         /// <summary>
+        /// Log data storage
+        /// </summary>
+        private List<string> logList;
+
+        /// <summary>
         /// Holds the migration datas.
         /// </summary>
         private MigrationData migrationData;
@@ -454,8 +459,13 @@ namespace Sharezbold
                 });
 
             return await t;
+<<<<<<< HEAD
         }*/
+        
+=======
+        }
 
+>>>>>>> 68e7b10b585d9250b78adc7bc2ebdb3064440e05
         /// <summary>
         /// Connects to the source, provides context.
         /// </summary>
