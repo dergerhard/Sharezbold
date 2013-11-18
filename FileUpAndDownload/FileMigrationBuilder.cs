@@ -7,6 +7,7 @@ namespace Sharezbold.FileMigration
     using System.Text;
     using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
+    using Logging;
 
     public class FileMigrationBuilder
     {
@@ -47,6 +48,12 @@ namespace Sharezbold.FileMigration
         public FileMigrationBuilder WithNumberOfThreads(int number)
         {
             this.specification.NumberOfThreads = number;
+            return this;
+        }
+
+        public FileMigrationBuilder WithLogger(Logger logger)
+        {
+            this.specification.Logger = logger;
             return this;
         }
 

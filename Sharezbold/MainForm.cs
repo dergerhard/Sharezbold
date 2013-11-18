@@ -915,7 +915,7 @@ namespace Sharezbold
 
             try
             {
-                this.migrationData.FileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithNumberOfThreads(numberOfThreads).WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.migrationData.SourceClientContext).WithTargetClientContext(this.migrationData.TargetClientContext).CreateMigrator();
+                this.migrationData.FileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithNumberOfThreads(numberOfThreads).WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationServiceURI.Text)).WithSourceClientContext(this.migrationData.SourceClientContext).WithTargetClientContext(this.migrationData.TargetClientContext).WithLogger(this.log).CreateMigrator();
             }
             catch (FileMigrationException exception)
             {
