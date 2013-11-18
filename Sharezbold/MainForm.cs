@@ -174,7 +174,24 @@ namespace Sharezbold
         /// <returns></returns>
         private async Task<bool> MigrateAll()
         {
+            try
+            {
+                ExecuteElementsMigration();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Error during Type-Migration!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
+            try
+            {
+                ExecuteFileMigration();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Error during Type-Migration!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
             return await this.contentLoader.MigrateAllAsync();
         }
 
@@ -722,6 +739,11 @@ namespace Sharezbold
             this.tabPageMigrationProgress.Show();
             this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
 
+            ExecuteElementsMigration();
+        }
+
+        private async void ExecuteElementsMigration()
+        {
             ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext, this.log);
             bool finished = await migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
 
@@ -943,6 +965,12 @@ namespace Sharezbold
 
         private void ButtonTestMigrationClicked(object o, EventArgs e)
         {
+            ExecuteFileMigration();
+        }
+
+
+        private void ExecuteFileMigration()
+        {
             foreach (string item in this.migrationData.WebUrlsToMigrate)
             {
                 Web targetWeb;
@@ -966,5 +994,6 @@ namespace Sharezbold
                 this.migrationData.FileMigrator.MigrateFilesOfWeb(sourceWeb, targetWeb);
             }
         }
+
     }
 }
