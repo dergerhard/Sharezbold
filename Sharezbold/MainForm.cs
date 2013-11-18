@@ -910,13 +910,22 @@ namespace Sharezbold
         private void FileMigrationTabClicked(object sender, EventArgs e)
         {
             this.textBoxFileMigrationWebs.Text = "";
-            int bandwith = (int) this.numericUpDownBandwith.Value;
+            int bandwith = (int)this.numericUpDownBandwith.Value;
             int numberOfThreads = (int)this.numericUpDownNumberOfThreads.Value;
+
+            try
+            {
+                this.migrationData.FileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithNumberOfThreads(numberOfThreads).WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.migrationData.SourceClientContext).WithTargetClientContext(this.migrationData.TargetClientContext).CreateMigrator();
+            }
+            catch (FileMigrationException exception)
+            {
+                MessageBox.Show(exception.Message, "File-Migration-Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             this.textBoxFileMigrationBandwith.Text = bandwith + " %";
             this.textBoxFileMigrationParallelThreads.Text = numberOfThreads.ToString();
             this.textBoxFileMigrationWebServiceAddress.Text = this.textBoxFileMigrationServiceURI.Text;
-
-            this.migrationData.FileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithNumberOfThreads(numberOfThreads).WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationWebServiceAddress.Text)).WithSourceClientContext(this.migrationData.SourceClientContext).WithTargetClientContext(this.migrationData.TargetClientContext).CreateMigrator();
 
             TreeNodeCollection treeNodeCollection = this.treeViewContentSelection.Nodes;
             this.migrationData.WebUrlsToMigrate = treeNodeCollection.GetSelectedWebUrls();
