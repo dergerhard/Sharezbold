@@ -449,7 +449,7 @@ namespace Sharezbold
         /// Loads the tree where you can migrate to.
         /// </summary>
         /// <returns>Task of SpTreeNode as return value.</returns>
-        private async Task<SpTreeNode> LoadDestinationTree()
+        /*private async Task<SpTreeNode> LoadDestinationTree()
         {
             Task<SpTreeNode> t = Task.Factory.StartNew(() =>
                 {
@@ -458,7 +458,7 @@ namespace Sharezbold
                 });
 
             return await t;
-        }
+        }*/
         
         /// <summary>
         /// Connects to the source, provides context.
@@ -735,7 +735,7 @@ namespace Sharezbold
         /// </summary>
         /// <param name="node">node to start</param>
         /// <param name="type">type of the nodes to mark</param>
-        private void MarkPossibleMigrateToElements(SpTreeNode node, string type)
+        /*private void MarkPossibleMigrateToElements(SpTreeNode node, string type)
         {
             if ((node.MigrationObject.DataObject.GetType() == typeof(Microsoft.SharePoint.Client.Web) && type.Equals("Site")) ||
                 (node.MigrationObject.DataObject.GetType() == typeof(Microsoft.SharePoint.Client.List) && type.Equals("List")))
@@ -751,14 +751,14 @@ namespace Sharezbold
             {
                 this.MarkPossibleMigrateToElements(n, type);
             }
-        }
+        }*/
 
         /// <summary>
         /// Mark the corresponding migrate to element if set
         /// </summary>
         /// <param name="node">node to start from</param>
         /// <param name="corr">corresponding object</param>
-        private void MarkCorrespondingMigrateToElement(SpTreeNode node, object corr)
+        /*private void MarkCorrespondingMigrateToElement(SpTreeNode node, object corr)
         {
             if (node.MigrationObject.DataObject == corr)
             {
@@ -770,6 +770,7 @@ namespace Sharezbold
                 this.MarkCorrespondingMigrateToElement(n, corr);
             }
         }
+        */
 
         /// <summary>
         /// Method is invoked, when the selected Element is changed
