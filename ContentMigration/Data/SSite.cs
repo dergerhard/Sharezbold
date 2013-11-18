@@ -14,6 +14,9 @@ namespace Sharezbold.ContentMigration.Data
     using System.Windows.Forms;
     using System.Xml;
 
+    /// <summary>
+    /// Represents a sharepoint site
+    /// </summary>
     public class SSite : TreeNode, IMigratable
     {
         /// <summary>
@@ -32,7 +35,7 @@ namespace Sharezbold.ContentMigration.Data
         private List<SList> lists;
 
         /// <summary>
-        /// Default constructor
+        /// Initializes a new instance of the <see cref="SSite" /> class.
         /// </summary>
         public SSite()
             : base(string.Empty)
@@ -67,6 +70,7 @@ namespace Sharezbold.ContentMigration.Data
             {
                 return true;
             }
+
             set
             {
                 // do nothing. site is always migratable
@@ -104,6 +108,7 @@ namespace Sharezbold.ContentMigration.Data
             {
                 return this.xmlData;
             }
+
             set
             {
                 this.xmlData = value;

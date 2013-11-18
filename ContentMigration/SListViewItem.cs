@@ -22,7 +22,7 @@ namespace Sharezbold.ContentMigration
     public class SListViewItem : ListViewItem
     {
         /// <summary>
-        /// Represents a list view item with a migration object
+        /// Initializes a new instance of the <see cref="SListViewItem"/> class. Represents a list view item with a migration object
         /// </summary>
         /// <param name="migrationObject">Represents the migration object</param>
         public SListViewItem(IMigratable migrationObject) : base(migrationObject.Name, migrationObject.ReadyForMigration ? 1 : 0)

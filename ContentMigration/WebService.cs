@@ -1,8 +1,11 @@
-﻿
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="WebService.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 namespace Sharezbold.ContentMigration
 {
-    using Sharezbold.ContentMigration.Data;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -10,7 +13,8 @@ namespace Sharezbold.ContentMigration
     using System.Net;
     using System.Text;
     using System.Threading.Tasks;
-
+    using Sharezbold.ContentMigration.Data;
+    
     /// <summary>
     /// Sets up web services and provides access to them
     /// </summary>
@@ -47,15 +51,110 @@ namespace Sharezbold.ContentMigration
         public const string UrlViews = @"/_vti_bin/Views.asmx";
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="WebService"/> class. Sets up the web services.
+        /// </summary>
+        /// <param name="srcUrl">The source url</param>
+        /// <param name="srcUser">The source user</param>
+        /// <param name="srcDomain">The source domain</param>
+        /// <param name="srcPassword">The source password</param>
+        /// <param name="dstUrl">The destination url</param>
+        /// <param name="dstUrlCA">The destination central administration url</param>
+        /// <param name="dstUser">The destination user</param>
+        /// <param name="dstDomain">The destination domain</param>
+        /// <param name="dstPassword">The destination password</param>
+        public WebService(string srcUrl, string srcUser, string srcDomain, string srcPassword, string dstUrl, string dstUrlCA, string dstUser, string dstDomain, string dstPassword)
+        {
+            this.SrcUrl = srcUrl;
+            this.SrcUser = srcUser;
+            this.SrcDomain = srcDomain;
+            this.SrcPassword = srcPassword;
+            this.DstUrl = dstUrl;
+            this.DstUrlCA = dstUrlCA;
+            this.DstUser = dstUser;
+            this.DstDomain = dstDomain;
+            this.DstPassword = dstPassword;
+
+            // set up urls
+            string srcUrlLists = this.SrcUrl + UrlLists;
+            string srcUrlWebs = this.SrcUrl + UrlWebs;
+            string srcUrlSites = this.SrcUrl + UrlSites;
+            string srcUrlSiteData = this.SrcUrl + UrlSiteData;
+            string srcUrlViews = this.SrcUrl + UrlViews;
+
+            string dstUrlLists = this.DstUrl + UrlLists;
+            string dstUrlWebs = this.DstUrl + UrlWebs;
+            string dstUrlSites = this.DstUrl + UrlSites;
+            string dstUrlSiteData = this.DstUrl + UrlSiteData;
+            string dstUrlViews = this.DstUrl + UrlViews;
+
+            // central admin is needed for admin.asmx
+            string dstUrlCaAdmin = this.DstUrlCA + UrlAdmin;
+
+            this.SrcCredentials = new CredentialCache();
+            this.SrcCredentials.Add(new Uri(this.SrcUrl), "NTLM", new NetworkCredential(this.SrcUser, this.SrcPassword, this.SrcDomain));
+
+            this.DstCredentials = new CredentialCache();
+            this.DstCredentials.Add(new Uri(this.DstUrl), "NTLM", new NetworkCredential(this.DstUser, this.DstPassword, this.DstDomain));
+
+            this.DstCredentialsCA = new CredentialCache();
+            this.DstCredentialsCA.Add(new Uri(this.DstUrlCA), "NTLM", new NetworkCredential(this.DstUser, this.DstPassword, this.DstDomain));
+
+            this.SrcSites = new SitesWS.Sites();
+            this.SrcSites.Url = srcUrlSites;
+            this.SrcSites.Credentials = this.SrcCredentials;
+
+            this.SrcWebs = new WebsWS.Webs();
+            this.SrcWebs.Url = srcUrlWebs;
+            this.SrcWebs.Credentials = this.SrcCredentials;
+
+            this.DstWebs = new WebsWS.Webs();
+            this.DstWebs.Url = dstUrlWebs;
+            this.DstWebs.Credentials = this.DstCredentials;
+
+            this.DstSites = new SitesWS.Sites();
+            this.DstSites.Url = dstUrlSites;
+
+            this.DstSites.Credentials = this.DstCredentials;
+
+            this.DstAdmin = new AdminWS.Admin();
+            this.DstAdmin.Url = dstUrlCaAdmin;
+            this.DstAdmin.Credentials = this.DstCredentialsCA;
+
+            this.SrcLists = new ListsWS.Lists();
+            this.SrcLists.Url = srcUrlLists;
+            this.SrcLists.Credentials = this.SrcCredentials;
+
+            this.DstLists = new ListsWS.Lists();
+            this.DstLists.Url = dstUrlLists;
+            this.DstLists.Credentials = this.DstCredentials;
+
+            this.SrcSiteData = new SiteDataWS.SiteData();
+            this.SrcSiteData.Url = srcUrlSiteData;
+            this.SrcSiteData.Credentials = this.SrcCredentials;
+
+            this.DstSiteData = new SiteDataWS.SiteData();
+            this.DstSiteData.Url = dstUrlSiteData;
+            this.DstSiteData.Credentials = this.DstCredentials;
+
+            this.SrcViews = new ViewsWS.Views();
+            this.SrcViews.Url = srcUrlViews;
+            this.SrcViews.Credentials = this.SrcCredentials;
+
+            this.DstViews = new ViewsWS.Views();
+            this.DstViews.Url = dstUrlViews;
+            this.DstViews.Credentials = this.DstCredentials;
+        }
+
+        /// <summary>
         /// Gets the source url
         /// </summary>
         public string SrcUrl { get; private set; }
-        
+
         /// <summary>
         /// Gets the destination url
         /// </summary>
         public string DstUrl { get; private set; }
-        
+
         /// <summary>
         /// Gets the destination url of its central administration
         /// </summary>
@@ -65,12 +164,12 @@ namespace Sharezbold.ContentMigration
         /// Gets the source credential cache
         /// </summary>
         public CredentialCache SrcCredentials { get; private set; }
-        
+
         /// <summary>
         /// Gets the destination credential cache
         /// </summary>
         public CredentialCache DstCredentials { get; private set; }
-        
+
         /// <summary>
         /// Gets the destination credential cache of its central administration
         /// </summary>
@@ -80,12 +179,12 @@ namespace Sharezbold.ContentMigration
         /// Gets the source username
         /// </summary>
         public string SrcUser { get; private set; }
-        
+
         /// <summary>
         /// Gets the source domain
         /// </summary>
         public string SrcDomain { get; private set; }
-        
+
         /// <summary>
         /// Gets the source password
         /// </summary>
@@ -95,12 +194,12 @@ namespace Sharezbold.ContentMigration
         /// Gets the destination username
         /// </summary>
         public string DstUser { get; private set; }
-        
+
         /// <summary>
         /// Gets the destination domain
         /// </summary>
         public string DstDomain { get; private set; }
-        
+
         /// <summary>
         /// Gets the destination password
         /// </summary>
@@ -202,101 +301,6 @@ namespace Sharezbold.ContentMigration
         }
 
         /// <summary>
-        /// Sets up the web services
-        /// </summary>
-        /// <param name="srcUrl">The source url</param>
-        /// <param name="srcUser">The source user</param>
-        /// <param name="srcDomain">The source domain</param>
-        /// <param name="srcPassword">The source password</param>
-        /// <param name="dstUrl">The destination url</param>
-        /// <param name="dstUrlCA">The destination central administration url</param>
-        /// <param name="DstUser">The destination user</param>
-        /// <param name="DstDomain">The destination domain</param>
-        /// <param name="DstPassword">The destination password</param>
-        public WebService(string srcUrl, string srcUser, string srcDomain, string srcPassword, string dstUrl, string dstUrlCA, string DstUser, string DstDomain, string DstPassword)
-        {
-            this.SrcUrl = srcUrl;
-            this.SrcUser = srcUser;
-            this.SrcDomain = srcDomain;
-            this.SrcPassword = srcPassword;
-            this.DstUrl = dstUrl;
-            this.DstUrlCA = dstUrlCA;
-            this.DstUser = DstUser;
-            this.DstDomain = DstDomain;
-            this.DstPassword = DstPassword;
-
-            // set up urls
-            string srcUrlLists = this.SrcUrl + UrlLists;
-            string srcUrlWebs = this.SrcUrl + UrlWebs;
-            string srcUrlSites = this.SrcUrl + UrlSites;
-            string srcUrlSiteData = this.SrcUrl + UrlSiteData;
-            string srcUrlViews = this.SrcUrl + UrlViews;
-
-            string dstUrlLists = this.DstUrl + UrlLists;
-            string dstUrlWebs = this.DstUrl + UrlWebs;
-            string dstUrlSites = this.DstUrl + UrlSites;
-            string dstUrlSiteData = this.DstUrl + UrlSiteData;
-            string dstUrlViews = this.DstUrl + UrlViews;
-
-            // central admin is needed for admin.asmx
-            string dstUrlCaAdmin = this.DstUrlCA + UrlAdmin;
-
-            this.SrcCredentials = new CredentialCache();
-            this.SrcCredentials.Add(new Uri(this.SrcUrl), "NTLM", new NetworkCredential(this.SrcUser, this.SrcPassword, this.SrcDomain));
-
-            this.DstCredentials = new CredentialCache();
-            this.DstCredentials.Add(new Uri(this.DstUrl), "NTLM", new NetworkCredential(this.DstUser, this.DstPassword, this.DstDomain));
-
-            this.DstCredentialsCA = new CredentialCache();
-            this.DstCredentialsCA.Add(new Uri(this.DstUrlCA), "NTLM", new NetworkCredential(this.DstUser, this.DstPassword, this.DstDomain));
-
-            this.SrcSites = new SitesWS.Sites();
-            this.SrcSites.Url = srcUrlSites;
-            this.SrcSites.Credentials = this.SrcCredentials;
-
-            this.SrcWebs = new WebsWS.Webs();
-            this.SrcWebs.Url = srcUrlWebs;
-            this.SrcWebs.Credentials = this.SrcCredentials;
-
-            this.DstWebs = new WebsWS.Webs();
-            this.DstWebs.Url = dstUrlWebs;
-            this.DstWebs.Credentials = this.DstCredentials;
-
-            this.DstSites = new SitesWS.Sites();
-            this.DstSites.Url = dstUrlSites;
-
-            this.DstSites.Credentials = this.DstCredentials;
-
-            this.DstAdmin = new AdminWS.Admin();
-            this.DstAdmin.Url = dstUrlCaAdmin;
-            this.DstAdmin.Credentials = this.DstCredentialsCA;
-
-            this.SrcLists = new ListsWS.Lists();
-            this.SrcLists.Url = srcUrlLists;
-            this.SrcLists.Credentials = this.SrcCredentials;
-
-            this.DstLists = new ListsWS.Lists();
-            this.DstLists.Url = dstUrlLists;
-            this.DstLists.Credentials = this.DstCredentials;
-
-            this.SrcSiteData = new SiteDataWS.SiteData();
-            this.SrcSiteData.Url = srcUrlSiteData;
-            this.SrcSiteData.Credentials = this.SrcCredentials;
-
-            this.DstSiteData = new SiteDataWS.SiteData();
-            this.DstSiteData.Url = dstUrlSiteData;
-            this.DstSiteData.Credentials = this.DstCredentials;
-
-            this.SrcViews = new ViewsWS.Views();
-            this.SrcViews.Url = srcUrlViews;
-            this.SrcViews.Credentials = this.SrcCredentials;
-
-            this.DstViews = new ViewsWS.Views();
-            this.DstViews.Url = dstUrlViews;
-            this.DstViews.Credentials = this.DstCredentials;
-        }
-
-        /// <summary>
         /// Set the correct url to views web service
         /// </summary>
         /// <param name="list">list to migrate</param>
@@ -326,7 +330,7 @@ namespace Sharezbold.ContentMigration
         /// <summary>
         /// Sets the correct url to source webs web service
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="url">the new url</param>
         public void SetWebsMigrateFrom(string url)
         {
             this.SrcWebs.Url = url + UrlWebs;

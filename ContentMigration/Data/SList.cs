@@ -65,7 +65,7 @@ namespace Sharezbold.ContentMigration.Data
         private XmlNode xmlList;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="SList" /> class.
         /// </summary>
         public SList()
         {
@@ -89,7 +89,7 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// Gets or sets distination site where we migrate to
+        /// Gets or sets destination site where we migrate to
         /// </summary>
         public SSite MigrateTo
         {
@@ -97,6 +97,7 @@ namespace Sharezbold.ContentMigration.Data
             {
                 return this.migrateTo;
             }
+
             set
             {
                 if (this.ParentObject != null && !this.ParentObject.Migrate)
@@ -122,6 +123,7 @@ namespace Sharezbold.ContentMigration.Data
                     return this.migrateToUrl;
                 }
             }
+
             set
             {
                 this.migrateToUrl = value;
@@ -144,12 +146,13 @@ namespace Sharezbold.ContentMigration.Data
                 {
                     return true;
                 }
+
                 return false;
             }
 
             set
             {
-                
+                // nothing to do here
             }
         }
 

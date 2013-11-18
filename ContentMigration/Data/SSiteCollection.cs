@@ -30,7 +30,7 @@ namespace Sharezbold.ContentMigration.Data
         private bool migrate;
 
         /// <summary>
-        /// Default constructor
+        /// Initializes a new instance of the <see cref="SSiteCollection"/> class.
         /// </summary>
         public SSiteCollection()
             : base(string.Empty)
@@ -113,8 +113,8 @@ namespace Sharezbold.ContentMigration.Data
         /// <summary>
         /// Adds a site to the data base and the child tree nodes
         /// </summary>
-        /// <param name="s"></param>
-        /// <param name="migrate"></param>
+        /// <param name="s">The site to add</param>
+        /// <param name="migrate">Specifies whether to migrate it or not</param>
         public void AddSite(SSite s, bool migrate)
         {
             s.Migrate = migrate;

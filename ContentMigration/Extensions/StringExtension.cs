@@ -1,5 +1,9 @@
-﻿
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="StringExtension.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Thomas Holzgethan (35224@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 namespace Sharezbold.ContentMigration.Extensions
 {
     using System;
@@ -9,8 +13,18 @@ namespace Sharezbold.ContentMigration.Extensions
     using System.Threading.Tasks;
     using Microsoft.SharePoint.Client;
 
+    /// <summary>
+    /// The class StringExtension
+    /// </summary>
     internal static class StringExtension
     {
+        /// <summary>
+        /// Gets the relative url of the web
+        /// </summary>
+        /// <param name="url">the url</param>
+        /// <param name="sourceClientContext">the source client context</param>
+        /// <param name="targetClientContext">the traget client context</param>
+        /// <returns>A dictionary of relative urls</returns>
         internal static Dictionary<Web, Web> GetRelativeUrlOfWeb(this string url, ClientContext sourceClientContext, ClientContext targetClientContext)
         {
             Web targetWeb;
