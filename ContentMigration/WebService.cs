@@ -143,7 +143,7 @@ namespace Sharezbold.ContentMigration
         /// <param name="list">list to migrate</param>
         public void SetViewsMigrateTo(SList list)
         {
-            this.DstViews.Url = list.MigrateTo.XmlData.Attributes["Url"].InnerText + UrlViews;
+            this.DstViews.Url = list.MigrateToUrl + UrlViews;
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Sharezbold.ContentMigration
         /// <param name="list"></param>
         public void SetListsMigrateTo(SList list)
         {
-            this.DstLists.Url = list.MigrateTo.XmlData.Attributes["Url"].InnerText + UrlLists;
+            this.DstLists.Url = list.MigrateToUrl + UrlLists;
         }
 
         public void SetWebsMigrateTo(string url)

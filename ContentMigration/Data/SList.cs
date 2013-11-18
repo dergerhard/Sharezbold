@@ -68,7 +68,7 @@ namespace Sharezbold.ContentMigration.Data
         /// <summary>
         /// data storage object for MigrateTo
         /// </summary>
-        private SSite migrateTo;
+        private SSite migrateTo = null;
 
         /// <summary>
         /// distination site to where we migrate
@@ -81,7 +81,35 @@ namespace Sharezbold.ContentMigration.Data
             }
             set
             {
-                migrateTo = value;
+                if (this.ParentObject != null && !this.ParentObject.Migrate)
+                {
+                    migrateTo = value;
+                }
+            }
+        }
+
+
+        private string migrateToUrl = "";
+
+        /// <summary>
+        /// The Url where to migrate the list. By default the url of the MigrateTo site. In case the original source parent site is migrated, the url is overwritten by this.migrateToUrl (newly created url at destination)
+        /// </summary>
+        public string MigrateToUrl
+        {
+            get
+            {
+                if (this.migrateTo != null)
+                {
+                    return this.migrateTo.XmlData.Attributes["Url"].InnerText;
+                }
+                else
+                {
+                    return this.migrateToUrl;
+                }
+            }
+            set
+            {
+                this.migrateToUrl = value;
             }
         }
 

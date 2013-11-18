@@ -189,6 +189,29 @@ Issues with web services
 http://mqsharepoint.blogspot.co.at/2008/10/working-with-sharepoint-web-services.html
 
 
+Target Invokation Exception. Unbegründet und an unterschiedlicnen Stellen (kein Bezug auf ein Statement beim Debuggen). 
+Lösung: devenv /resetuserdata  
+siehe: http://hjerpbakk.com/blog/2011/5/30/exception-has-been-thrown-by-the-target-of-an-invocation.html
+
+
+Correct async await:
+				Task<string> updateList = Task.Factory.StartNew(() => 
+                {
+                    try
+                    {
+                        this.ws.DstLists.UpdateList("this one can throw exception");
+                        return "";
+                    }
+                    catch (Exception e)
+                    {
+                        return "added attribute FAILED: " + e.Message;
+                    }
+                });
+
+                this.log.AddMessage(await updateList, true);
+
+
+
 Async Programming
 http://msdn.microsoft.com/de-de/library/vstudio/hh191443.aspx
 

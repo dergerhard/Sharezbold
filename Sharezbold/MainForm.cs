@@ -168,7 +168,10 @@ namespace Sharezbold
             }
         }
 
-
+        /// <summary>
+        /// Migrate All Async
+        /// </summary>
+        /// <returns></returns>
         private async Task<bool> MigrateAll()
         {
 
