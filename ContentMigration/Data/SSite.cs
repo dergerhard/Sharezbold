@@ -55,7 +55,7 @@ namespace Sharezbold.ContentMigration.Data
         /// <summary>
         /// Gaters the name of the object
         /// </summary>
-        public string Name
+        public new string Name
         {
             get
             {

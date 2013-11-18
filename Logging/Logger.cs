@@ -102,22 +102,6 @@ namespace Sharezbold.Logging
             }
         }
 
-        /// <summary>
-        /// See AddMessage
-        /// </summary>
-        /// <param name="message">the message</param>
-        /// <param name="onlyLogFile">if true, it is only written to the log file</param>
-        /// <returns></returns>
-        /*public async Task<bool> AddMessageAsync(string message, bool onlyLogFile = false)
-        {
-            Task<bool> t = Task.Factory.StartNew(() =>
-                {
-                    this.AddMessage(message, onlyLogFile);
-                    return true;
-                });
-
-            return await t;
-        }*/
 
         /// <summary>
         /// Writes a message to the log and syncs it with the list box. If default constructor was used, the message is displayed in the console
@@ -128,8 +112,9 @@ namespace Sharezbold.Logging
         {
             if (!message.Equals(""))
             {
-                string tabs = new String('\t', (int)this.indent);
-                string msg = DateTime.Now.ToString("HH:mm:ss") + " " + tabs + message;
+                string timeIndent = new String(' ', 5);
+                string tabs = new String(' ', ((int)this.indent)*10);
+                string msg = DateTime.Now.ToString("HH:mm:ss") + timeIndent + tabs + message;
 
                 //string msg = DateTime.Now.ToString("HH:mm:ss") + " " + message;
 

@@ -75,6 +75,11 @@ namespace Sharezbold
         private ContentLoader contentLoader;
 
         /// <summary>
+        /// Log data storage
+        /// </summary>
+        private List<string> logList;
+
+        /// <summary>
         /// Holds the migration datas.
         /// </summary>
         private MigrationData migrationData;
@@ -169,24 +174,7 @@ namespace Sharezbold
         /// <returns></returns>
         private async Task<bool> MigrateAll()
         {
-            try
-            {
-                ExecuteElementsMigration();
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.Message, "Error during Type-Migration!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
 
-            try
-            {
-                ExecuteFileMigration();
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.Message, "Error during Type-Migration!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            }
             return await this.contentLoader.MigrateAllAsync();
         }
 
@@ -471,8 +459,13 @@ namespace Sharezbold
                 });
 
             return await t;
+<<<<<<< HEAD
         }*/
+        
+=======
+        }
 
+>>>>>>> 68e7b10b585d9250b78adc7bc2ebdb3064440e05
         /// <summary>
         /// Connects to the source, provides context.
         /// </summary>
@@ -734,11 +727,6 @@ namespace Sharezbold
             this.tabPageMigrationProgress.Show();
             this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
 
-            ExecuteElementsMigration();
-        }
-
-        private async void ExecuteElementsMigration()
-        {
             ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext, this.log);
             bool finished = await migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
 
@@ -961,12 +949,6 @@ namespace Sharezbold
 
         private void ButtonTestMigrationClicked(object o, EventArgs e)
         {
-            ExecuteFileMigration();
-        }
-
-
-        private void ExecuteFileMigration()
-        {
             foreach (string item in this.migrationData.WebUrlsToMigrate)
             {
                 Web targetWeb;
@@ -990,6 +972,5 @@ namespace Sharezbold
                 this.migrationData.FileMigrator.MigrateFilesOfWeb(sourceWeb, targetWeb);
             }
         }
-
     }
 }
