@@ -79,6 +79,8 @@ namespace Sharezbold
         /// </summary>
         private MigrationData migrationData;
 
+        private ElementsMigrationWorker migrationWorker;
+
         /// <summary>
         /// Data binding object for logList
         /// </summary>
@@ -345,7 +347,7 @@ namespace Sharezbold
                 await this.ApplyConfigurationAndLoadSourceTreeAsync();
                 this.treeViewContentSelection.Nodes.Add(this.sourceSiteCollection);
                 this.waitForm.Hide();
-                this.tabControMain.SelectedTab = this.tabPageContentSelection;
+                this.tabControMain.SelectedTab = this.tabPageMigrationElements;
             }
             catch (Exception ex)
             {
@@ -481,6 +483,7 @@ namespace Sharezbold
                 // set up web services and loader
                 this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, this.settings.ToHostCA, this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
                 this.contentLoader = new ContentLoader(this.webServices, this.migrationData, this.log);
+                this.migrationWorker = new ElementsMigrationWorker(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext, this.log);
 
                 return this.webServices.IsSourceLoginPossible && this.migrationData.SourceClientContext != null;
             });
@@ -704,6 +707,8 @@ namespace Sharezbold
         /// <param name="e">EventArgs itself</param>
         private async void ButtonElementsMigrationClicked(object sender, EventArgs e)
         {
+            this.tabControMain.SelectedTab = this.tabPageContentSelection;
+            /*
             try
             {
                 this.ValidateInputFields();
@@ -730,12 +735,13 @@ namespace Sharezbold
             this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
 
             ExecuteElementsMigration();
+             * */
         }
 
-        private async void ExecuteElementsMigration()
+        private void ExecuteElementsMigration()
         {
-            ElementsMigrationWorker migrationWorker = new ElementsMigrationWorker(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext, this.log);
-            bool finished = await migrationWorker.StartMigrationAsync(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
+            
+            bool finished = this.migrationWorker.StartMigration(this.checkBoxMigrateContentType.Checked, this.checkBoxMigrateUser.Checked, this.checkBoxMigrateGroup.Checked, this.checkBoxMigrateSiteColumns.Checked, this.checkBoxMigratePermissionlevels.Checked, this.checkBoxMigrateWorkflow.Checked);
 
             if (finished)
             {

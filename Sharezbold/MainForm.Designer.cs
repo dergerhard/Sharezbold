@@ -168,27 +168,27 @@ namespace Sharezbold
             this.loadMigrationProfileToolStripMenuItem1,
             this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // saveMigrationProfileToolStripMenuItem1
             // 
             this.saveMigrationProfileToolStripMenuItem1.Name = "saveMigrationProfileToolStripMenuItem1";
-            this.saveMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
+            this.saveMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(204, 22);
             this.saveMigrationProfileToolStripMenuItem1.Text = "Save Migration Profile ...";
             this.saveMigrationProfileToolStripMenuItem1.Click += new System.EventHandler(this.SaveMigrationProfileToolStripMenuItem_Click);
             // 
             // loadMigrationProfileToolStripMenuItem1
             // 
             this.loadMigrationProfileToolStripMenuItem1.Name = "loadMigrationProfileToolStripMenuItem1";
-            this.loadMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
+            this.loadMigrationProfileToolStripMenuItem1.Size = new System.Drawing.Size(204, 22);
             this.loadMigrationProfileToolStripMenuItem1.Text = "Load Migration Profile ...";
             this.loadMigrationProfileToolStripMenuItem1.Click += new System.EventHandler(this.LoadMigrationProfileToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -205,21 +205,21 @@ namespace Sharezbold
             // loadMigrationProfileToolStripMenuItem
             // 
             this.loadMigrationProfileToolStripMenuItem.Name = "loadMigrationProfileToolStripMenuItem";
-            this.loadMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.loadMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.loadMigrationProfileToolStripMenuItem.Text = "Load Migration profile";
             this.loadMigrationProfileToolStripMenuItem.Click += new System.EventHandler(this.LoadMigrationProfileToolStripMenuItem_Click);
             // 
             // saveMigrationProfileToolStripMenuItem
             // 
             this.saveMigrationProfileToolStripMenuItem.Name = "saveMigrationProfileToolStripMenuItem";
-            this.saveMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.saveMigrationProfileToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.saveMigrationProfileToolStripMenuItem.Text = "Save Migration profile";
             this.saveMigrationProfileToolStripMenuItem.Click += new System.EventHandler(this.SaveMigrationProfileToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.exitToolStripMenuItem.Text = "Beenden";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -694,6 +694,9 @@ namespace Sharezbold
             // checkBoxMigrateContentType
             // 
             this.checkBoxMigrateContentType.AutoSize = true;
+            this.checkBoxMigrateContentType.Checked = true;
+            this.checkBoxMigrateContentType.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMigrateContentType.Enabled = false;
             this.checkBoxMigrateContentType.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.checkBoxMigrateContentType.Location = new System.Drawing.Point(64, 79);
             this.checkBoxMigrateContentType.Name = "checkBoxMigrateContentType";
@@ -705,11 +708,11 @@ namespace Sharezbold
             // 
             // buttonElementsMigration
             // 
-            this.buttonElementsMigration.Location = new System.Drawing.Point(244, 321);
+            this.buttonElementsMigration.Location = new System.Drawing.Point(342, 321);
             this.buttonElementsMigration.Name = "buttonElementsMigration";
-            this.buttonElementsMigration.Size = new System.Drawing.Size(183, 23);
+            this.buttonElementsMigration.Size = new System.Drawing.Size(85, 23);
             this.buttonElementsMigration.TabIndex = 6;
-            this.buttonElementsMigration.Text = "Start Migration Elements";
+            this.buttonElementsMigration.Text = "Content Selection";
             this.buttonElementsMigration.UseVisualStyleBackColor = true;
             this.buttonElementsMigration.Click += new System.EventHandler(this.ButtonElementsMigrationClicked);
             // 
@@ -726,6 +729,9 @@ namespace Sharezbold
             // checkBoxMigrateUser
             // 
             this.checkBoxMigrateUser.AutoSize = true;
+            this.checkBoxMigrateUser.Checked = true;
+            this.checkBoxMigrateUser.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMigrateUser.Enabled = false;
             this.checkBoxMigrateUser.Location = new System.Drawing.Point(64, 117);
             this.checkBoxMigrateUser.Name = "checkBoxMigrateUser";
             this.checkBoxMigrateUser.Size = new System.Drawing.Size(86, 17);
@@ -736,6 +742,9 @@ namespace Sharezbold
             // checkBoxMigrateGroup
             // 
             this.checkBoxMigrateGroup.AutoSize = true;
+            this.checkBoxMigrateGroup.Checked = true;
+            this.checkBoxMigrateGroup.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMigrateGroup.Enabled = false;
             this.checkBoxMigrateGroup.Location = new System.Drawing.Point(64, 156);
             this.checkBoxMigrateGroup.Name = "checkBoxMigrateGroup";
             this.checkBoxMigrateGroup.Size = new System.Drawing.Size(93, 17);
@@ -746,6 +755,9 @@ namespace Sharezbold
             // checkBoxMigrateSiteColumns
             // 
             this.checkBoxMigrateSiteColumns.AutoSize = true;
+            this.checkBoxMigrateSiteColumns.Checked = true;
+            this.checkBoxMigrateSiteColumns.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMigrateSiteColumns.Enabled = false;
             this.checkBoxMigrateSiteColumns.Location = new System.Drawing.Point(64, 234);
             this.checkBoxMigrateSiteColumns.Name = "checkBoxMigrateSiteColumns";
             this.checkBoxMigrateSiteColumns.Size = new System.Drawing.Size(122, 17);
@@ -766,6 +778,9 @@ namespace Sharezbold
             // checkBoxMigratePermissionlevels
             // 
             this.checkBoxMigratePermissionlevels.AutoSize = true;
+            this.checkBoxMigratePermissionlevels.Checked = true;
+            this.checkBoxMigratePermissionlevels.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMigratePermissionlevels.Enabled = false;
             this.checkBoxMigratePermissionlevels.Location = new System.Drawing.Point(64, 197);
             this.checkBoxMigratePermissionlevels.Name = "checkBoxMigratePermissionlevels";
             this.checkBoxMigratePermissionlevels.Size = new System.Drawing.Size(145, 17);
