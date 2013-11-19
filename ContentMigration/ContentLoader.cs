@@ -324,14 +324,16 @@ namespace Sharezbold.ContentMigration
             {
                 this.log.AddMessage(res);
             }
-            
+
+            XmlNode newDstList = null;
+
             // add list from source
             Task<KeyValuePair<string, bool>> addList = Task.Factory.StartNew(() =>
             {
                 try
                 {
                     Thread.Sleep(1000);
-                    this.ws.DstLists.AddList(listName, l.Attributes["Description"].InnerText, Convert.ToInt32(l.Attributes["ServerTemplate"].InnerText));
+                    newDstList = this.ws.DstLists.AddList(listName, l.Attributes["Description"].InnerText, Convert.ToInt32(l.Attributes["ServerTemplate"].InnerText));
                     return new KeyValuePair<string, bool>("Migrate lists added the new list", false);
                 }
                 catch (Exception e)
@@ -375,8 +377,24 @@ namespace Sharezbold.ContentMigration
             }
 
             this.log.AddMessage("List properties added");
-            int i = 1;
             
+            // parse newly created list for fields
+            var existingFields = new HashSet<string>();
+            foreach (XmlNode field in newDstList["Fields"])
+            {
+                if (field.Name.Equals("Field"))
+                {
+                    XmlNode namefield = field.Attributes["Name"];
+                    if (namefield != null && !string.IsNullOrEmpty(namefield.InnerText))
+                    {
+                        existingFields.Add(namefield.InnerText);
+                    }
+                }
+            }
+
+
+            //create or update missing fields
+            int i = 1;
             foreach (XmlNode field in l["Fields"])
             {
                 if (field.Name.Equals("Field"))
@@ -394,7 +412,16 @@ namespace Sharezbold.ContentMigration
                     {
                         try
                         {
-                            this.ws.DstLists.UpdateList(listName, null, fields, fields, null, string.Empty);
+                            if (existingFields.Contains(field.Attributes["Name"].InnerText))
+                            {
+                                // update
+                                this.ws.DstLists.UpdateList(listName, null, null, fields, null, string.Empty);
+                            }
+                            else
+                            {
+                                // create
+                                this.ws.DstLists.UpdateList(listName, null, fields, null, null, string.Empty);
+                            }
                             return string.Empty;
                         }
                         catch (Exception e)
