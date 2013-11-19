@@ -13,23 +13,36 @@ namespace Sharezbold.FileMigration.Host
     using Contract;
     using Service;
 
+    /// <summary>
+    /// HostService is responsible for connecting and closing the connection to the FileMigrationService.
+    /// </summary>
     internal class HostService
     {
+        /// <summary>
+        /// Instance of the ServiceHost.
+        /// </summary>
         private ServiceHost serviceHost;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HostService"/> class.
+        /// </summary>
+        /// <param name="serviceUri">the uri of the file migration service</param>
         public HostService(Uri serviceUri)
         {
-            serviceHost = new ServiceHost(typeof(FileMigrationService), serviceUri);
+            this.serviceHost = new ServiceHost(typeof(FileMigrationService), serviceUri);
         }
 
+        /// <summary>
+        /// Starts and opens the connection to the service
+        /// </summary>
+        /// <returns>true if success, otherwise false</returns>
         internal bool Start()
         {
-            // ServiceHost svcHost = new ServiceHost(typeof(FileMigrationService), new Uri("http://sps2013003:12345/FileMigrationService"));
             try
             {
-                // Check to see if the service host already has a ServiceMetadataBehavior
-                ServiceMetadataBehavior smb = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
-                // If not, add one
+                //// Check to see if the service host already has a ServiceMetadataBehavior
+                ServiceMetadataBehavior smb = this.serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
+                //// If not, add one
                 if (smb == null)
                 {
                     smb = new ServiceMetadataBehavior();
@@ -38,22 +51,16 @@ namespace Sharezbold.FileMigration.Host
                 smb.HttpGetEnabled = true;
                 smb.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
 
-                serviceHost.Description.Behaviors.Add(smb);
-                // Add application endpoint
+                this.serviceHost.Description.Behaviors.Add(smb);
+                //// Add application endpoint
                 WSHttpBinding binding = new WSHttpBinding(SecurityMode.None);
 
-                serviceHost.AddServiceEndpoint(typeof(IFileMigration), binding, "");
+                this.serviceHost.AddServiceEndpoint(typeof(IFileMigration), binding, string.Empty);
 
-                // Open the service host to accept incoming calls
-                serviceHost.Open();
+                //// Open the service host to accept incoming calls
+                this.serviceHost.Open();
 
                 return true;
-                // The service can now be accessed.
-                /*
-                Console.WriteLine("The service is ready.");
-                Console.WriteLine("Press <ENTER> to terminate service.");
-                Console.WriteLine();
-                Console.ReadLine();*/
             }
             catch (CommunicationException commProblem)
             {
@@ -63,16 +70,25 @@ namespace Sharezbold.FileMigration.Host
             }
         }
 
+        /*
+        /// <summary>
+        /// Starts and opens the connection async.
+        /// </summary>
+        /// <returns>true if success, otherwise false</returns>
         internal async Task<bool> StartAsync()
         {
             return Start();
-        }
+        }*/
 
+        /// <summary>
+        /// Stops the connection to the service.
+        /// </summary>
+        /// <returns>true if success, otherwise false</returns>
         internal bool Stop()
         {
             try
             {
-                serviceHost.Close();
+                this.serviceHost.Close();
                 return true;
             }
             catch (CommunicationException commProblem)
@@ -83,9 +99,14 @@ namespace Sharezbold.FileMigration.Host
             }
         }
 
+        /*
+        /// <summary>
+        /// Stops the service async.
+        /// </summary>
+        /// <returns>true if success, otherwise false</returns>
         internal async Task<bool> StopAsync()
         {
             return Stop();
-        }
+        }*/
     }
 }

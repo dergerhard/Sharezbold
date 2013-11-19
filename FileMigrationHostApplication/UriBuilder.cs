@@ -7,19 +7,50 @@
 
 namespace Sharezbold.FileMigration.Host
 {
-    using Extensions;
     using System;
     using System.Text;
+    using Extensions;
 
+    /// <summary>
+    /// This class builds the uri.
+    /// </summary>
     internal class UriBuilder
     {
-        private string Protocol { get; set; }
-        private string ServiceAddress { get; set; }
-        private string Port { get; set; }
-        private string ServiceName { get; set; }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UriBuilder"/> class.
+        /// </summary>
+        internal UriBuilder()
+        {
+        }
 
+        /// <summary>
+        /// Gets the uri.
+        /// </summary>
         internal Uri Uri { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the protocol.
+        /// </summary>
+        private string Protocol { get; set; }
+
+        /// <summary>
+        /// Gets or sets the service address.
+        /// </summary>
+        private string ServiceAddress { get; set; }
+
+        /// <summary>
+        /// Gets or sets the port.
+        /// </summary>
+        private string Port { get; set; }
+
+        /// <summary>
+        /// Gets or sets the servicename.
+        /// </summary>
+        private string ServiceName { get; set; }
+
+        /// <summary>
+        /// Builds the uri with the user input.
+        /// </summary>
         internal void BuildTheUriWithUserInput()
         {
             Console.WriteLine("Have to build the uri for the Service (like http://hostname:12345/FileMigrationService).");
@@ -29,15 +60,21 @@ namespace Sharezbold.FileMigration.Host
             this.ReadThePort();
             this.ReadTheServiceName();
 
-            BuildUri();
+            this.BuildUri();
         }
 
+        /// <summary>
+        /// Reads the protocol.
+        /// </summary>
         private void ReadTheProtocol()
         {
             this.Protocol = "http";
             Console.WriteLine("Using the DEFAULT protocol '{0}'", this.Protocol);
         }
 
+        /// <summary>
+        /// Reads the service address.
+        /// </summary>
         private void ReadTheServiceAddress()
         {
             string hostname = System.Environment.MachineName;
@@ -55,6 +92,9 @@ namespace Sharezbold.FileMigration.Host
             }
         }
 
+        /// <summary>
+        /// Reads the port.
+        /// </summary>
         private void ReadThePort()
         {
             string port = "12345";
@@ -63,7 +103,7 @@ namespace Sharezbold.FileMigration.Host
 
             try
             {
-                this.Port.IsNumberic();
+                this.Port.IsNumeric();
             }
             catch (ValidationException)
             {
@@ -72,12 +112,18 @@ namespace Sharezbold.FileMigration.Host
             }
         }
 
+        /// <summary>
+        /// Reads the service name.
+        /// </summary>
         private void ReadTheServiceName()
         {
             this.ServiceName = "FileMigrationService";
             Console.WriteLine("Using the DEFAULT service name '{0}'", this.ServiceName);
         }
 
+        /// <summary>
+        /// Builds the uri.
+        /// </summary>
         private void BuildUri()
         {
             StringBuilder builder = new StringBuilder(this.Protocol);

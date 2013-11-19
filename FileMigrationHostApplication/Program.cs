@@ -9,12 +9,16 @@ namespace Sharezbold.FileMigration.Host
 {
     using System;
 
-    static class Program
+    /// <summary>
+    /// The entrypoint class of the program.
+    /// </summary>
+    public static class Program
     {
         /// <summary>
-        /// Der Haupteinstiegspunkt für die Anwendung.
+        /// The entrypoint of the application.
         /// </summary>
-        static int Main()
+        /// <returns>status codes of the program. 0 is success.</returns>
+        public static int Main()
         {
             UriBuilder uriBuilder = new UriBuilder();
             uriBuilder.BuildTheUriWithUserInput();

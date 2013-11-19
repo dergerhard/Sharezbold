@@ -6,8 +6,15 @@
 //-----------------------------------------------------------------------
 namespace Sharezbold.FileMigration.Host.Extensions
 {
+    /// <summary>
+    /// Extension for the strings to validate them.
+    /// </summary>
     internal static class StringValidator
     {
+        /// <summary>
+        /// Validates, if string is null or empty.
+        /// </summary>
+        /// <param name="str">string to validate</param>
         internal static void IsNullOrEmpty(this string str)
         {
             if (str == null || str.Length == 0)
@@ -16,7 +23,11 @@ namespace Sharezbold.FileMigration.Host.Extensions
             }
         }
 
-        internal static void IsNumberic(this string str)
+        /// <summary>
+        /// Validates if string is numeric.
+        /// </summary>
+        /// <param name="str">string to validate</param>
+        internal static void IsNumeric(this string str)
         {
             int number;
             if (!int.TryParse(str, out number))
