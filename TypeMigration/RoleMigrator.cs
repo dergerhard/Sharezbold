@@ -64,7 +64,13 @@ namespace Sharezbold.ElementsMigration
                     creationObject.Order = sourceRoleDefinition.Order;
 
                     RoleDefinition targetRoleDefinition = targetRoleDefinitionCollection.Add(creationObject);
-                    targetRoleDefinition.Tag = sourceRoleDefinition.Tag;
+                    try
+                    {
+                        targetRoleDefinition.Tag = sourceRoleDefinition.Tag;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
                 }
                 else
                 {

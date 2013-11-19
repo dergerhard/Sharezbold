@@ -73,11 +73,45 @@ namespace Sharezbold.ElementsMigration
 
                     WorkflowAssociation targetWorkflowAssociation = targetWorkflowAssociations.Add(creationObject);
 
-                    targetWorkflowAssociation.AllowManual = sourceWorkflowAssociation.AllowManual;
-                    targetWorkflowAssociation.AutoStartChange = sourceWorkflowAssociation.AutoStartChange;
-                    targetWorkflowAssociation.AutoStartCreate = sourceWorkflowAssociation.AutoStartCreate;
-                    targetWorkflowAssociation.Enabled = sourceWorkflowAssociation.Enabled;
-                    targetWorkflowAssociation.AssociationData = sourceWorkflowAssociation.AssociationData;
+                    try
+                    {
+                        targetWorkflowAssociation.AllowManual = sourceWorkflowAssociation.AllowManual;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
+
+                    try
+                    {
+                        targetWorkflowAssociation.AutoStartChange = sourceWorkflowAssociation.AutoStartChange;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
+
+                    try
+                    {
+                        targetWorkflowAssociation.AutoStartCreate = sourceWorkflowAssociation.AutoStartCreate;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
+
+                    try
+                    {
+                        targetWorkflowAssociation.Enabled = sourceWorkflowAssociation.Enabled;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
+
+                    try
+                    {
+                        targetWorkflowAssociation.AssociationData = sourceWorkflowAssociation.AssociationData;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
                 }
                 else
                 {

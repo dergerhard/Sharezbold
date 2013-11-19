@@ -60,9 +60,30 @@ namespace Sharezbold.ElementsMigration
                     groupCreationInformation.Title = sourceGroup.Title;
 
                     Group targetGroup = groupCollectoinOnTargetServer.Add(groupCreationInformation);
-                    targetGroup.AllowMembersEditMembership = sourceGroup.AllowMembersEditMembership;
-                    targetGroup.AllowRequestToJoinLeave = sourceGroup.AllowRequestToJoinLeave;
-                    targetGroup.AutoAcceptRequestToJoinLeave = sourceGroup.AutoAcceptRequestToJoinLeave;
+
+                    try
+                    {
+                        targetGroup.AllowMembersEditMembership = sourceGroup.AllowMembersEditMembership;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
+
+                    try
+                    {
+                        targetGroup.AllowRequestToJoinLeave = sourceGroup.AllowRequestToJoinLeave;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
+
+                    try
+                    {
+                        targetGroup.AutoAcceptRequestToJoinLeave = sourceGroup.AutoAcceptRequestToJoinLeave;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
                 }
                 else
                 {

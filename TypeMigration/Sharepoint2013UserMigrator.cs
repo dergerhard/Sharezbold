@@ -63,8 +63,22 @@ namespace Sharezbold.ElementsMigration
                     creationObject.Title = sourceUser.Title;
 
                     User targetUser = targetUserCollection.Add(creationObject);
-                    targetUser.IsSiteAdmin = sourceUser.IsSiteAdmin;
-                    targetUser.Tag = sourceUser.Tag;
+
+                    try
+                    {
+                        targetUser.IsSiteAdmin = sourceUser.IsSiteAdmin;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
+
+                    try
+                    {
+                        targetUser.Tag = sourceUser.Tag;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
                 }
                 else
                 {

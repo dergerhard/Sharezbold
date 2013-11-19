@@ -75,8 +75,21 @@ namespace Sharezbold.ElementsMigration
                         throw new ElementsMigrationException("Exception during importing the SiteUsers.", e);
                     }
 
-                    targetUser.IsSiteAdmin = sourceUser.IsSiteAdmin;
-                    targetUser.Tag = sourceUser.Tag;
+                    try
+                    {
+                        targetUser.IsSiteAdmin = sourceUser.IsSiteAdmin;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
+
+                    try
+                    {
+                        targetUser.Tag = sourceUser.Tag;
+                    }
+                    catch (PropertyOrFieldNotInitializedException)
+                    {
+                    }
                 }
                 else
                 {

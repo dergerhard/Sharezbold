@@ -132,18 +132,94 @@ namespace Sharezbold.ElementsMigration
           ////  creationObject.ParentContentType = this.AddParent(sourceContentTypeCollection, targetContentTypeCollection, sourceContentType.Parent);
 
             ContentType targetContentType = targetContentTypeCollection.Add(creationObject);
+            
+            try
+            {
+                targetContentType.DisplayFormTemplateName = sourceContentType.DisplayFormTemplateName;
+            }
+            catch (PropertyOrFieldNotInitializedException)
+            {
+            }
 
-            targetContentType.DisplayFormTemplateName = sourceContentType.DisplayFormTemplateName;
-            targetContentType.DisplayFormUrl = sourceContentType.DisplayFormUrl;
-            targetContentType.DocumentTemplate = sourceContentType.DocumentTemplate;
-            targetContentType.EditFormTemplateName = sourceContentType.EditFormTemplateName;
-            targetContentType.EditFormUrl = sourceContentType.EditFormUrl;
-            targetContentType.Hidden = sourceContentType.Hidden;
-            targetContentType.NewFormTemplateName = sourceContentType.NewFormTemplateName;
-            targetContentType.NewFormUrl = sourceContentType.NewFormUrl;
-            targetContentType.ReadOnly = sourceContentType.ReadOnly;
-            targetContentType.Sealed = sourceContentType.Sealed;
-            targetContentType.Tag = sourceContentType.Tag;
+            try
+            {
+                targetContentType.DisplayFormUrl = sourceContentType.DisplayFormUrl;
+            }
+            catch (PropertyOrFieldNotInitializedException)
+            {
+            }
+
+            try
+            {
+                targetContentType.DocumentTemplate = sourceContentType.DocumentTemplate;
+            }
+            catch (PropertyOrFieldNotInitializedException)
+            {
+            }
+
+            try
+            {
+                targetContentType.EditFormTemplateName = sourceContentType.EditFormTemplateName;
+            }
+            catch (PropertyOrFieldNotInitializedException)
+            {
+            }
+
+            try
+            {
+                targetContentType.EditFormUrl = sourceContentType.EditFormUrl;
+            }
+            catch (PropertyOrFieldNotInitializedException)
+            {
+            }
+
+            try
+            {
+                targetContentType.Hidden = sourceContentType.Hidden;
+            }
+            catch (PropertyOrFieldNotInitializedException)
+            {
+            }
+
+            try
+            {
+                targetContentType.NewFormTemplateName = sourceContentType.NewFormTemplateName;
+            }
+            catch (PropertyOrFieldNotInitializedException)
+            {
+            }
+
+            try
+            {
+                targetContentType.NewFormUrl = sourceContentType.NewFormUrl;
+            }
+            catch (PropertyOrFieldNotInitializedException)
+            {
+            }
+
+            try
+            {
+                targetContentType.ReadOnly = sourceContentType.ReadOnly;
+            }
+            catch (PropertyOrFieldNotInitializedException)
+            {
+            }
+
+            try
+            {
+                targetContentType.Sealed = sourceContentType.Sealed;
+            }
+            catch (PropertyOrFieldNotInitializedException)
+            {
+            }
+
+            try
+            {
+                targetContentType.Tag = sourceContentType.Tag;
+            }
+            catch (PropertyOrFieldNotInitializedException)
+            {
+            }
         }
 
         /// <summary>
