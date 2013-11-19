@@ -126,7 +126,6 @@ namespace Sharezbold
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.listBoxMigrationLog = new System.Windows.Forms.ListBox();
             this.buttonFinish = new System.Windows.Forms.Button();
-            this.label13 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabControMain.SuspendLayout();
@@ -1079,21 +1078,11 @@ namespace Sharezbold
             this.buttonFinish.UseVisualStyleBackColor = true;
             this.buttonFinish.Click += new System.EventHandler(this.OnFinishExit);
             // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(0, 0);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(41, 13);
-            this.label13.TabIndex = 4;
-            this.label13.Text = "label13";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1122, 451);
-            this.Controls.Add(this.label13);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.tabControMain);
             this.Controls.Add(this.menuStrip1);
@@ -1232,6 +1221,5 @@ namespace Sharezbold
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Button buttonTestMigration;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label label13;
     }
 }
