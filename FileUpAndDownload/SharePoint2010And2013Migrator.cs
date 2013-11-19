@@ -20,16 +20,25 @@ namespace Sharezbold.FileMigration
     /// </summary>
     public class SharePoint2010And2013Migrator
     {
+        /// <summary>
+        /// The FileMigrationSpecification.
+        /// </summary>
         private FileMigrationSpecification fileMigrationSpecification;
 
+        /// <summary>
+        /// The current file.
+        /// </summary>
         private File currentFile;
+
+        /// <summary>
+        /// The current target web.
+        /// </summary>
         private Web currentTargetWeb;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SharePoint2010And2013Migrator"/> class.
         /// </summary>
-        /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
-        /// <param name="targetClientContext">ClientContext of target SharePoint</param>
+        /// <param name="fileMigrationSpecification">instance of the FileMigrationSpecification</param>
         internal SharePoint2010And2013Migrator(FileMigrationSpecification fileMigrationSpecification)
         {
             this.fileMigrationSpecification = fileMigrationSpecification;
@@ -37,36 +46,46 @@ namespace Sharezbold.FileMigration
             this.SpecifySharePointSpecification();
         }
 
+        /// <summary>
+        /// Migrates the files of a web in a shared documents folder.
+        /// </summary>
+        /// <param name="sourceWeb">the source web</param>
+        /// <param name="targetWeb">the target web</param>
         public void MigrateFilesOfWeb(Web sourceWeb, Web targetWeb)
         {
-            // throws ValidationException if sourceWeb or targetWeb does not exists.
-            Validator.ValidateIfWebExists(fileMigrationSpecification.SourceClientContext, sourceWeb);
-            Validator.ValidateIfWebExists(fileMigrationSpecification.SourceClientContext, sourceWeb);
-            
+            //// throws ValidationException if sourceWeb or targetWeb does not exists.
+            Validator.ValidateIfWebExists(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
+            Validator.ValidateIfWebExists(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
+
             this.currentTargetWeb = targetWeb;
 
-            FileCollection files = GetFilesOfSharedDocumentsFolder(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
+            FileCollection files = this.GetFilesOfSharedDocumentsFolder(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
 
             ThreadPool.SetMaxThreads(this.fileMigrationSpecification.NumberOfThreads, this.fileMigrationSpecification.NumberOfThreads);
-            // List<FileCollection> allFiles = GetAllFilesOfWeb(this.fileMigrationSpecification.SourceClientContext, sourceWeb);
-            /*
-            foreach (FileCollection files in allFiles)
-            {*/
-                foreach (File file in files)
-                {
-                    this.currentFile = file;
-                    
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(MigrationThreadProcess));
-                    
-                }    
-           // }
+
+            foreach (File file in files)
+            {
+                this.currentFile = file;
+
+                ThreadPool.QueueUserWorkItem(new WaitCallback(this.MigrationThreadProcess));
+            }
         }
 
-        private void MigrationThreadProcess(Object stateInfo)
+        /// <summary>
+        /// Start the migration thread process for threadpool.
+        /// </summary>
+        /// <param name="stateInfo">info of the state of the thread</param>
+        private void MigrationThreadProcess(object stateInfo)
         {
             new FileMigrator().MigrateFile(this.currentFile, this.fileMigrationSpecification, this.currentTargetWeb);
         }
 
+        /// <summary>
+        /// Returns all files of web.
+        /// </summary>
+        /// <param name="clientContext">the ClientContext</param>
+        /// <param name="web">the Web</param>
+        /// <returns>all files of web</returns>
         private List<FileCollection> GetAllFilesOfWeb(ClientContext clientContext, Web web)
         {
             List<FileCollection> files = new List<FileCollection>();
@@ -75,11 +94,18 @@ namespace Sharezbold.FileMigration
             clientContext.Load(rootFolder);
             clientContext.ExecuteQuery();
 
-            files = GetFilesOfAllFolder(clientContext, rootFolder, files);
+            files = this.GetFilesOfAllFolder(clientContext, rootFolder, files);
 
             return files;
         }
 
+        /// <summary>
+        /// Gets all files of all folders of the web.
+        /// </summary>
+        /// <param name="clientContext">the ClientContext</param>
+        /// <param name="folder">the folder</param>
+        /// <param name="files">already found files</param>
+        /// <returns>all files</returns>
         private List<FileCollection> GetFilesOfAllFolder(ClientContext clientContext, Folder folder, List<FileCollection> files)
         {
             FolderCollection folders = folder.Folders;
@@ -98,19 +124,32 @@ namespace Sharezbold.FileMigration
             {
                 foreach (Folder f in folders)
                 {
-                    files = GetFilesOfAllFolder(clientContext, f, files);
+                    files = this.GetFilesOfAllFolder(clientContext, f, files);
                 }
             }
 
             return files;
         }
 
+        /// <summary>
+        /// Gets the files of the shared documents folder.
+        /// </summary>
+        /// <param name="clientContext">the ClientContext</param>
+        /// <param name="web">the Web</param>
+        /// <returns>files of shared documents folder</returns>
         private FileCollection GetFilesOfSharedDocumentsFolder(ClientContext clientContext, Web web)
         {
-            Folder sharedDocumentFolder = GetSharedDocumentsFolder(clientContext, web);
-            return GetFiles(clientContext, sharedDocumentFolder);
+            Folder sharedDocumentFolder = this.GetSharedDocumentsFolder(clientContext, web);
+            return this.GetFiles(clientContext, sharedDocumentFolder);
         }
 
+        /// <summary>
+        /// Gets the shared documents folder of the web
+        /// </summary>
+        /// <param name="clientContext">the ClientContext</param>
+        /// <param name="web">the Web</param>
+        /// <returns>the shared documents folder</returns>
+        /// <exception cref="FileMigrationException">if the shared documents folder was not found</exception>
         private Folder GetSharedDocumentsFolder(ClientContext clientContext, Web web)
         {
             Folder rootFolder = web.RootFolder;
@@ -121,7 +160,8 @@ namespace Sharezbold.FileMigration
             clientContext.Load(folders);
             clientContext.ExecuteQuery();
 
-            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(FolderName.SHARED_DOCUMENTS_FOLDERNAME));
+            FolderName folderName = new FolderName();
+            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(folderName.SharedDocumentsFoldername));
 
             if (sharedDocumentsFolder == null)
             {
@@ -133,17 +173,27 @@ namespace Sharezbold.FileMigration
             }
         }
 
+        /// <summary>
+        /// Gets the files of the given folder.
+        /// </summary>
+        /// <param name="clientContext">the ClientContext</param>
+        /// <param name="folder">the Folder</param>
+        /// <returns>files of folder</returns>
         private FileCollection GetFiles(ClientContext clientContext, Folder folder)
         {
             FileCollection files = folder.Files;
             clientContext.Load(files);
             clientContext.ExecuteQuery();
 
-            // TODO where files ends with...
+            //// TODO where files ends with...
 
             return files;
         }
 
+        /// <summary>
+        /// Sets necessary specifications.
+        /// </summary>
+        /// <exception cref="FileMigrationException">if the migration fails.</exception>
         private void SpecifySharePointSpecification()
         {
             try

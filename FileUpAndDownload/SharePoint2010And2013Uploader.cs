@@ -30,6 +30,11 @@ namespace Sharezbold.FileMigration
             this.targetClientContext = clientContext;
         }
 
+        /// <summary>
+        /// Uploads the document.
+        /// </summary>
+        /// <param name="migrationFile">the migration file</param>
+        /// <param name="targetWeb">the target web</param>
         internal void UploadDocument(MigrationFile migrationFile,  Web targetWeb)
         {
             Console.WriteLine("Upload file '{0}' now.", migrationFile.File.Name);
@@ -41,18 +46,23 @@ namespace Sharezbold.FileMigration
             FileCreationInformation newFile = new FileCreationInformation();
             newFile.Content = migrationFile.Content;
             newFile.Overwrite = true;
-            newFile.Url = GetSharedDocumentsUrl(rootFolder) + migrationFile.File.Name;
+            newFile.Url = this.GetSharedDocumentsUrl(rootFolder) + migrationFile.File.Name;
 
             File file;
-            Folder folder = GetSharedDocumentsFolder(rootFolder);
+            Folder folder = this.GetSharedDocumentsFolder(rootFolder);
 
             file = folder.Files.Add(newFile);
             this.targetClientContext.ExecuteQuery();
         }
 
+        /// <summary>
+        /// Gets the shared Documents url.
+        /// </summary>
+        /// <param name="rootFolder">the root folder</param>
+        /// <returns>url of shared documents</returns>
         private string GetSharedDocumentsUrl(Folder rootFolder)
         {
-            string url = GetSharedDocumentsFolder(rootFolder).ServerRelativeUrl;
+            string url = this.GetSharedDocumentsFolder(rootFolder).ServerRelativeUrl;
             if (!url.EndsWith("/"))
             {
                 url += "/";
@@ -61,13 +71,19 @@ namespace Sharezbold.FileMigration
             return url;
         }
 
+        /// <summary>
+        /// Gets the shared documents folder.
+        /// </summary>
+        /// <param name="folder">the root folder</param>
+        /// <returns>the shared documents folder</returns>
         private Folder GetSharedDocumentsFolder(Folder folder)
         {
             FolderCollection folders = folder.Folders;
-            targetClientContext.Load(folders);
-            targetClientContext.ExecuteQuery();
+            this.targetClientContext.Load(folders);
+            this.targetClientContext.ExecuteQuery();
 
-            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(FolderName.SHARED_DOCUMENTS_FOLDERNAME));
+            FolderName folderName = new FolderName();
+            Folder sharedDocumentsFolder = folders.Single(f => f.Name.Equals(folderName.SharedDocumentsFoldername));
 
             if (sharedDocumentsFolder == null)
             {

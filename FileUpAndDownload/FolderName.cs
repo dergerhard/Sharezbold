@@ -6,15 +6,22 @@
 //-----------------------------------------------------------------------
 namespace Sharezbold.FileMigration
 {
+    /// <summary>
+    /// Represents a constant class.
+    /// </summary>
     internal class FolderName
     {
         /// <summary>
-        /// Name of shared documents folder.
+        /// Initializes a new instance of the <see cref="FolderName"/> class.
         /// </summary>
-        internal static string SHARED_DOCUMENTS_FOLDERNAME = "Shared Documents";
-
-        private FolderName()
+        internal FolderName()
         {
+            this.SharedDocumentsFoldername = "Shared Documents";
         }
+
+        /// <summary>
+        /// Gets the name of the shared documents folder.
+        /// </summary>
+        internal string SharedDocumentsFoldername { get; private set; }
     }
 }
