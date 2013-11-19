@@ -70,16 +70,6 @@ namespace Sharezbold.FileMigration.Host
             }
         }
 
-        /*
-        /// <summary>
-        /// Starts and opens the connection async.
-        /// </summary>
-        /// <returns>true if success, otherwise false</returns>
-        internal async Task<bool> StartAsync()
-        {
-            return Start();
-        }*/
-
         /// <summary>
         /// Stops the connection to the service.
         /// </summary>
@@ -98,15 +88,5 @@ namespace Sharezbold.FileMigration.Host
                 return false;
             }
         }
-
-        /*
-        /// <summary>
-        /// Stops the service async.
-        /// </summary>
-        /// <returns>true if success, otherwise false</returns>
-        internal async Task<bool> StopAsync()
-        {
-            return Stop();
-        }*/
     }
 }
