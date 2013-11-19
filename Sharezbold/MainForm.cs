@@ -171,7 +171,7 @@ namespace Sharezbold
         {
             try
             {
-                //ExecuteElementsMigration();
+                ExecuteElementsMigration();
             }
             catch (Exception exception)
             {
@@ -180,7 +180,7 @@ namespace Sharezbold
 
             try
             {
-                //ExecuteFileMigration();
+                ExecuteFileMigration();
             }
             catch (Exception exception)
             {
@@ -580,7 +580,10 @@ namespace Sharezbold
                 MessageBox.Show("As the destination web application is empty, migration will be started now.", "Info");
                 this.EnableTab(this.tabPageMigrationProgress, true);
                 this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
+                this.waitForm.Show();
+                this.waitForm.SpecialText = "migrating elements";
                 await this.MigrateAll();
+                this.waitForm.Hide();
             }
             else
             {

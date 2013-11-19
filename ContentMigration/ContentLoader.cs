@@ -143,7 +143,6 @@ namespace Sharezbold.ContentMigration
             {
                 if (site.Migrate && keepGoing)
                 {
-                    // keepGoing = await this.MigrateSiteAsync(site, this.DestinationSiteCollection);
                     keepGoing = await this.MigrateSiteAsync(site, this.DestinationSiteCollection);
                 }
 
@@ -285,7 +284,7 @@ namespace Sharezbold.ContentMigration
                 return true;
             }
 
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -1013,7 +1012,7 @@ namespace Sharezbold.ContentMigration
                 {
                     
                     res = this.ws.DstAdmin.CreateSite(
-                        ws.DstUrl,
+                        this.ws.DstUrl,
                         sourceXml.Attributes["Title"].InnerText,
                         sourceXml.Attributes["Description"].InnerText,
                         (int)this.GetLanguage(this.SourceSiteCollection),
@@ -1027,15 +1026,39 @@ namespace Sharezbold.ContentMigration
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("OK, Here we go: " + res);
-                    return "Error migrating site collection \"" + sourceXml.Attributes["Title"] + "\". Check if there is already a site collection at the destination sharepoint server present! Message: " + e.Message;
+                    return "Error migrating site collection \"" + sourceXml.Attributes["Title"].InnerText + "\". Check if there is already a site collection at the destination sharepoint server present! Message: " + e.Message;
                 }
             });
 
             string response = await t;
             if (response.Equals(string.Empty))
             {
-                this.log.AddMessage("Migrating site collection \"" + sourceXml.Attributes["Title"] + "\" finished");
+                this.log.AddMessage("Migrating site collection \"" + sourceXml.Attributes["Title"].InnerText + "\" finished");
+                
+                // for correct processing of lists migration, the newly created site collection must be loaded
+                Task loadDstSC = Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        this.LoadDestinationSiteCollection();
+                        foreach (var site in this.SourceSiteCollection.Sites)
+                        {
+                            foreach (var list in site.Lists)
+                            {
+                                //TODO: this only works if there are NO subsites... otherwise all source lists from different sites will be migrated to one destination site (the site collection site)
+                                list.MigrateToUrl = this.DestinationSiteCollection.XmlData.ElementAt(0).Attributes["Url"].InnerText;
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                });
+                await loadDstSC;
+                
+                // also migrate the site columns
+                await this.MigrateSiteColumnsAsync(url, this.ws.DstUrl); 
+
                 return true;
             }
             else
