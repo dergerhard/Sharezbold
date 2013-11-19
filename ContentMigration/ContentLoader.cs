@@ -243,9 +243,9 @@ namespace Sharezbold.ContentMigration
                     catch (Exception e)
                     {
                         // there is always an error... no matter what you do (XML error, altough I couldn't have made one here)
-                        // has to be ignored
+                        // has to be ignored! return true! always
                         Debug.WriteLine(e.Message);
-                        return false;
+                        return true;
                     }
                 });
 
@@ -1003,14 +1003,16 @@ namespace Sharezbold.ContentMigration
         private async Task<bool> MigrateSiteCollectionAsync()
         {
             XmlNode sourceXml = this.SourceSiteCollection.XmlData.ElementAt(0);
-            this.log.AddMessage("Migrating site collection \"" + sourceXml.Attributes["Title"] + "\"");
+            this.log.AddMessage("Migrating site collection \"" + sourceXml.Attributes["Title"].InnerText + "\"");
             string url = sourceXml.Attributes["Url"].InnerText;
 
             Task<string> t = Task.Factory.StartNew(() =>
             {
+                string res= string.Empty;
                 try
                 {
-                    this.ws.DstAdmin.CreateSite(
+                    
+                    res = this.ws.DstAdmin.CreateSite(
                         ws.DstUrl,
                         sourceXml.Attributes["Title"].InnerText,
                         sourceXml.Attributes["Description"].InnerText,
@@ -1025,7 +1027,8 @@ namespace Sharezbold.ContentMigration
                 }
                 catch (Exception e)
                 {
-                    return "Error migrating site collection \"" + sourceXml.Attributes["Title"] + "\". Message: " + e.Message;
+                    Console.WriteLine("OK, Here we go: " + res);
+                    return "Error migrating site collection \"" + sourceXml.Attributes["Title"] + "\". Check if there is already a site collection at the destination sharepoint server present! Message: " + e.Message;
                 }
             });
 
@@ -1033,13 +1036,13 @@ namespace Sharezbold.ContentMigration
             if (response.Equals(string.Empty))
             {
                 this.log.AddMessage("Migrating site collection \"" + sourceXml.Attributes["Title"] + "\" finished");
+                return true;
             }
             else
             {
                 this.log.AddMessage(response);
+                return false;
             }
-
-            return true;
         }
 
         /// <summary>
