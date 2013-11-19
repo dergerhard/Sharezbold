@@ -143,6 +143,11 @@ namespace Sharezbold
                 Console.WriteLine("ERROR during migrating {0}", migrationType);
                 Console.WriteLine(e);
             }
+            catch (Exception e)
+            {
+                this.logger.AddMessage("FATAL during migrating " + migrationType + "\n\r");
+                this.logger.AddMessage(e.Message + "\n\r");
+            }
 
             this.logger.AddMessage("=============== FINISHED MIGRATION OF " + migrationType + " =================== \n\r");
         }
