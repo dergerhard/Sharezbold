@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="LoadingElementsException.cs" company="FH Wiener Neustadt">
+// <copyright file="NotSupportedException.cs" company="FH Wiener Neustadt">
 //     Copyright (c) FH Wiener Neustadt. All rights reserved.
 // </copyright>
 // <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>

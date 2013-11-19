@@ -1,5 +1,9 @@
-﻿
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="IMigratable.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
+//-----------------------------------------------------------------------
 namespace Sharezbold.ContentMigration.Data
 {
     using System;
@@ -14,7 +18,7 @@ namespace Sharezbold.ContentMigration.Data
     public interface IMigratable
     {
         /// <summary>
-        /// Specifies whether to migrate the object or not
+        /// Gets or sets a value indicating whether to migrate the object or not
         /// </summary>
         bool Migrate
         {
@@ -23,7 +27,7 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// Tells whether a object is configured to be migrated
+        /// Gets or sets a value indicating whether the object is configured to be migrated
         /// </summary>
         bool ReadyForMigration
         {
@@ -32,7 +36,7 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// Name for the migration object
+        /// Gets the name for the migration object
         /// </summary>
         string Name
         {
@@ -40,9 +44,8 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// Represents the parent object
+        /// Gets or sets the parent object
         /// </summary>
         IMigratable ParentObject { get; set; }
-
     }
 }

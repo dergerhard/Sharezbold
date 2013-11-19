@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ContentDownloader.cs" company="FH Wiener Neustadt">
+// <copyright file="SSiteCollection.cs" company="FH Wiener Neustadt">
 //     Copyright (c) FH Wiener Neustadt. All rights reserved.
 // </copyright>
 // <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
@@ -20,25 +20,9 @@ namespace Sharezbold.ContentMigration.Data
     public class SSiteCollection : TreeNode, IMigratable
     {
         /// <summary>
-        /// Xml data of the site collection
-        /// </summary>
-        public List<XmlNode> XmlData { get; set; }
-
-        /// <summary>
         /// Data storage object for Sites
         /// </summary>
         private List<SSite> sites;
-
-        /// <summary>
-        /// Represents all sub sites
-        /// </summary>
-        public List<SSite> Sites
-        {
-            get
-            {
-                return sites;
-            }
-        }
 
         /// <summary>
         /// Data storage object for migrate
@@ -46,7 +30,34 @@ namespace Sharezbold.ContentMigration.Data
         private bool migrate;
 
         /// <summary>
-        /// Defines wheter to migrate the site collection or not. 
+        /// Initializes a new instance of the <see cref="SSiteCollection"/> class.
+        /// </summary>
+        public SSiteCollection()
+            : base(string.Empty)
+        {
+            this.sites = new List<SSite>();
+            this.migrate = false;
+            this.ParentObject = null;
+        }
+
+        /// <summary>
+        /// Gets or sets the Xml data of the site collection
+        /// </summary>
+        public List<XmlNode> XmlData { get; set; }
+
+        /// <summary>
+        /// Gets all sub sites
+        /// </summary>
+        public List<SSite> Sites
+        {
+            get
+            {
+                return this.sites;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to migrate the site collection or not. 
         /// </summary>
         public bool Migrate
         {
@@ -69,7 +80,7 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// Defines whether an object is ready for migration
+        /// Gets or sets a value indicating whether an object is ready for migration
         /// </summary>
         public bool ReadyForMigration
         {
@@ -80,12 +91,11 @@ namespace Sharezbold.ContentMigration.Data
 
             set
             {
-
             }
         }
 
         /// <summary>
-        /// Gaters the name of the object
+        /// Gets the name of the object
         /// </summary>
         public new string Name
         {
@@ -96,15 +106,15 @@ namespace Sharezbold.ContentMigration.Data
         }
 
         /// <summary>
-        /// Represents the parent object
+        /// Gets or sets  the parent object
         /// </summary>
         public IMigratable ParentObject { get; set; }
 
         /// <summary>
         /// Adds a site to the data base and the child tree nodes
         /// </summary>
-        /// <param name="s"></param>
-        /// <param name="migrate"></param>
+        /// <param name="s">The site to add</param>
+        /// <param name="migrate">Specifies whether to migrate it or not</param>
         public void AddSite(SSite s, bool migrate)
         {
             s.Migrate = migrate;
@@ -112,18 +122,8 @@ namespace Sharezbold.ContentMigration.Data
             this.Nodes.Add(s);
             if (s.IsSiteCollectionSite)
             {
-                this.Text = s.XmlData != null ? s.XmlData.Attributes["Title"].InnerText : "";
+                this.Text = s.XmlData != null ? s.XmlData.Attributes["Title"].InnerText : string.Empty;
             }
-        }
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public SSiteCollection() : base("")
-        {
-            this.sites = new List<SSite>();
-            this.migrate = false;
-            this.ParentObject = null;
         }
     }
 }

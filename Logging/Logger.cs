@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="LoadingElementsException.cs" company="FH Wiener Neustadt">
+// <copyright file="Logger.cs" company="FH Wiener Neustadt">
 //     Copyright (c) FH Wiener Neustadt. All rights reserved.
 // </copyright>
 // <author>Gerhard Liebmann (86240@fhwn.ac.at)</author>
@@ -16,7 +16,7 @@ namespace Sharezbold.Logging
     using System.Windows.Forms;
 
     /// <summary>
-    /// This class provides thread-safe logging to a listbox and a file
+    /// This class provides thread-safe logging to a list box and a file
     /// </summary>
     public sealed class Logger
     {
@@ -26,12 +26,12 @@ namespace Sharezbold.Logging
         private List<string> userLog;
 
         /// <summary>
-        /// BindingSource for user log (for binding with e.g. listbox)
+        /// BindingSource for user log (for binding with e.g. list box)
         /// </summary>
         private BindingSource userLogBindingSource = null;
 
         /// <summary>
-        /// the file to wirte log messages to
+        /// the file to write log messages to
         /// </summary>
         private TextWriter logfile = null;
 
@@ -46,9 +46,14 @@ namespace Sharezbold.Logging
         private ListBox dataBindBox = null;
 
         /// <summary>
-        /// Logger constructor for binding with listbox and log-file
+        /// Specifies the number of tabs in front of the log text.
         /// </summary>
-        /// <param name="dataBind">The listbox object to display the log entries</param>
+        private uint indent = 0;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Logger"/> class. Logger constructor for binding with list box and log-file
+        /// </summary>
+        /// <param name="dataBind">The list box object to display the log entries</param>
         /// <param name="logfileurl">The log file to save the log entries to</param>
         public Logger(ListBox dataBind, string logfileurl)
         {
@@ -56,39 +61,37 @@ namespace Sharezbold.Logging
             this.dataBindBox = dataBind;
 
             this.userLogBindingSource = new BindingSource();
-            this.userLogBindingSource.DataSource = userLog;
+            this.userLogBindingSource.DataSource = this.userLog;
             this.dataBindBox.DataSource = this.userLogBindingSource;
 
             try
             {
-                logfile = new StreamWriter(logfileurl);
+                this.logfile = new StreamWriter(logfileurl);
             }
             catch (Exception e)
             {
                 Debug.WriteLine("Logger: not possible to open log file. Reason: " + e.Message);
             }
-            
         }
 
         /// <summary>
-        /// Default constructor. All messages are displayed in debug.
+        /// Initializes a new instance of the <see cref="Logger"/> class. Default constructor. All messages are displayed in debug.
         /// </summary>
         public Logger()
         {
             this.writeOnlyToDebug = true;
         }
-
+                
         /// <summary>
-        /// Specifies the number of tabs in front of the log text.
-        /// </summary>
-        private uint indent = 0;
-
-        /// <summary>
-        /// Specifies the number of tabs in front of the log text. Maximum is 5. The indention stays the same, till it is set to another value.
+        /// Gets or sets the number of tabs in front of the log text. Maximum is 5. The indention stays the same, till it is set to another value.
         /// </summary>
         public uint Indent
         {
-            get { return this.indent; }
+            get 
+            { 
+                return this.indent; 
+            }
+
             set
             {
                 if (value > 5)
@@ -102,7 +105,6 @@ namespace Sharezbold.Logging
             }
         }
 
-
         /// <summary>
         /// Writes a message to the log and syncs it with the list box. If default constructor was used, the message is displayed in the console
         /// </summary>
@@ -110,13 +112,11 @@ namespace Sharezbold.Logging
         /// <param name="onlyLogFile">if true, it is only written to the log file</param>
         public void AddMessage(string message, bool onlyLogFile = false)
         {
-            if (!message.Equals(""))
+            if (!message.Equals(string.Empty))
             {
-                string timeIndent = new String(' ', 5);
-                string tabs = new String(' ', ((int)this.indent)*10);
+                string timeIndent = new string(' ', 5);
+                string tabs = new string(' ', ((int)this.indent) * 10);
                 string msg = DateTime.Now.ToString("HH:mm:ss") + timeIndent + tabs + message;
-
-                //string msg = DateTime.Now.ToString("HH:mm:ss") + " " + message;
 
                 if (this.writeOnlyToDebug)
                 {
@@ -126,31 +126,20 @@ namespace Sharezbold.Logging
                 {
                     if (onlyLogFile == false)
                     {
-                        lock (userLogBindingSource)
+                        lock (this.userLogBindingSource)
                         {
-                            userLogBindingSource.Add(msg);
-                            dataBindBox.SetSelected(dataBindBox.Items.Count - 1, true);
-                            //dataBindBox.Update();
+                            this.userLogBindingSource.Add(msg);
+                            this.dataBindBox.SetSelected(this.dataBindBox.Items.Count - 1, true);
                         }
                     }
 
-                    lock (logfile)
+                    lock (this.logfile)
                     {
-                        logfile.WriteLine(msg);
-                        logfile.Flush();
+                        this.logfile.WriteLine(msg);
+                        this.logfile.Flush();
                     }
                 }
             }
         }
-
-        /*
-        public async Task AddMessage(string message, bool onlyLogFile = false)
-        {
-            var t = Task.Factory.StartNew(() =>
-                {
-                    this.AddMessage
-                });
-            return await t;
-        }*/
     }
 }

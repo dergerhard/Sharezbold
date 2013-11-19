@@ -98,7 +98,7 @@ namespace Sharezbold
 
             this.migrationData = new MigrationData();
 
-            // this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
+            this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
             this.treeViewContentSelection.CheckBoxes = true;
             this.listViewMigrationContent.Scrollable = true;
 
@@ -187,6 +187,7 @@ namespace Sharezbold
                 MessageBox.Show(exception.Message, "Error during Type-Migration!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
+
             return await this.contentLoader.MigrateAllAsync();
         }
 
@@ -459,21 +460,6 @@ namespace Sharezbold
         }
 
         /// <summary>
-        /// Loads the tree where you can migrate to.
-        /// </summary>
-        /// <returns>Task of SpTreeNode as return value.</returns>
-        /*private async Task<SpTreeNode> LoadDestinationTree()
-        {
-            Task<SpTreeNode> t = Task.Factory.StartNew(() =>
-                {
-                    ContentDownloader downloader = new ContentDownloader(this.migrationData.TargetClientContext);
-                    return downloader.GenerateMigrationTree(false);
-                });
-
-            return await t;
-        }*/
-
-        /// <summary>
         /// Connects to the source, provides context.
         /// </summary>
         /// <returns>Task with flag as return value.</returns>
@@ -592,28 +578,31 @@ namespace Sharezbold
             if (this.settings.SiteCollectionMigration)
             {
                 MessageBox.Show("As the destination web application is empty, migration will be started now.", "Info");
+                this.EnableTab(this.tabPageMigrationProgress, true);
                 this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
-                await this.contentLoader.MigrateAllAsync();
-
+                this.waitForm.Show();
+                this.waitForm.SpecialText = "migrating elements";
+                await this.MigrateAll();
+                this.waitForm.Hide();
             }
-            this.EnableTab(this.tabPageContentSelection, false);
-            this.EnableTab(this.tabPageMigrationPreparation, true);
-
-            /*
-             * 1. Site Collection will be migrated
-             *      a. --> nothing to choose, skip to migration
-             * 2. Sites and lists will be migrated
-             *      a. --> all lists beneath a site will stay there
-             *      b. --> all lists where the site is not migrated must have a combobox to choose the destination site (or the newly created ones)
-             * 3. Only lists are migrated
-             *      a. same as 2.b
-             */
-            this.waitForm.Show();
-            this.waitForm.SpecialText = "loading migration elements";
-            this.log.AddMessage("Loading migration elements");
-
-            Task<bool> t = Task<bool>.Factory.StartNew(() =>
+            else
             {
+                this.EnableTab(this.tabPageContentSelection, false);
+                this.EnableTab(this.tabPageMigrationPreparation, true);
+
+                /*
+                 * 1. Site Collection will be migrated
+                 *      a. --> nothing to choose, skip to migration
+                 * 2. Sites and lists will be migrated
+                 *      a. --> all lists beneath a site will stay there
+                 *      b. --> all lists where the site is not migrated must have a combobox to choose the destination site (or the newly created ones)
+                 * 3. Only lists are migrated
+                 *      a. same as 2.b
+                 */
+                this.waitForm.Show();
+                this.waitForm.SpecialText = "loading migration elements";
+                this.log.AddMessage("Loading migration elements");
+
                 // Generate the ListView with the source elements to configure
                 // 1. site collection
                 if (this.sourceSiteCollection.Migrate)
@@ -653,22 +642,28 @@ namespace Sharezbold
                     }
                 }
 
-                try
+                Task<string> loadDestinationTree = Task.Factory.StartNew(() =>
                 {
-                    this.destinationSiteCollection = this.contentLoader.LoadDestinationSiteCollection();
-                }
-                catch (Exception ex)
+                    try
+                    {
+                        this.destinationSiteCollection = this.contentLoader.LoadDestinationSiteCollection();
+                        return string.Empty;
+                    }
+                    catch (Exception ex)
+                    {
+                        return ex.Message;
+                    }
+                });
+
+                string error = await loadDestinationTree;
+                if (!error.Equals(string.Empty))
                 {
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
+                    MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
-                return true;
-            });
-
-            await t;
-            this.waitForm.Hide();
-            this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
+                this.waitForm.Hide();
+                this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
+            }
 
         }
 
@@ -747,48 +742,6 @@ namespace Sharezbold
                 this.log.AddMessage("*************** ELEMENTS MIGRATION FINISHED *******************");
             }
         }
-
-        /// <summary>
-        /// Mark possible migrate to elements
-        /// </summary>
-        /// <param name="node">node to start</param>
-        /// <param name="type">type of the nodes to mark</param>
-        /*private void MarkPossibleMigrateToElements(SpTreeNode node, string type)
-        {
-            if ((node.MigrationObject.DataObject.GetType() == typeof(Microsoft.SharePoint.Client.Web) && type.Equals("Site")) ||
-                (node.MigrationObject.DataObject.GetType() == typeof(Microsoft.SharePoint.Client.List) && type.Equals("List")))
-            {
-                node.BackColor = Color.LightBlue;
-            }
-            else
-            {
-                node.BackColor = Color.Transparent;
-            }
-
-            foreach (SpTreeNode n in node.Nodes)
-            {
-                this.MarkPossibleMigrateToElements(n, type);
-            }
-        }*/
-
-        /// <summary>
-        /// Mark the corresponding migrate to element if set
-        /// </summary>
-        /// <param name="node">node to start from</param>
-        /// <param name="corr">corresponding object</param>
-        /*private void MarkCorrespondingMigrateToElement(SpTreeNode node, object corr)
-        {
-            if (node.MigrationObject.DataObject == corr)
-            {
-                node.BackColor = Color.Blue;
-            }
-
-            foreach (SpTreeNode n in node.Nodes)
-            {
-                this.MarkCorrespondingMigrateToElement(n, corr);
-            }
-        }
-        */
 
         /// <summary>
         /// Method is invoked, when the selected Element is changed
@@ -989,6 +942,16 @@ namespace Sharezbold
 
                 this.migrationData.FileMigrator.MigrateFilesOfWeb(sourceWeb, targetWeb);
             }
+        }
+
+        /// <summary>
+        /// Close the Application
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The event args</param>
+        private void OnFinishExit(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
     }
