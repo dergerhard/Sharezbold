@@ -6,10 +6,10 @@
 //-----------------------------------------------------------------------
 namespace Sharezbold.FileMigration.Service
 {
-    using Contract;
-    using Microsoft.SharePoint.Administration;
     using System;
     using System.Collections.Generic;
+    using Contract;
+    using Microsoft.SharePoint.Administration;
 
     /// <summary>
     /// Logic of the webservice for FileMigration.
