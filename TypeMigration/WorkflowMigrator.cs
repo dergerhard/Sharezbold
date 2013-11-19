@@ -11,9 +11,9 @@ namespace Sharezbold.ElementsMigration
     using System.Collections.Generic;
     using System.Linq;
     using Extension;
+    using Logging;
     using Microsoft.SharePoint.Client;
     using Microsoft.SharePoint.Client.Workflow;
-    using Logging;
 
     /// <summary>
     /// Migrates the workflows from SharePoint 2010 and 2013 to SharePoint 2013.
@@ -25,6 +25,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
+        /// <param name="logger">instance of the Logger</param>
         internal WorkflowMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger)
             : base(sourceClientContext, targetClientContext, logger)
         {

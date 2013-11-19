@@ -8,8 +8,8 @@
 namespace Sharezbold.ElementsMigration
 {
     using System.Collections.Generic;
-    using Microsoft.SharePoint.Client;
     using Logging;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// Abstract class for elements migration.
@@ -28,6 +28,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
+        /// <param name="logger">Instance of the Logger</param>
         protected AbstractMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger)
         {
             this.SourceClientContext = sourceClientContext;

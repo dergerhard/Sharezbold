@@ -9,8 +9,8 @@ namespace Sharezbold.ElementsMigration
 {
     using System;
     using System.Collections.Generic;
-    using Microsoft.SharePoint.Client;
     using Logging;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// Migrator for Sharepoint 2010 to Sharepoint 2013 and Sharepoint 2013 to Sharepoint 2010.
@@ -27,6 +27,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of the source SharePoint (2010)</param>
         /// <param name="targetClientContext">ClientContext of the target SharePoint (2013)</param>
+        /// <param name="logger">instance of the Logger</param>
         public Sharepoint2010Migrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger)
         {
             this.migrators = new LinkedList<KeyValuePair<MigrationType, AbstractMigrator>>();
@@ -42,7 +43,6 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the ContentTypes.
         /// </summary>
-        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public void MigrateContentTypes()
         {
@@ -63,7 +63,6 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the User.
         /// </summary>
-        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public void MigrateUser()
         {
@@ -84,7 +83,6 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the Groups.
         /// </summary>
-        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public void MigrateGroup()
         {
@@ -105,7 +103,6 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the PermissionLevels (Roles).
         /// </summary>
-        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public void MigratePermissionlevels()
         {
@@ -125,8 +122,7 @@ namespace Sharezbold.ElementsMigration
 
         /// <summary>
         /// Migrates the SiteColumns.
-        /// </summary>
-        /// <returns>Log as LinkedList</returns>        
+        /// </summary>    
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public void MigrateSiteColumns()
         {
@@ -147,7 +143,6 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Migrates the Workflow.
         /// </summary>
-        /// <returns>Log as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">If the migration fails.</exception>
         public void MigrateWorkflow()
         {

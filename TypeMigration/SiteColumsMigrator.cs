@@ -11,8 +11,8 @@ namespace Sharezbold.ElementsMigration
     using System.Collections.Generic;
     using System.Linq;
     using Extension;
-    using Microsoft.SharePoint.Client;
     using Logging;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// This class migrates the fields (SiteColumn).
@@ -24,6 +24,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
+        /// <param name="logger">instance of the Logger</param>
         internal SiteColumsMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger) : base(sourceClientContext, targetClientContext, logger)
         {
         }
@@ -68,53 +69,64 @@ namespace Sharezbold.ElementsMigration
                         targetField.Indexed = sourceField.Indexed;
                     }
                     catch (PropertyOrFieldNotInitializedException)
-                    { }
+                    {
+                    }
+
                     try
                     {
                         targetField.ReadOnlyField = sourceField.ReadOnlyField;
                     }
                     catch (PropertyOrFieldNotInitializedException)
-                    { }
+                    {
+                    }
+
                     try
                     {
                         targetField.Required = sourceField.Required;
                     }
                     catch (PropertyOrFieldNotInitializedException)
-                    { }
+                    {
+                    }
+
                     try
                     {
                         targetField.StaticName = sourceField.StaticName;
                     }
                     catch (PropertyOrFieldNotInitializedException)
-                    { }
+                    {
+                    }
 
                     try
                     {
                         targetField.Tag = sourceField.Tag;
                     }
                     catch (PropertyOrFieldNotInitializedException)
-                    { }
+                    {
+                    }
 
                     try
                     {
                         targetField.TypeAsString = sourceField.TypeAsString;
                     }
                     catch (PropertyOrFieldNotInitializedException)
-                    { }
+                    {
+                    }
 
                     try
                     {
                         targetField.ValidationFormula = sourceField.ValidationFormula;
                     }
                     catch (PropertyOrFieldNotInitializedException)
-                    { }
+                    {
+                    }
 
                     try
                     {
                         targetField.ValidationMessage = sourceField.ValidationMessage;
                     }
                     catch (PropertyOrFieldNotInitializedException)
-                    { }
+                    {
+                    }
                 }
                 else
                 {

@@ -10,8 +10,8 @@ namespace Sharezbold.ElementsMigration
     using System;
     using System.Collections.Generic;
     using Extension;
-    using Microsoft.SharePoint.Client;
     using Logging;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// This class migrates the ContentType from the source SharePoint to the target SharePoint.
@@ -26,8 +26,9 @@ namespace Sharezbold.ElementsMigration
         /// <summary>
         /// Initializes a new instance of the <see cref="ContentTypesMigrator"/> class.
         /// </summary>
-        /// <param name="sourceClientContext">clientContext of the source SharePoint</param>
+        /// <param name="sourceClientContext">ClientContext of the source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of the target SharePoint</param>
+        /// <param name="logger">Instance of the Logger</param>
         public ContentTypesMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger)
             : base(sourceClientContext, targetClientContext, logger)
         {

@@ -10,8 +10,8 @@ namespace Sharezbold.ElementsMigration
     using System;
     using System.Collections.Generic;
     using Extension;
-    using Microsoft.SharePoint.Client;
     using Logging;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// This class is responsible to migrate the Groups.
@@ -23,6 +23,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">clientcontext of source SharePoint</param>
         /// <param name="targetClientContext">clientcontext of target SharePoint</param>
+        /// <param name="logger">instance of the Logger</param>
         internal UserGroupMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger)
             : base(sourceClientContext, targetClientContext, logger)
         {

@@ -10,8 +10,8 @@ namespace Sharezbold.ElementsMigration
     using System;
     using System.Collections.Generic;
     using Extension;
-    using Microsoft.SharePoint.Client;
     using Logging;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// Migrates the SiteUser from the source SharePoint to the target SharePoint.
@@ -23,6 +23,7 @@ namespace Sharezbold.ElementsMigration
         /// </summary>
         /// <param name="sourceClientContext">ClientContext of source SharePoint</param>
         /// <param name="targetClientContext">ClientContext of target SharePoint</param>
+        /// <param name="logger">instance of the Logger</param>
         internal Sharepoint2013UserMigrator(ClientContext sourceClientContext, ClientContext targetClientContext, Logger logger) : base(sourceClientContext, targetClientContext, logger)
         {
         }
