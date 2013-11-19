@@ -79,6 +79,9 @@ namespace Sharezbold
         /// </summary>
         private MigrationData migrationData;
 
+        /// <summary>
+        /// The ElementsMigrationWorker.
+        /// </summary>
         private ElementsMigrationWorker migrationWorker;
 
         /// <summary>
@@ -349,6 +352,8 @@ namespace Sharezbold
                 this.treeViewContentSelection.Nodes.Add(this.sourceSiteCollection);
                 this.waitForm.Hide();
                 this.tabControMain.SelectedTab = this.tabPageMigrationElements;
+
+                this.migrationWorker = new ElementsMigrationWorker(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext, this.log);
             }
             catch (Exception ex)
             {
@@ -484,7 +489,6 @@ namespace Sharezbold
                 // set up web services and loader
                 this.webServices = new WebService(this.settings.FromHost, this.settings.FromUserName, this.settings.FromDomain, this.settings.FromPassword, this.settings.ToHost, this.settings.ToHostCA, this.settings.ToUserName, this.settings.ToDomain, this.settings.ToPassword);
                 this.contentLoader = new ContentLoader(this.webServices, this.migrationData, this.log);
-                this.migrationWorker = new ElementsMigrationWorker(this.migrationData.SourceClientContext, this.migrationData.TargetClientContext, this.log);
 
                 return this.webServices.IsSourceLoginPossible && this.migrationData.SourceClientContext != null;
             });
