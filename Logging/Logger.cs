@@ -66,7 +66,11 @@ namespace Sharezbold.Logging
 
             try
             {
-                this.logfile = new StreamWriter(logfileurl);
+                if (!Directory.Exists(logfileurl))
+                {
+                    Directory.CreateDirectory(logfileurl);
+                }
+                this.logfile = new StreamWriter(Path.Combine(logfileurl, "SharezboldLog.txt"));
             }
             catch (Exception e)
             {

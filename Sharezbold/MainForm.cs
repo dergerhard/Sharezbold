@@ -116,7 +116,8 @@ namespace Sharezbold
             this.EnableTab(this.tabPageMigrationPreparation, false);
             this.EnableTab(this.tabPageMigrationProgress, false);
 
-            this.log = new Logger(this.listBoxMigrationLog, @"C:\temp\log.txt");
+            this.log = new Logger(this.listBoxMigrationLog, Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            
             this.log.AddMessage("Program started");
 
         }
