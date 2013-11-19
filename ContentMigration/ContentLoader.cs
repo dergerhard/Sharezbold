@@ -392,8 +392,7 @@ namespace Sharezbold.ContentMigration
                 }
             }
 
-
-            //create or update missing fields
+            // create or update missing fields
             int i = 1;
             foreach (XmlNode field in l["Fields"])
             {
@@ -422,6 +421,7 @@ namespace Sharezbold.ContentMigration
                                 // create
                                 this.ws.DstLists.UpdateList(listName, null, fields, null, null, string.Empty);
                             }
+
                             return string.Empty;
                         }
                         catch (Exception e)
@@ -1034,10 +1034,9 @@ namespace Sharezbold.ContentMigration
 
             Task<string> t = Task.Factory.StartNew(() =>
             {
-                string res= string.Empty;
+                string res = string.Empty;
                 try
                 {
-                    
                     res = this.ws.DstAdmin.CreateSite(
                         this.ws.DstUrl,
                         sourceXml.Attributes["Title"].InnerText,
@@ -1072,13 +1071,14 @@ namespace Sharezbold.ContentMigration
                         {
                             foreach (var list in site.Lists)
                             {
-                                //TODO: this only works if there are NO subsites... otherwise all source lists from different sites will be migrated to one destination site (the site collection site)
+                                // TODO: this only works if there are NO subsites... otherwise all source lists from different sites will be migrated to one destination site (the site collection site)
                                 list.MigrateToUrl = this.DestinationSiteCollection.XmlData.ElementAt(0).Attributes["Url"].InnerText;
                             }
                         }
                     }
                     catch (Exception e)
                     {
+                        Debug.WriteLine(e.Message);
                     }
                 });
                 await loadDstSC;
