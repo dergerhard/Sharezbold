@@ -204,6 +204,7 @@ namespace Sharezbold.FileMigration
 
                 Console.WriteLine("Setting the max file size.");
                 this.fileMigrationSpecification.MaxFileSize = fileMigrationService.GetMaxFileSize();
+                this.fileMigrationSpecification.MaxFileSize = 2;
             }
             catch (Exception)
             {

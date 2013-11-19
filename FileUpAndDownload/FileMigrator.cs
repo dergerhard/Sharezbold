@@ -37,14 +37,17 @@ namespace Sharezbold.FileMigration
             try
             {                
                 MigrationFile migrationFile = downloader.DownloadDocument(file);
-                specification.Logger.AddMessage(string.Format("downloaded file '{0}'.", migrationFile.File.Name));
+                Console.WriteLine("downloaded file '{0}'.", migrationFile.File.Name);
+                //// specification.Logger.AddMessage(string.Format("downloaded file '{0}'.", migrationFile.File.Name));
                 Thread.Sleep(this.GetWaitingTime(specification.Bandwith));
                 uploader.UploadDocument(migrationFile, targetWeb);
-                specification.Logger.AddMessage(string.Format("uploaded file '{0}'.", migrationFile.File.Name));
+                Console.WriteLine("uploaded file '{0}'.", migrationFile.File.Name);
+                ////specification.Logger.AddMessage(string.Format("uploaded file '{0}'.", migrationFile.File.Name));
             }
             catch (OperationCanceledException e)
             {
-                specification.Logger.AddMessage(string.Format("Exception: {0}", e.Message));
+                Console.WriteLine("Exception: {0}", e.Message);
+               //// specification.Logger.AddMessage(string.Format("Exception: {0}", e.Message));
             }
         }
 

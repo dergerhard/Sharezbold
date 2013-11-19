@@ -160,6 +160,7 @@ namespace Sharezbold
                 this.EnableTab(this.tabPageMigrationProgress, true);
                 this.buttonFinish.Enabled = false;
                 bool result = await this.MigrateAll();
+                this.MigrateFilesAndTypes();
                 MessageBox.Show("Migration process finished " + (result ? "successfully" : "with Errors. Please read the log!"), "Info");
                 this.buttonFinish.Enabled = true;
             }
@@ -174,6 +175,11 @@ namespace Sharezbold
         /// </summary>
         /// <returns></returns>
         private async Task<bool> MigrateAll()
+        {
+            return await this.contentLoader.MigrateAllAsync();
+        }
+
+        private void MigrateFilesAndTypes()
         {
             try
             {
@@ -193,9 +199,8 @@ namespace Sharezbold
                 MessageBox.Show(exception.Message, "Error during Type-Migration!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
-
-            return await this.contentLoader.MigrateAllAsync();
         }
+
 
         /// <summary>
         /// copies settings to the user interface
@@ -583,96 +588,10 @@ namespace Sharezbold
         /// <param name="e">the EventArgs itself</param>
         private async void ButtonConfigureMigration_Click(object sender, EventArgs e)
         {
-            if (this.settings.SiteCollectionMigration)
-            {
-                MessageBox.Show("As the destination web application is empty, migration will be started now.", "Info");
-                this.EnableTab(this.tabPageMigrationProgress, true);
-                this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
-                this.waitForm.Show();
-                this.waitForm.SpecialText = "migrating elements";
-                await this.MigrateAll();
-                this.waitForm.Hide();
-            }
-            else
-            {
-                this.EnableTab(this.tabPageContentSelection, false);
-                this.EnableTab(this.tabPageMigrationPreparation, true);
-
-                /*
-                 * 1. Site Collection will be migrated
-                 *      a. --> nothing to choose, skip to migration
-                 * 2. Sites and lists will be migrated
-                 *      a. --> all lists beneath a site will stay there
-                 *      b. --> all lists where the site is not migrated must have a combobox to choose the destination site (or the newly created ones)
-                 * 3. Only lists are migrated
-                 *      a. same as 2.b
-                 */
-                this.waitForm.Show();
-                this.waitForm.SpecialText = "loading migration elements";
-                this.log.AddMessage("Loading migration elements");
-
-                // Generate the ListView with the source elements to configure
-                // 1. site collection
-                if (this.sourceSiteCollection.Migrate)
-                {
-                    listViewMigrationContent.Items.Add(new SListViewItem(this.sourceSiteCollection));
-                }
-
-                List<SList> listsWithoutSite = new List<SList>();
-
-                // 2. sites
-                foreach (SSite site in this.sourceSiteCollection.Sites)
-                {
-                    if (site.Migrate)
-                    {
-                        listViewMigrationContent.Items.Add(new SListViewItem(site));
-                    }
-
-                    foreach (SList li in site.Lists)
-                    {
-                        if (li.Migrate && site.Migrate)
-                        {
-                            listViewMigrationContent.Items.Add(new SListViewItem(li));
-                        }
-                        if (li.Migrate && !site.Migrate)
-                        {
-                            listsWithoutSite.Add(li);
-                        }
-                    }
-                }
-
-                if (listsWithoutSite.Count > 0)
-                {
-                    this.listViewMigrationContent.Items.Add("---Lists without Sites---");
-                    foreach (SList li in listsWithoutSite)
-                    {
-                        this.listViewMigrationContent.Items.Add(new SListViewItem(li));
-                    }
-                }
-
-                Task<string> loadDestinationTree = Task.Factory.StartNew(() =>
-                {
-                    try
-                    {
-                        this.destinationSiteCollection = this.contentLoader.LoadDestinationSiteCollection();
-                        return string.Empty;
-                    }
-                    catch (Exception ex)
-                    {
-                        return ex.Message;
-                    }
-                });
-
-                string error = await loadDestinationTree;
-                if (!error.Equals(string.Empty))
-                {
-                    MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-
-                this.waitForm.Hide();
-                this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
-            }
-
+            this.EnableTab(this.tabPageFileMigration, true);
+            this.tabControMain.SelectedTab = this.tabPageFileMigration;
+            this.FileMigrationTabLoaded();
+            this.EnableTab(this.tabPageContentSelection, false);
         }
 
         /// <summary>
@@ -893,7 +812,7 @@ namespace Sharezbold
             }
         }
 
-        private void FileMigrationTabClicked(object sender, EventArgs e)
+        private void FileMigrationTabLoaded()
         {
             this.textBoxFileMigrationWebs.Text = "";
             int bandwith = (int)this.numericUpDownBandwith.Value;
@@ -901,7 +820,7 @@ namespace Sharezbold
 
             try
             {
-                this.migrationData.FileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithNumberOfThreads(numberOfThreads).WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationServiceURI.Text)).WithSourceClientContext(this.migrationData.SourceClientContext).WithTargetClientContext(this.migrationData.TargetClientContext).WithLogger(this.log).CreateMigrator();
+                this.migrationData.FileMigrator = FileMigrationBuilder.GetNewFileMigrationBuilder().WithLogger(this.log).WithNumberOfThreads(numberOfThreads).WithBandwith(bandwith).WithServiceAddress(new Uri(this.textBoxFileMigrationServiceURI.Text)).WithSourceClientContext(this.migrationData.SourceClientContext).WithTargetClientContext(this.migrationData.TargetClientContext).CreateMigrator();
             }
             catch (FileMigrationException exception)
             {
@@ -923,12 +842,103 @@ namespace Sharezbold
             }
         }
 
-        private void ButtonTestMigrationClicked(object o, EventArgs e)
+        private async void ButtonTestMigrationClicked(object o, EventArgs e)
         {
-            ExecuteFileMigration();
+            this.FileMigrationTabLoaded();
+            if (this.settings.SiteCollectionMigration)
+            {
+                MessageBox.Show("As the destination web application is empty, migration will be started now.", "Info");
+                this.EnableTab(this.tabPageMigrationProgress, true);
+                this.tabControMain.SelectedTab = this.tabPageMigrationProgress;
+                this.waitForm.Show();
+                this.waitForm.SpecialText = "migrating elements";
+                await this.MigrateAll();
+                this.waitForm.Hide();
+            }
+            else
+            {
+                this.EnableTab(this.tabPageContentSelection, false);
+                this.EnableTab(this.tabPageMigrationPreparation, true);
+
+                /*
+                 * 1. Site Collection will be migrated
+                 *      a. --> nothing to choose, skip to migration
+                 * 2. Sites and lists will be migrated
+                 *      a. --> all lists beneath a site will stay there
+                 *      b. --> all lists where the site is not migrated must have a combobox to choose the destination site (or the newly created ones)
+                 * 3. Only lists are migrated
+                 *      a. same as 2.b
+                 */
+                this.waitForm.Show();
+                this.waitForm.SpecialText = "loading migration elements";
+                this.log.AddMessage("Loading migration elements");
+
+                // Generate the ListView with the source elements to configure
+                // 1. site collection
+                if (this.sourceSiteCollection.Migrate)
+                {
+                    listViewMigrationContent.Items.Add(new SListViewItem(this.sourceSiteCollection));
+                }
+
+                List<SList> listsWithoutSite = new List<SList>();
+
+                // 2. sites
+                foreach (SSite site in this.sourceSiteCollection.Sites)
+                {
+                    if (site.Migrate)
+                    {
+                        listViewMigrationContent.Items.Add(new SListViewItem(site));
+                    }
+
+                    foreach (SList li in site.Lists)
+                    {
+                        if (li.Migrate && site.Migrate)
+                        {
+                            listViewMigrationContent.Items.Add(new SListViewItem(li));
+                        }
+                        if (li.Migrate && !site.Migrate)
+                        {
+                            listsWithoutSite.Add(li);
+                        }
+                    }
+                }
+
+                if (listsWithoutSite.Count > 0)
+                {
+                    this.listViewMigrationContent.Items.Add("---Lists without Sites---");
+                    foreach (SList li in listsWithoutSite)
+                    {
+                        this.listViewMigrationContent.Items.Add(new SListViewItem(li));
+                    }
+                }
+
+                Task<string> loadDestinationTree = Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        this.destinationSiteCollection = this.contentLoader.LoadDestinationSiteCollection();
+                        return string.Empty;
+                    }
+                    catch (Exception ex)
+                    {
+                        return ex.Message;
+                    }
+                });
+
+                string error = await loadDestinationTree;
+                if (!error.Equals(string.Empty))
+                {
+                    MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                this.waitForm.Hide();
+                this.tabControMain.SelectedTab = this.tabPageMigrationPreparation;
+            }
         }
 
-
+        /// <summary>
+        /// File migration
+        /// </summary>
         private void ExecuteFileMigration()
         {
             foreach (string item in this.migrationData.WebUrlsToMigrate)
@@ -963,6 +973,11 @@ namespace Sharezbold
         private void OnFinishExit(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void textBoxFileMigrationWebs_TextChanged(object sender, EventArgs e)
+        {
+
         }
 
     }
