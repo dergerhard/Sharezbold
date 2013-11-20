@@ -26,8 +26,8 @@ namespace Sharezbold
         /// Connect to the ClientContext and returns an instance of it.
         /// </summary>
         /// <param name="host">host to connect</param>
-        /// <param name="username">username</param>
-        /// <param name="password">password</param>
+        /// <param name="username">the username</param>
+        /// <param name="password">the password</param>
         /// <param name="domain">domain of SharePoint</param>
         /// <param name="proxySettings">settings of proxy</param>
         /// <returns>instance of ClientContext if connection works, otherwise null will be returned</returns>

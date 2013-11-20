@@ -1,18 +1,26 @@
-﻿
+﻿//-----------------------------------------------------------------------
+// <copyright file="TreeNodeCollectionExtension.cs" company="FH Wiener Neustadt">
+//     Copyright (c) FH Wiener Neustadt. All rights reserved.
+// </copyright>
+// <author>Thomas Holzgethan</author>
+//-----------------------------------------------------------------------
 namespace Sharezbold.Extensions
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows.Forms;
     using System.Xml;
-    using Microsoft.SharePoint.Client;
     using ContentMigration.Data;
 
+    /// <summary>
+    /// Extension class for the TreeNodeCollection.
+    /// </summary>
     internal static class TreeNodeCollectionExtension
     {
+        /// <summary>
+        /// Returns the web urls of selected items in a TreeNodeCollection.
+        /// </summary>
+        /// <param name="selection">the TreeNodeCollection to check</param>
+        /// <returns>selected web urls as string</returns>
         internal static HashSet<string> GetSelectedWebUrls(this TreeNodeCollection selection)
         {
             HashSet<string> webUrlList = new HashSet<string>();
@@ -24,11 +32,11 @@ namespace Sharezbold.Extensions
                     SSiteCollection siteCollection = (SSiteCollection)migratable;
                     if (siteCollection.Checked)
                     {
-                        // is sitecollection is checked, add every page
+                        //// is sitecollection is checked, add every page
                         foreach (SSite site in siteCollection.Sites)
                         {
                             XmlAttribute attr = site.XmlData.Attributes["Url"];
-                            String url = attr.Value;
+                            string url = attr.Value;
                             if (url != null)
                             {
                                 webUrlList.Add(url);
@@ -42,7 +50,7 @@ namespace Sharezbold.Extensions
                             if (site.Checked)
                             {
                                 XmlAttribute attr = site.XmlData.Attributes["Url"];
-                                String url = attr.Value;
+                                string url = attr.Value;
                                 if (url != null)
                                 {
                                     webUrlList.Add(url);
@@ -55,26 +63,6 @@ namespace Sharezbold.Extensions
                 {
                     //// other items are either site and could be in set already or they are list, which is not important for this query.
                 }
-                /*
-                else if (migratable.GetType() == typeof(SSite))
-                {
-                    SSite site = (SSite)migratable;
-                    if (site.Checked)
-                    {
-                        XmlAttribute attr = site.XmlData.Attributes["Url"];
-                        String url = attr.Value;
-                        if (url != null)
-                        {
-                            webUrlList.Add(url);
-                        }
-                    }
-                }
-                else if (migratable.GetType() == typeof(SList))
-                {
-                   // it's not a web!
-                }
-                 * */
-                ////  Console.WriteLine("'{0}' is ready to migrate: {1}; type = {2}", migratable.Name, migratable.ReadyForMigration, migratable.GetType());
             }
 
             return webUrlList;

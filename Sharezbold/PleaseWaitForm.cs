@@ -30,7 +30,7 @@ namespace Sharezbold
         }
 
         /// <summary>
-        /// SpecialText is an additional loding information label
+        /// Gets or sets the SpecialText, which is an additional loding information label
         /// </summary>
         public string SpecialText 
         { 

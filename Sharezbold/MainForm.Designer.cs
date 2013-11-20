@@ -959,7 +959,6 @@ namespace Sharezbold
             this.textBoxFileMigrationWebs.Name = "textBoxFileMigrationWebs";
             this.textBoxFileMigrationWebs.Size = new System.Drawing.Size(229, 289);
             this.textBoxFileMigrationWebs.TabIndex = 0;
-            this.textBoxFileMigrationWebs.TextChanged += new System.EventHandler(this.textBoxFileMigrationWebs_TextChanged);
             // 
             // label12
             // 

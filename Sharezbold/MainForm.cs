@@ -8,26 +8,20 @@ namespace Sharezbold
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
     using System.Diagnostics;
     using System.Drawing;
     using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Text;
-    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using System.Xml;
     using System.Xml.Serialization;
     using ContentMigration;
-    using Microsoft.SharePoint.Client;
-    using Sharezbold.Settings;
-    using Sharezbold.ContentMigration.Data;
-    using Sharezbold.Logging;
-    using FileMigration;
+    using ContentMigration.Data;
     using Extensions;
+    using FileMigration;
+    using Logging;
+    using Microsoft.SharePoint.Client;
+    using Settings;
 
     /// <summary>
     /// The main form of the program
@@ -85,11 +79,6 @@ namespace Sharezbold
         private ElementsMigrationWorker migrationWorker;
 
         /// <summary>
-        /// Data binding object for logList
-        /// </summary>
-        //private BindingSource log;
-
-        /// <summary>
         /// the message logger
         /// </summary>
         private Logger log;
@@ -103,7 +92,7 @@ namespace Sharezbold
 
             this.migrationData = new MigrationData();
 
-            this.Size = new Size(this.Size.Width, this.Size.Height - 25); //Todo: use tablessControl
+            this.Size = new Size(this.Size.Width, this.Size.Height - 25); ////Todo: use tablessControl
             this.treeViewContentSelection.CheckBoxes = true;
             this.listViewMigrationContent.Scrollable = true;
 
@@ -183,7 +172,7 @@ namespace Sharezbold
         {
             try
             {
-                ExecuteElementsMigration();
+                this.ExecuteElementsMigration();
             }
             catch (Exception exception)
             {
@@ -192,7 +181,7 @@ namespace Sharezbold
 
             try
             {
-                ExecuteFileMigration();
+                this.ExecuteFileMigration();
             }
             catch (Exception exception)
             {
@@ -768,7 +757,7 @@ namespace Sharezbold
                 string fromSourceServer = "From source server: ";
                 if (this.currentConfigurationElement.MigrationObject is SList)
                 {
-                    //find the site:
+                    ////find the site:
                     SList list = (SList)this.currentConfigurationElement.MigrationObject;
                     string listBoxText = this.listBoxMigrateTo.SelectedItem.ToString();
 
@@ -793,8 +782,8 @@ namespace Sharezbold
                             }
                         }
                     }
-
                 }
+
                 this.currentConfigurationElement.UpdateReadyForMigration();
                 this.listViewMigrationContent.Update();
             }
@@ -814,7 +803,7 @@ namespace Sharezbold
 
         private void FileMigrationTabLoaded()
         {
-            this.textBoxFileMigrationWebs.Text = "";
+            this.textBoxFileMigrationWebs.Text = string.Empty;
             int bandwith = (int)this.numericUpDownBandwith.Value;
             int numberOfThreads = (int)this.numericUpDownNumberOfThreads.Value;
 
@@ -896,6 +885,7 @@ namespace Sharezbold
                         {
                             listViewMigrationContent.Items.Add(new SListViewItem(li));
                         }
+
                         if (li.Migrate && !site.Migrate)
                         {
                             listsWithoutSite.Add(li);
@@ -974,11 +964,5 @@ namespace Sharezbold
         {
             this.Close();
         }
-
-        private void textBoxFileMigrationWebs_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
     }
 }

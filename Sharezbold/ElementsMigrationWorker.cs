@@ -8,13 +8,10 @@
 namespace Sharezbold
 {
     using System;
-    using System.Collections.Generic;
-    using System.Net;
     using System.Threading.Tasks;
-    using System.Windows.Forms;
     using ElementsMigration;
-    using Microsoft.SharePoint.Client;
     using Logging;
+    using Microsoft.SharePoint.Client;
 
     /// <summary>
     /// This class is the interface to the DLL "TypeMigration" and migrates the elements TypeContent, User, Group, Permission, Workflow and SiteColumns. 
@@ -33,6 +30,9 @@ namespace Sharezbold
         /// </summary>
         private ClientContext targetClientContext;
 
+        /// <summary>
+        /// The Logger.
+        /// </summary>
         private Logger logger;
 
         /// <summary>
@@ -51,7 +51,6 @@ namespace Sharezbold
         /// <summary>
         /// Delegates the migration-operation.
         /// </summary>
-        /// <returns>log-output as LinkedList</returns>
         /// <exception cref="ElementsMigrationException">if migration fails</exception>
         private delegate void MigrationDelegation();
 

@@ -70,6 +70,7 @@ namespace Sharezbold.Logging
                 {
                     Directory.CreateDirectory(logfileurl);
                 }
+
                 this.logfile = new StreamWriter(Path.Combine(logfileurl, "SharezboldLog.txt"));
             }
             catch (Exception e)

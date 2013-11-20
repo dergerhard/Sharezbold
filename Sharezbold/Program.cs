@@ -37,7 +37,7 @@ namespace Sharezbold
                 Console.WriteLine(e);
                 Console.WriteLine(e.Message);
                 MessageBox.Show("Unexpected Error: " + e.Message, "FATAL ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }	
+            }
         }
     }
 }
