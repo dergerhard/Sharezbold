@@ -1,42 +1,217 @@
 <html>
-  <head>
-  <link rel="stylesheet" type="text/css" href="../style/sharedzbold.css">
-    <title>Sharezbold-Manuel
-    </title>
-  </head>
-  <body><h1>Sharezbold-Manuel</h1>
-    <div>Hier finden Sie alle relevanten Informationen zum Betreiben der Sharezbold-Software und wie Sie eine Migration durchf&uuml;hren.
-    </div><h2>Sharezbold-Applikation</h2>    In diesem Abschnitt finden Sie die Bedienung der Sharezbold Software.     Mit dieser software kann eine Migration von SharePoint 2010 auf SharePoint 2013 oder SharePoint 2013 auf SharePoint 2013 durchgef&uuml;hrt werden.     <h3>Installer</h3>    <b>Beachten Sie:</b> F&uuml;r die Installation sind Admin-Benutzerrechte erforderlich! <br />
-    <div class="contentblock">
-    <img src="./images/installer01.png"> <br />      Zun&auml;chst muss die Sprache ausgew&auml;hlt werden.<br />
-    </div>
-    <div class="contentblock">
-    <img src="./images/installer02.png"> <br />      Im n&auml;chsten Schritt starten man den Prozess mit klick auf <i>Weiter</i>.<br />
-    </div>
-    <div class="contentblock">
-    <img src="./images/installer03.png"> <br />      Nun w&auml;hlt man das Zielverzeichnis aus und starten den Installer mit klick auf <i>Installieren</i>.<br />
-    </div>
-    <div class="contentblock">
-    <img src="./images/installer04.png"> <br />      Zuletzt, wenn das Installieren erfolgreich war, kann das Programm gestartet werden. <br />
-    </div>
-    <div class="contentblock">
-    <img src="./images/program01.png"> <br />      In der Eingabemaske k&ouml;nnen die Einstellungen f&uuml;r einen erfolgreichen Migrationsprozess vorgenommen werden. Nachfolgend eine Erkl&auuml;rung der einzelnen Werte:<br />
-    <table>
-<tr>
-<th>Einstellungsoption</th><th>Beschreibung</th>
+<head>
+<link rel="stylesheet" type="text/css" href="../style/sharezbold.css">
+<title>Sharezbold-Manuel</title>
+</head>
+<body>
+	<a href="../index.html">Home</a>
+	<div>
+	<h1>Sharezbold-Manuel</h1>
+	</div>
+	<div>Hier finden Sie alle relevanten Informationen zum Betreiben
+		der Sharezbold-Software und wie Sie eine Migration durchf&uuml;hren.</div>
+	<div><h2>Sharezbold-Applikation</h2></div>
+	<div>In diesem Abschnitt finden Sie die Bedienung der Sharezbold
+		Software. Mit dieser software kann eine Migration von SharePoint 2010
+		auf SharePoint 2013 oder SharePoint 2013 auf SharePoint 2013
+		durchgef&uuml;hrt werden.</div>
+	<div><h3>Installer</h3></div>
+	<div>
+		<b>Beachten Sie:</b> F&uuml;r die Installation sind
+		Admin-Benutzerrechte erforderlich!
+	</div>
+	<br />
+	<div class="contentblock">
+		<img src="./images/installer01.png"> <br /> Zun&auml;chst muss
+		die Sprache ausgew&auml;hlt werden.<br />
+	</div>
+	<div class="contentblock">
+		<img src="./images/installer02.png"> <br /> Im n&auml;chsten
+		Schritt starten man den Prozess mit klick auf <i>Weiter</i>.<br />
+	</div>
+	<div class="contentblock">
+		<img src="./images/installer03.png"> <br /> Nun w&auml;hlt man
+		das Zielverzeichnis aus und starten den Installer mit klick auf <i>Installieren</i>.<br />
+	</div>
+	<div class="contentblock">
+		<img src="./images/installer04.png"> <br /> Zuletzt, wenn das
+		Installieren erfolgreich war, kann das Programm gestartet werden. <br />
+	</div>
+	<div class="contentblock">
+		<img src="./images/program01.png"> <br /> In der Eingabemaske
+		k&ouml;nnen die Einstellungen f&uuml;r einen erfolgreichen
+		Migrationsprozess vorgenommen werden. Nachfolgend eine Erkl&auml;rung
+		der einzelnen Werte:<br />
+		<table border="0">
+			<tr>
+				<th>Einstellungsoption</th>
+				<th>Beschreibung</th>
+			</tr>
+			<tr>
+				<td colspan="2" id="middleheader" align="center"><i>Source
+						Configuration</i></td>
+			</tr>
+			<tr>
+				<td><b>Site-Collection</b></td>
+				<td>Adresse des Quell-SharePoints.</td>
+			</tr>
+			<tr>
+				<td><b>Username</b></td>
+				<td>Username f&uuml;r den Quell-SharePoint</td>
+			</tr>
+			<tr>
+				<td><b>Domain</b></td>
+				<td>Dom&auml;ne des Quell-SharePoints</td>
+			</tr>
+			<tr>
+				<td><b>Password</b></td>
+				<td>Passwort des Users</td>
+			</tr>
+			<tr>
+				<td colspan="2" id="middleheader" align="center"><i>Destination
+						Configuration</i></td>
+			</tr>
+			<tr>
+				<td><b>Host</b></td>
+				<td>Adresse des Ziel-SharePoints</td>
+			</tr>
+			<tr>
+				<td><b>Central Admin-URL</b></td>
+				<td>Adresse der Administration des Ziel-SharePoints</td>
+			</tr>
+			<tr>
+				<td><b>Username</b></td>
+				<td>Username f&uuml;r den Zugriff auf den Ziel-SharePoint</td>
+			</tr>
+			<tr>
+				<td><b>Domain</b></td>
+				<td>Dom&auml;ne des Ziel-SharePoints</td>
+			</tr>
+			<tr>
+				<td><b>Password</b></td>
+				<td>Passwort des Users</td>
+			</tr>
+			<tr>
+				<td colspan="2" id="middleheader" align="center"><i>Proxy</i></td>
+			</tr>
+			<tr>
+				<td><b>Activate</b></td>
+				<td>Proxy-Einstellungen aktivieren</td>
+			</tr>
+			<tr>
+				<td><b>Proxy URL</b></td>
+				<td>URL des Proxy</td>
+			</tr>
+			<tr>
+				<td><b>Username</b></td>
+				<td>Benutzername</td>
+			</tr>
+			<tr>
+				<td><b>Password</b></td>
+				<td>Passwort des Benutzers</td>
+			</tr>
+			<tr>
+				<td colspan="2" id="middleheader" align="center"><i>Miscellaneous</i></td>
+			</tr>
+			<tr>
+				<td><b>A site collection will be migrated</b></td>
+				<td>Checkbox, wenn komplette SiteCollection migriert werden
+					soll</td>
+			</tr>
+			<tr>
+				<td><b>File-Migration Service URI</b></td>
+				<td>URI des FileMigrationService (wird f&uuml;r die
+					File-Migration ben&ouml;tigt.)</td>
+			</tr>
+			<tr>
+				<td><b>Bandwith</b></td>
+				<td>Bandbreite f&uuml;r Down- und Upload von Dokumenten</td>
+			</tr>
+			<tr>
+				<td><b>Number of Threads</b></td>
+				<td>Anzahl an Threads f&uuml;r den Down- und Upload</td>
+			</tr>
+		</table>
+	</div>
+	<div class="contentblock">
+		<img src="./images/program02.png"> <br /> Profile k&ouml;nnen
+		auch gespeichert und geladen werden. Hierzu kann man das Men&uuml; <i>File</i>
+		verwenden:
+		<ul>
 
-</tr>
-</table>
-    </div>
-    <div class="contentblock">
-    <img src="./images/program02.png"> <br />      Profile k&ouml;nnen auch gespeichert und geladen werden. Hierzu kann man das Men&uuml; <i>File</i> verwenden:
-<ul>
-
-     <li>Mit <i>Save Migration Profile ...</i> k&ouml;nnen die aktuellen Einstellungen gespeichert werden.</li>
-     <li> Mit <i>Load Migration Profile ...</i> k&ouml;nnen Einstellungen wieder geladen werden. Die Einstellungen werden in eine XML-Datei (im Klartext) gespeichert.</li>
-     </ul>
-    </div>
-    <div class="contentblock">
-    </div>
-  </body>
+			<li>Mit <i>Save Migration Profile ...</i> k&ouml;nnen die
+				aktuellen Einstellungen gespeichert werden.
+			</li>
+			<li>Mit <i>Load Migration Profile ...</i> k&ouml;nnen
+				Einstellungen wieder geladen werden. Die Einstellungen werden in
+				eine XML-Datei (im Klartext) gespeichert.
+			</li>
+		</ul>
+	</div>
+	<div class="contentblock">
+		Klickt man auf den Button <i>next</i>, so wird man intuitiv Step by
+		Step durch das Programm geführt. Nachfolgend sind die einzelnen
+		Schritte kurz beschrieben:
+		<ol>
+			<li class="step">Zu Beginn kann man sich bei der Elements
+				Migration entscheiden, welche Typ-Elemente (ContentTypes)migriert
+				werden sollen. Zur Auswahl stehen:
+				<ul>
+					<li><b>User:</b> Benutzer werden migriert.</li>
+					<li><b>Group:</b> Benutzergruppen werden migriert.</li>
+					<li><b>PermissionLevels:</b> Die Rechte werden migriert.</li>
+					<li><b>SiteColumns:</b> Die Site-Columns werden migriert.</li>
+					<li><b>Workflow:</b> Die Workflows werden migriert.</li>
+				</ul> <b>Hinweis:</b> Bestehende Typ-Elemente werden nicht gel&ouml;scht.
+				Mit Klick auf <i>Migrate Content-Type</i> werden alle Typ-Elemente
+				ausgew&auml;hlt.<br /> Mit Klick auf <i>Content</i> geht's weiter
+				zur Content-Selection.
+			</li>
+			<li class="step">Nun kann mittels eines Tree-Pickers
+				ausgew&auml;hlt werden, welche Seiten und welcher Inhalt auf den
+				Seiten migriert werden soll.<br /> <b>Hinweis:</b> Die erste Site
+				tr&auml;gt den selben Namen wie die SiteCollection, da die erste
+				Site den selben Namen hat wie die SiteCollection selbst.<br /> Mit
+				Klick auf <i>Configure File Migration</i> kommt man zur
+				Informationsseite der File-Migration.
+			</li>
+			<li class="step">Es folgt eine &Uuml;bersicht der Informationen
+				zur File-Migration. Aufgef&uuml;hrt werden punkte wie:
+				<ol>
+					<li>Webs, von denen die Files migriert werden.</li>
+					<li>Die ausgew&auml;hlte Bandbreite.</li>
+					<li>Die Anzahl an Threads.</li>
+					<li>Die URI des FileMigrationService</li>
+					<li>Die limitierte FileSize per Upload.</li>
+				</ol> <b>Hinweis:</b> Auf dieser Seite sind keine %Auml;nderungen mehr
+				m&ouml;glich. Sie dient lediglich als Info-Seite.<br /> Ein Klick
+				auf <i>Configure Migration Elements</i> f&uuml;hrt einem zur Seite,
+				wo die zu migrierenden Elemente ausgew&auml;hlt werden k&ouml;nnen.
+			</li>
+			<li class="step">Auf dieser Seite gibt es zwei Boxen. Bei der
+				linken Box k&ouml;nnen die Elemente, welche Migriert werden soll,
+				ausgew&auml;hlt werden. Darunter fallen zum Beispielen Themen wie
+				Kalender oder Notizen. Auf der rechte Seite wird ausgew&auml;hlt in
+				welches Web migriert werden soll.<br /> <b>Hinweis:</b> Da hier
+				viele Daten geladen werden m&uuml;ssen, kann der Ladevorgang einiges
+				an Zeit in Anspruch nehmen.<br /> Mit Klick auf <i>Start
+					Migration</i> wird die Migration gestartet.
+			</li>
+			<li class="step">W&auml;hrend der Migration werden laufend
+				Informationen ausgegeben, welche Teile erfolgreich migriert wurden.
+				Schl&auml;gt jedoch zum Beispiel bei der Migration eines
+				Content-Types etwas fehl, so wird das ebenfalls aufgef&uuml;hrt und
+				kann im selbst korrigiert werden. <br /> <b>Hinweis:</b> Die Dauer
+				der Migration h&auml;ngt von der Anzahl der ausgew&auml;hlten
+				Elmente aus.<br /> Das Log wird ebenfalls ins User-Home
+				geschrieben, damit der Benutzer n&auml;here Informationen &uuml;ber
+				die Migrationserfolg oder -misserfolg erh&auml;hlt.
+			</li>
+			<li class="step">Wenn der Migrations-Prozess abgeschlossen ist,
+				erscheint eine Info-Textbox. Das Programm kann mit <i>Finish
+					Exit</i> verlassen werden.
+			</li>
+		</ol>
+	</div>
+</body>
 </html>

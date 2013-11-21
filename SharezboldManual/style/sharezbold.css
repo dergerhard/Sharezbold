@@ -1,0 +1,54 @@
+h1
+{
+	font: "Calibri";
+}
+
+h2
+{
+	font: "Calibri";
+}
+
+h3
+{
+	font: "Calibri";
+}
+
+div
+{
+	font-family: "Calibri";	
+}
+
+.contentblock
+{
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.step
+{
+	margin-top: 10px;
+}
+
+table
+{
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+td
+{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+tr
+{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.middleheader
+{
+	font-size: larger;
+	font-style: italic;
+}
